@@ -16,6 +16,7 @@ build/
 out/
 .next/
 .turbo/
+*.tsbuildinfo
 
 # IDE
 .vscode/
