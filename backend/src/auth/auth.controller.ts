@@ -3,10 +3,14 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Post('register')
   register(@Body() dto: RegisterDto) {
@@ -20,7 +24,23 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  me(@Request() req: { user: { userId: string; email: string; role: string } }) {
-    return { user: req.user };
+  async me(
+    @Request()
+    req: { user: { userId: string; email: string; role: string } },
+  ) {
+    const user = await this.prisma.usuario.findUnique({
+      where: { id: req.user.userId },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        ativo: true,
+        emailVerificado: true,
+        criadoEm: true,
+        atualizadoEm: true,
+      },
+    });
+
+    return { user };
   }
 }

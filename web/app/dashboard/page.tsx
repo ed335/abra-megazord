@@ -1,51 +1,46 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Button from '@/components/shared/Button';
-import { clearToken, fetchWithAuth, getToken } from '@/lib/auth';
+import Link from "next/link";
+import Button from "@/components/shared/Button";
+import { clearToken } from "@/lib/auth";
+import useSWR from "swr";
+import { fetchWithAuth } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 type MeResponse = {
   user: {
-    userId: string;
+    id: string;
     email: string;
     role: string;
-  };
+    ativo: boolean;
+    emailVerificado: boolean;
+    criadoEm: string;
+    atualizadoEm: string;
+  } | null;
 };
 
 export default function DashboardPage() {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'auth' | 'no-auth'>(
-    'idle'
+  const router = useRouter();
+  const { data, error, isLoading } = useSWR<MeResponse>(
+    "/auth/me",
+    (url) => fetchWithAuth<MeResponse>(url.replace("/auth/me", "/auth/me")),
+    { revalidateOnFocus: false }
   );
-  const [error, setError] = useState<string | null>(null);
-  const [me, setMe] = useState<MeResponse['user'] | null>(null);
-
-  useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      setStatus('no-auth');
-      return;
-    }
-
-    setStatus('loading');
-    fetchWithAuth<MeResponse>('/auth/me')
-      .then((data) => {
-        setMe(data.user);
-        setStatus('auth');
-      })
-      .catch((err) => {
-        setError(err.message);
-        setStatus('no-auth');
-      });
-  }, []);
 
   const handleLogout = () => {
     clearToken();
-    setMe(null);
-    setStatus('no-auth');
+    router.push("/login");
   };
 
-  if (status === 'no-auth') {
+  if (isLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-off-white">
+        <p className="text-cinza-medio">Carregando...</p>
+      </main>
+    );
+  }
+
+  if (error || !data?.user) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-3xl mx-auto bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12">
@@ -54,17 +49,17 @@ export default function DashboardPage() {
           </h1>
           {error && (
             <p className="text-sm text-erro bg-erro/10 border border-erro/30 rounded-lg px-4 py-3 mb-4">
-              {error}
+              {error instanceof Error ? error.message : "Sessão inválida"}
             </p>
           )}
           <p className="text-cinza-medio mb-6">
             Faça login ou crie uma conta para acessar o dashboard.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button variant="primary" onClick={() => (window.location.href = '/login')}>
+            <Button variant="primary" onClick={() => router.push("/login")}>
               Ir para Login
             </Button>
-            <Button variant="secondary" onClick={() => (window.location.href = '/cadastro')}>
+            <Button variant="secondary" onClick={() => router.push("/cadastro")}>
               Criar conta
             </Button>
             <Link href="/" className="text-sm text-verde-oliva underline">
@@ -76,13 +71,7 @@ export default function DashboardPage() {
     );
   }
 
-  if (status === 'loading') {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-off-white">
-        <p className="text-cinza-medio">Carregando...</p>
-      </main>
-    );
-  }
+  const user = data.user;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-16">
@@ -94,7 +83,7 @@ export default function DashboardPage() {
               Sessão autenticada
             </h1>
             <p className="text-cinza-medio mt-2">
-              Este é um placeholder para o painel; a sessão está válida.
+              Sessão válida. Em breve adicionaremos cards e ações reais.
             </p>
           </div>
           <Button variant="secondary" onClick={handleLogout}>
@@ -102,18 +91,22 @@ export default function DashboardPage() {
           </Button>
         </div>
 
-        {me && (
-          <div className="border border-cinza-claro rounded-lg p-4 bg-cinza-muito-claro">
-            <p className="text-sm text-cinza-medio">Usuário</p>
-            <p className="text-lg font-semibold text-cinza-escuro">{me.email}</p>
-            <p className="text-sm text-cinza-medio mt-1">Role: {me.role}</p>
-            <p className="text-sm text-cinza-medio">ID: {me.userId}</p>
-          </div>
-        )}
+        <div className="border border-cinza-claro rounded-lg p-4 bg-cinza-muito-claro">
+          <p className="text-sm text-cinza-medio">Usuário</p>
+          <p className="text-lg font-semibold text-cinza-escuro">{user.email}</p>
+          <p className="text-sm text-cinza-medio mt-1">Role: {user.role}</p>
+          <p className="text-sm text-cinza-medio">ID: {user.id}</p>
+          <p className="text-sm text-cinza-medio">
+            Ativo: {user.ativo ? "Sim" : "Não"} | E-mail verificado:{" "}
+            {user.emailVerificado ? "Sim" : "Não"}
+          </p>
+        </div>
 
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="border border-cinza-claro rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-cinza-escuro mb-2">Próximos passos</h3>
+            <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
+              Próximos passos
+            </h3>
             <ul className="list-disc list-inside text-cinza-medio space-y-1 text-sm">
               <li>Adicionar formulários de paciente/prescritor</li>
               <li>Conectar com fluxo de prescrição</li>
@@ -121,9 +114,11 @@ export default function DashboardPage() {
             </ul>
           </div>
           <div className="border border-cinza-claro rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-cinza-escuro mb-2">Status da sessão</h3>
+            <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
+              Status da sessão
+            </h3>
             <p className="text-sm text-cinza-medio">
-              Token armazenado localmente. Use este espaço para exibir métricas ou atalhos.
+              Token armazenado em cookie/LocalStorage. Use este espaço para métricas ou atalhos.
             </p>
           </div>
         </div>
