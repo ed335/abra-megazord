@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --verde-oliva: #6B7C59;
+}
+
 /* Reset e bases */
 * {
   @apply border-cinza-claro;
