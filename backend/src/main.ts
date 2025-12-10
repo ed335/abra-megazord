@@ -7,6 +7,18 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
 
+  const allowedOrigins = (
+    process.env.CORS_ORIGINS ||
+    'http://localhost:3000,http://23.251.148.183:3000,http://23.251.148.183'
+  )
+    .split(',')
+    .map((o) => o.trim());
+
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: false,
+  });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const port = process.env.API_PORT ? Number(process.env.API_PORT) : 3001;
