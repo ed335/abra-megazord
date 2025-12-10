@@ -1,112 +1,59 @@
-# 🚀 Copiar e Colar na VM Google Cloud
+# 🚀 Google Cloud Quick Start (Ubuntu VM)
 
-## Comando 1: Clonar Repositório
-```bash
-git clone https://github.com/ed335/abra-megazord.git && cd abra-megazord
-```
+Guia enxuto para subir o projeto em uma VM (Ubuntu 22.04+). Use com usuário com sudo. Abra apenas as portas necessárias (22, 3000, 3001, 5050, 8025 se precisar MailHog/pgAdmin).
 
----
-
-## Comando 2: Instalar Dependências (Backend)
-```bash
-cd backend && npm install && cd ..
-```
-
----
-
-## Comando 3: Instalar Dependências (Frontend)
-```bash
-cd web && npm install && cd ..
-```
-
----
-
-## Comando 4: Iniciar Docker
-```bash
-docker-compose up -d
-```
-
----
-
-## Comando 5: Aguardar 10 segundos e rodar Migrations
-```bash
-sleep 10 && cd backend && npm run prisma:generate && npm run prisma:migrate dev -- --name init && cd ..
-```
-
----
-
-## Comando 6: Criar .env files
-```bash
-cp backend/.env.example backend/.env && cp web/.env.example web/.env.local
-```
-
----
-
-## 🎯 Script Completo (Copiar e Colar Tudo)
+## Copiar e colar
 
 ```bash
-# Clone
-git clone https://github.com/ed335/abra-megazord.git && cd abra-megazord
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Backend
-cd backend && npm install && npm run prisma:generate && cd ..
+echo "🔧 Instalando dependências do sistema..."
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl git docker.io docker-compose
 
-# Frontend
-cd web && npm install && cd ..
+echo "🔧 Instalando Node.js 20 (se não existir)..."
+if ! command -v node >/dev/null; then
+  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+fi
 
-# Docker
+echo "👤 Dando permissão para usar Docker sem sudo..."
+sudo usermod -aG docker "$USER"
+
+echo "📥 Clonando repositório..."
+git clone https://github.com/ed335/abra-megazord.git
+cd abra-megazord
+
+echo "📦 Instalando dependências backend..."
+cd backend && npm install
+echo "📦 Instalando dependências frontend..."
+cd ../web && npm install
+cd ..
+
+echo "🐳 Subindo banco e utilidades..."
 docker-compose up -d
 
-# Aguardar
-sleep 15
+echo "🗄️ Gerando Prisma Client e migrations..."
+cd backend
+npm run prisma:generate
+npm run prisma:migrate -- --name init
+cd ..
 
-# Migrations
-cd backend && npm run prisma:migrate dev -- --name init && cd ..
+echo "🔐 Criando envs padrão..."
+cp backend/.env.example backend/.env
+cp web/.env.example web/.env.local
 
-# Env files
-cp backend/.env.example backend/.env && cp web/.env.example web/.env.local
-
-echo "✅ Setup completo!"
 echo ""
-echo "🚀 Inicie os serviços:"
+echo "✅ Pronto! Em dois terminais separados:"
 echo "Terminal 1: cd ~/abra-megazord/backend && npm run start:dev"
 echo "Terminal 2: cd ~/abra-megazord/web && npm run dev"
 echo ""
-echo "🌐 Acesse:"
-echo "Frontend: http://localhost:3000"
-echo "Backend: http://localhost:3001/api"
-echo "pgAdmin: http://localhost:5050"
-echo "MailHog: http://localhost:8025"
+echo "🌐 Acessos:"
+echo "- Frontend: http://localhost:3000"
+echo "- Backend:  http://localhost:3001/api"
+echo "- pgAdmin:  http://localhost:5050 (admin@abracann.local / admin)"
+echo "- MailHog:  http://localhost:8025"
 ```
 
----
-
-## 📚 Documentação Completa
-
-Depois que tudo rodar, leia em ordem:
-
-1. **README.md**
-2. **VM_SETUP_COMPLETO.md** ← Guia detalhado com troubleshooting
-3. **docs/arquitetura.md**
-4. **docs/fluxos.md**
-5. **docs/uiux.md**
-
----
-
-## ✅ Checklist Final
-
-- [ ] Git clonado
-- [ ] Backend npm install
-- [ ] Frontend npm install
-- [ ] Docker rodando
-- [ ] Migrations executadas
-- [ ] .env files criados
-- [ ] Backend iniciado
-- [ ] Frontend iniciado
-- [ ] Consegue acessar http://localhost:3000
-
----
-
-**Links:**
-- Repositório: https://github.com/ed335/abra-megazord
-- Guia Completo: https://github.com/ed335/abra-megazord/blob/main/VM_SETUP_COMPLETO.md
+> Dica: se o `docker-compose up -d` falhar por permissão, rode `newgrp docker` e repita. Se a porta 5432 já estiver em uso, altere a porta no `docker-compose.yml` e na `DATABASE_URL` do backend.
