@@ -1,15 +1,17 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/shared/Button';
+import { API_URL, setToken } from '@/lib/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,8 +31,16 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
+      if (data.accessToken) {
+        setToken(data.accessToken);
+        setStatus('success');
+        setMessage('Login realizado com sucesso. Redirecionando...');
+        setTimeout(() => router.push('/dashboard'), 800);
+        return;
+      }
+
       setStatus('success');
-      setMessage(`Login realizado. Token: ${data.accessToken ?? 'gerado'}`);
+      setMessage('Login realizado.');
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Erro ao entrar';
       setStatus('error');
