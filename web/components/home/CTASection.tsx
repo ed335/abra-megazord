@@ -3,8 +3,11 @@
 import { motion } from 'framer-motion';
 import Button from '@/components/shared/Button';
 import { ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function CTASection() {
+  const router = useRouter();
+
   return (
     <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -45,9 +48,7 @@ export default function CTASection() {
             variant="primary"
             size="lg"
             className="bg-off-white text-verde-oliva hover:bg-cinza-claro group"
-            onClick={() => {
-              // TODO: Navegar para cadastro
-            }}
+            onClick={() => router.push('/cadastro')}
           >
             Cadastre-se Agora
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -56,9 +57,7 @@ export default function CTASection() {
             variant="secondary"
             size="lg"
             className="border-off-white text-off-white hover:bg-off-white/10"
-            onClick={() => {
-              // TODO: Navegar para contato
-            }}
+            onClick={() => router.push('/contato')}
           >
             Fale Conosco
           </Button>

@@ -3,8 +3,11 @@
 import { motion } from 'framer-motion';
 import Button from '@/components/shared/Button';
 import { ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function HeroSection() {
+  const router = useRouter();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -84,9 +87,7 @@ export default function HeroSection() {
             variant="primary"
             size="lg"
             className="group"
-            onClick={() => {
-              // TODO: Navegar para cadastro
-            }}
+            onClick={() => router.push('/cadastro')}
           >
             Começar Agora
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -94,9 +95,7 @@ export default function HeroSection() {
           <Button
             variant="secondary"
             size="lg"
-            onClick={() => {
-              // TODO: Navegar para mais informações
-            }}
+            onClick={() => router.push('/contato')}
           >
             Saber Mais
           </Button>
