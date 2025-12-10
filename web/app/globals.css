@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset e bases */
+* {
+  @apply border-cinza-claro;
+}
+
+body {
+  @apply bg-off-white text-cinza-escuro;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Tipografia Base */
+h1 {
+  @apply text-display font-bold text-cinza-escuro;
+}
+
+h2 {
+  @apply text-h2 font-semibold text-cinza-escuro;
+}
+
+h3 {
+  @apply text-h3 font-semibold text-cinza-escuro;
+}
+
+h4 {
+  @apply text-h4 font-semibold text-cinza-escuro;
+}
+
+p {
+  @apply text-body text-cinza-medio;
+}
+
+a {
+  @apply text-verde-oliva hover:underline transition-colors;
+}
+
+/* Acessibilidade - Focus visível */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  @apply outline-none ring-2 ring-verde-oliva ring-offset-2;
+}
+
+/* Links acessíveis */
+:focus-visible {
+  outline: 2px solid var(--verde-oliva);
+  outline-offset: 2px;
+}
+
+/* Scrollbar customizado */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-off-white;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-cinza-claro rounded-full hover:bg-cinza-medio;
+}
+
+/* Placeholder */
+::placeholder {
+  @apply text-cinza-medio;
+}
+
+/* Seleção de texto */
+::selection {
+  @apply bg-verde-oliva text-off-white;
+}

@@ -1,0 +1,265 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============= Enums =============
+
+enum Role {
+  PACIENTE
+  PRESCRITOR
+  ADMIN
+}
+
+enum StatusPrescricao {
+  ATIVA
+  VENCIDA
+  CANCELADA
+  UTILIZADA
+}
+
+enum CategoriaArtigo {
+  EDUCACAO
+  PESQUISA
+  ORIENTACAO
+  LEGISLACAO
+}
+
+// ============= Models =============
+
+model Usuario {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  password    String    // bcrypt hash
+  role        Role      @default(PACIENTE)
+  ativo       Boolean   @default(true)
+  emailVerificado Boolean @default(false)
+  
+  criadoEm    DateTime  @default(now())
+  atualizadoEm DateTime @updatedAt
+  deletadoEm  DateTime? // Para soft delete
+
+  // Relações
+  paciente    Paciente?
+  prescritor  Prescritor?
+  admin       Admin?
+  sessions    Session[]
+  logsAuditoria LogAuditoria[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  usuarioId   String
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  refreshToken String?
+  ipAddress   String?
+  userAgent   String?
+  
+  criadoEm    DateTime  @default(now())
+  expiresEm   DateTime
+  
+  @@index([usuarioId])
+  @@index([expiresEm])
+}
+
+model Paciente {
+  id              String    @id @default(cuid())
+  usuarioId       String    @unique
+  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  // Dados pessoais
+  cpf             String    @unique  // Criptografado
+  nome            String
+  email           String    @unique
+  telefone        String    // Criptografado (opcional)
+  dataNascimento  DateTime
+  
+  // LGPD & Privacidade
+  consenteLGPD    Boolean   @default(false)
+  consentimentoEm DateTime?
+  dataDelecaoAgendada DateTime? // Para direito ao esquecimento
+
+  // Endereço
+  rua             String?
+  numero          String?
+  complemento     String?
+  cidade          String?
+  estado          String?
+  cep             String?
+  
+  // Dados médicos (sensíveis)
+  condicoes       String[] @default([])  // JSON array
+  alergias        String[] @default([])
+  medicamentos    String[] @default([])
+  
+  // Relacionamentos
+  prescricoes     Prescricao[]
+  consentimentos  ConsentimentoLGPD[]
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([usuarioId])
+  @@index([cpf])
+}
+
+model Prescritor {
+  id              String    @id @default(cuid())
+  usuarioId       String    @unique
+  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  crm             String    @unique
+  nome            String
+  especialidade   String
+  instituicao     String?
+  email           String    @unique
+  telefone        String?
+  
+  // Validação
+  crmVerificado   Boolean   @default(false)
+  dataVerificacao DateTime?
+  
+  // Relacionamentos
+  prescricoes     Prescricao[]
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([usuarioId])
+  @@index([crm])
+}
+
+model Admin {
+  id              String    @id @default(cuid())
+  usuarioId       String    @unique
+  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  permissoes      String[] @default([]) // JSON array
+  notas           String?
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+}
+
+model Prescricao {
+  id              String    @id @default(cuid())
+  
+  // Relações
+  pacienteId      String
+  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  
+  prescritorId    String
+  prescritor      Prescritor @relation(fields: [prescritorId], references: [id])
+  
+  // Dados médicos
+  descricao       String    // Indicação medicinal
+  dosagem         String    // Ex: "5-10mg"
+  frequencia      String    // Ex: "2x ao dia"
+  duracao         String    // Ex: "30 dias"
+  
+  // Certificado digital
+  certificadoUrl  String?   // URL do PDF no storage
+  qrCode          String?   // QR code data (URL/JSON)
+  
+  // Status & Validade
+  status          StatusPrescricao @default(ATIVA)
+  validadeDe      DateTime
+  validadeAte     DateTime
+  
+  // Assinatura digital (futuro)
+  assinatura      String?   // Hash da assinatura
+  
+  // Auditoria
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([pacienteId])
+  @@index([prescritorId])
+  @@index([status])
+  @@index([validadeAte])
+}
+
+model Artigo {
+  id              String    @id @default(cuid())
+  
+  titulo          String
+  slug            String    @unique
+  conteudo        String    // Markdown
+  resumo          String?   // Preview
+  autor           String
+  
+  categoria       CategoriaArtigo
+  tags            String[] @default([])
+  
+  publicado       Boolean   @default(false)
+  visualizacoes   Int       @default(0)
+  
+  imagemUrl       String?   // URL da imagem de capa
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  publicadoEm     DateTime?
+  
+  @@index([slug])
+  @@index([categoria])
+  @@index([publicado])
+}
+
+model LogAuditoria {
+  id              String    @id @default(cuid())
+  
+  usuarioId       String?
+  usuario         Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  
+  acao            String    // LOGIN, CADASTRO, PRESCRICAO_CRIADA, etc
+  recurso         String    // PACIENTE, PRESCRICAO, ARTIGO, etc
+  recursoId       String?   // ID do recurso afetado
+  
+  detalhes        Json?     // Dados contextuais (status anterior/novo)
+  ipAddress       String?
+  userAgent       String?
+  
+  criadoEm        DateTime  @default(now())
+  
+  @@index([usuarioId])
+  @@index([acao])
+  @@index([recurso])
+  @@index([criadoEm])
+}
+
+model ConsentimentoLGPD {
+  id              String    @id @default(cuid())
+  
+  pacienteId      String
+  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  
+  versaoTermo     String    // Ex: "1.0"
+  hashTermo       String    // SHA-256 do termo
+  
+  aceito          Boolean   @default(false)
+  ipAddress       String?
+  userAgent       String?
+  
+  criadoEm        DateTime  @default(now())
+  
+  @@index([pacienteId])
+}
+
+// ============= Índices & Constraints =============
+
+// Constraints de negócio via migrations:
+// - Paciente só acessa seus dados
+// - Prescritor só cria prescrição para pacientes validados
+// - Prescrição só válida com CRM ativo
+// - Dados sensíveis são criptografados no BD
