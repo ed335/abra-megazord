@@ -6,19 +6,19 @@ import { CheckCircle } from 'lucide-react';
 const steps = [
   {
     title: 'Cadastre-se',
-    description: 'Crie sua conta em poucos minutos. Informações seguras, LGPD compliant.',
+    description: 'Crie sua conta com validação de e-mail. Dados protegidos e consentimento LGPD.',
   },
   {
     title: 'Busque um Prescritor',
-    description: 'Escolha entre prescritores validados em sua região.',
+    description: 'Escolha prescritores com CRM validado e veja a disponibilidade.',
   },
   {
     title: 'Receba Prescrição',
-    description: 'Obtenha seu cartão digital medicinal assinado digitalmente.',
+    description: 'Receba prescrição digital com QR code e assinatura eletrônica.',
   },
   {
     title: 'Acesse Benefícios',
-    description: 'Educação, suporte e comunidade de pacientes.',
+    description: 'Educação, suporte e acompanhamento contínuo em um só lugar.',
   },
 ];
 

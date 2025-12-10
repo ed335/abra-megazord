@@ -8,25 +8,25 @@ const features = [
     icon: Shield,
     title: 'Segurança Garantida',
     description:
-      'Seus dados são criptografados com AES-256 e conformes à LGPD. Controle total sobre suas informações pessoais.',
+      'Criptografia AES-256, LGPD by design, consentimento granular e logs de auditoria.',
   },
   {
     icon: Lock,
     title: 'Prescrições Digitais',
     description:
-      'Cartão digital medicinal assinado, com QR code validável em farmácias. Sempre à mão.',
+      'Emita e valide prescrições com QR code e assinatura digital. Histórico sempre disponível.',
   },
   {
     icon: Users,
     title: 'Prescritores Validados',
     description:
-      'Apenas profissionais com CRM ativo podem prescrever. Máxima segurança na emissão.',
+      'Verificação de CRM e fluxo de onboarding seguro para profissionais de saúde.',
   },
   {
     icon: Award,
     title: 'Educação Baseada em Ciência',
     description:
-      'Artigos, pesquisas e orientações curadas por especialistas. Conhecimento atualizado.',
+      'Artigos e orientações curadas por especialistas para pacientes e prescritores.',
   },
 ];
 
