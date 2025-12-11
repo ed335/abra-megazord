@@ -69,9 +69,9 @@ export default function FeaturesSection() {
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className="text-xl text-cinza-medio max-w-2xl mx-auto"
+            className="text-xl text-cinza-medio max-w-3xl mx-auto"
           >
-            Tudo integrado em uma plataforma segura, acolhedora e completa.
+            Tudo integrado em uma plataforma segura, acolhedora e completa — para quem quer orientação clara e documentos em ordem.
           </motion.p>
         </motion.div>
 

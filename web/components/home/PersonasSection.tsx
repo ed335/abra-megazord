@@ -76,6 +76,18 @@ export default function PersonasSection() {
             );
           })}
         </div>
+
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-cinza-claro rounded-xl p-4 shadow-sm">
+          <p className="text-sm sm:text-base text-cinza-escuro">
+            Precisa entender qual fluxo seguir? Fale com a equipe AbraCann e receba orientação segura.
+          </p>
+          <a
+            href="/contato"
+            className="text-sm font-semibold text-verde-oliva hover:underline"
+          >
+            Falar com a equipe →
+          </a>
+        </div>
       </div>
     </section>
   );
