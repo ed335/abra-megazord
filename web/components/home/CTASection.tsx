@@ -70,7 +70,7 @@ export default function CTASection() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          Seus dados são protegidos conforme a LGPD. Verificação de identidade inclusa no processo.
+          Seus dados de saúde são tratados com extremo cuidado, seguindo LGPD e verificação de identidade.
         </motion.p>
       </motion.div>
     </section>

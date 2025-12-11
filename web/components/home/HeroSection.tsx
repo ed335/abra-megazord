@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Button from '@/components/shared/Button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShieldCheck, BookOpen, Ban } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function HeroSection() {
@@ -73,10 +73,33 @@ export default function HeroSection() {
         {/* Descrição */}
         <motion.p
           variants={itemVariants}
-          className="text-xl sm:text-2xl text-cinza-medio mb-8 max-w-3xl mx-auto leading-relaxed"
+          className="text-xl sm:text-2xl text-cinza-medio mb-6 max-w-3xl mx-auto leading-relaxed"
         >
           Associação digital que conecta você a prescritores habilitados, organiza prescrições e documentos em um cartão seguro, e oferece educação responsável. Não somos clínica nem loja: atuamos com ciência, LGPD e acolhimento.
         </motion.p>
+
+        {/* Badges rápidos de confiança */}
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10"
+        >
+          {[
+            { icon: ShieldCheck, label: 'LGPD + consentimento claro' },
+            { icon: BookOpen, label: 'Baseado em ciência, não em promessa' },
+            { icon: Ban, label: 'Não vendemos produto; não é uso recreativo' },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <span
+                key={item.label}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-cinza-claro text-sm text-cinza-escuro shadow-sm"
+              >
+                <Icon className="w-4 h-4 text-verde-oliva" aria-hidden />
+                {item.label}
+              </span>
+            );
+          })}
+        </motion.div>
 
         {/* CTAs */}
         <motion.div
@@ -111,23 +134,24 @@ export default function HeroSection() {
         {/* Stats */}
         <motion.div
           variants={itemVariants}
-          className="grid grid-cols-3 gap-4 sm:gap-8 pt-12 border-t border-cinza-claro"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-8 border-t border-cinza-claro"
         >
           {[
-            { number: '500+', label: 'Pacientes em acompanhamento' },
-            { number: '150+', label: 'Prescritores habilitados e validados' },
-            { number: '99,9%', label: 'Disponibilidade da plataforma' },
+            { number: '500+', label: 'Pacientes em acompanhamento', desc: 'Fluxos orientados e suporte contínuo.' },
+            { number: '150+', label: 'Prescritores habilitados e validados', desc: 'CRM verificado e emissão segura.' },
+            { number: '99,9%', label: 'Disponibilidade da plataforma', desc: 'Infra segura para seus documentos.' },
           ].map((stat, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
-              className="text-center"
+              className="text-center bg-white border border-cinza-claro rounded-xl p-4 shadow-sm"
             >
               <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">
                 {stat.number}
               </p>
-              <p className="text-sm text-cinza-medio mt-2">{stat.label}</p>
+              <p className="text-sm text-cinza-escuro mt-1 font-semibold">{stat.label}</p>
+              <p className="text-xs text-cinza-medio mt-1">{stat.desc}</p>
             </motion.div>
           ))}
         </motion.div>

@@ -54,7 +54,7 @@ export default function PersonasSection() {
             return (
               <div
                 key={persona.title}
-                className="h-full bg-white border border-cinza-claro rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="h-full bg-white border border-cinza-claro rounded-xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-verde-claro/15 text-verde-oliva flex items-center justify-center">
