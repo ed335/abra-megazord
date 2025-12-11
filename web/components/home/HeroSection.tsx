@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Button from '@/components/shared/Button';
 import { ArrowRight, ShieldCheck, BookOpen, Ban, User, Activity, QrCode } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function HeroSection() {
@@ -54,8 +55,14 @@ export default function HeroSection() {
         {/* Coluna texto */}
         <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center">
           <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
-              <span className="text-2xl">🌿</span>
+            <div className="inline-flex items-center gap-3 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
+              <Image
+                src="https://abracann.org.br/_next/image?url=%2Flogo-header.png&w=256&q=75"
+                alt="AbraCann"
+                width={80}
+                height={24}
+                className="object-contain bg-white rounded-md p-1"
+              />
               <span className="text-sm font-medium text-verde-oliva">Associação Medicinal • AbraCann</span>
             </div>
           </motion.div>
