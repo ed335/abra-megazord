@@ -65,6 +65,22 @@ export default function CTASection() {
           </Button>
         </motion.form>
 
+        <motion.div
+          className="mt-4 flex justify-center"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.35 }}
+        >
+          <button
+            type="button"
+            onClick={() => router.push('/pre-anamnese')}
+            className="text-off-white font-medium underline underline-offset-4 hover:text-white transition-colors"
+          >
+            Preferir iniciar pela pré-anamnese guiada
+          </button>
+        </motion.div>
+
         <motion.p
           className="text-sm text-off-white/70 mt-8"
           initial={{ opacity: 0 }}

@@ -52,7 +52,7 @@ export default function HeroSection() {
         initial="hidden"
         animate="visible"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           {/* Coluna texto */}
           <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center">
             <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
@@ -60,11 +60,11 @@ export default function HeroSection() {
                 <Image
                   src="https://abracann.org.br/_next/image?url=%2Flogo-header.png&w=256&q=75"
                   alt="AbraCann"
-                  width={80}
-                  height={24}
-                  className="object-contain bg-white rounded-md p-1"
+                  width={88}
+                  height={28}
+                  className="object-contain h-7 w-auto"
                 />
-                <span className="text-sm font-medium text-verde-oliva">Associação Medicinal • AbraCann</span>
+                <span className="text-sm font-medium text-verde-oliva">Associação Medicinal</span>
               </div>
             </motion.div>
 
@@ -85,63 +85,50 @@ export default function HeroSection() {
               Associação medicinal que conecta pacientes e prescritores, organiza sua documentação e acompanha o tratamento com segurança jurídica, ética e acolhimento clínico. Não somos clínica nem loja.
             </motion.p>
 
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"
-            >
-              {[
-                { icon: ShieldCheck, label: 'LGPD + consentimento claro' },
-                { icon: BookOpen, label: 'Baseado em ciência, não em promessa' },
-                { icon: Ban, label: 'Não vendemos produto; não é recreativo' },
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <span
-                    key={item.label}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-off-white border border-cinza-claro text-sm text-cinza-escuro shadow-sm"
-                  >
-                    <Icon className="w-4 h-4 text-verde-oliva" aria-hidden />
-                    {item.label}
-                  </span>
-                );
-              })}
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4"
-            >
-              <Button
-                variant="primary"
-                size="lg"
-                className="group transform transition duration-200 hover:scale-[1.01] shadow-md"
-                onClick={() => router.push('/cadastro')}
-              >
-                Começar Agora
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={() => {
-                  const target = document.getElementById('como-funciona');
-                  if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    router.push('/#como-funciona');
-                  }
-                }}
-                className="transform transition duration-200 hover:scale-[1.01] border border-verde-oliva text-verde-oliva bg-white"
-              >
-                Entenda Como Funciona
-              </Button>
+            <motion.div variants={itemVariants} className="space-y-3">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="group transform transition duration-200 hover:scale-[1.01] shadow-md"
+                  onClick={() => router.push('/cadastro')}
+                >
+                  Começar Agora
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => {
+                    const target = document.getElementById('como-funciona');
+                    if (target) {
+                      target.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      router.push('/#como-funciona');
+                    }
+                  }}
+                  className="transform transition duration-200 hover:scale-[1.01] border border-verde-oliva text-verde-oliva bg-white"
+                >
+                  Entenda Como Funciona
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  variant="tertiary"
+                  size="md"
+                  className="text-verde-oliva underline underline-offset-4 px-0"
+                  onClick={() => router.push('/pre-anamnese')}
+                >
+                  Iniciar pré-anamnese guiada
+                </Button>
+              </div>
             </motion.div>
           </div>
 
           {/* Card do paciente */}
           <motion.div
             variants={itemVariants}
-            className="bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full"
+            className="bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full self-center lg:self-center"
             whileHover={{ y: -4 }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -187,9 +174,32 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
+        {/* Badges abaixo do hero */}
+        <motion.div
+          variants={itemVariants}
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4 max-w-5xl w-full mx-auto"
+        >
+          {[
+            { icon: ShieldCheck, label: 'LGPD + consentimento claro' },
+            { icon: BookOpen, label: 'Baseado em ciência, não em promessa' },
+            { icon: Ban, label: 'Não vendemos produto; não é recreativo' },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <span
+                key={item.label}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-off-white border border-cinza-claro text-sm text-cinza-escuro shadow-sm justify-center"
+              >
+                <Icon className="w-4 h-4 text-verde-oliva" aria-hidden />
+                {item.label}
+              </span>
+            );
+          })}
+        </motion.div>
+
         {/* Stats abaixo do hero */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-5xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate="visible"

@@ -32,6 +32,12 @@ enum CategoriaArtigo {
   LEGISLACAO
 }
 
+enum PerfilIntake {
+  PACIENTE_NOVO
+  EM_TRATAMENTO
+  CUIDADOR
+}
+
 // ============= Models =============
 
 model Usuario {
@@ -236,6 +242,32 @@ model LogAuditoria {
   @@index([acao])
   @@index([recurso])
   @@index([criadoEm])
+}
+
+model Intake {
+  id               String       @id @default(cuid())
+  perfil           PerfilIntake
+  condicaoPrincipal String?
+  objetivoPrincipal String?
+  gravidade        Int?
+  tratamentosPrevios String[]   @default([])
+  comorbidades     String[]     @default([])
+  notas            String?
+  preferenciaAcompanhamento String?
+  melhorHorario    String?
+  contatoEmail     String
+  contatoWhatsapp  String?
+  cidade           String?
+  estado           String?
+  consentiu        Boolean      @default(false)
+  origem           String?      // ex: web-hero, cta-final
+
+  criadoEm         DateTime     @default(now())
+  atualizadoEm     DateTime     @updatedAt
+
+  @@index([perfil])
+  @@index([contatoEmail])
+  @@index([cidade, estado])
 }
 
 model ConsentimentoLGPD {

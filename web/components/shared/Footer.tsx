@@ -18,7 +18,7 @@ export default function Footer() {
                 alt="AbraCann"
                 width={120}
                 height={32}
-                className="object-contain bg-white rounded-md p-2"
+                className="object-contain h-8 w-auto"
               />
             </div>
             <p className="text-off-white/80 text-sm leading-relaxed">
