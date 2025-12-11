@@ -58,7 +58,7 @@ export default function CTASection() {
             type="submit"
             variant="primary"
             size="lg"
-            className="bg-off-white text-verde-oliva hover:bg-cinza-claro group w-full sm:w-auto"
+            className="bg-white text-verde-oliva hover:bg-off-white group w-full sm:w-auto font-semibold shadow-md"
           >
             Quero me cadastrar
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
