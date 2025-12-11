@@ -46,7 +46,7 @@ export default function HeroSection() {
 
       {/* Conteúdo */}
       <motion.div
-        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center"
+        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -180,7 +180,7 @@ export default function HeroSection() {
 
       {/* Stats */}
       <motion.div
-        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-10 mt-8 border-t border-cinza-claro"
+        className="relative z-10 max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-8 mt-8 border-t border-cinza-claro"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
