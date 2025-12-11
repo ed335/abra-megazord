@@ -2,16 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // Permite acesso ao dev server via IP público (evita warning do Next em dev)
-  experimental: {
-    allowedDevOrigins: [
-      "http://localhost:3000",
-      "http://31.97.93.100:3000",
-      "http://31.97.93.100",
-      "https://abracann.org.br",
-      "https://www.abracann.org.br",
-    ],
-  },
   images: {
     remotePatterns: [
       {
