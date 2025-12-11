@@ -46,7 +46,7 @@ export default function HeroSection() {
 
       {/* Conteúdo */}
       <motion.div
-        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start"
+        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -178,32 +178,33 @@ export default function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Stats col */}
-        <motion.div
-          className="w-full flex flex-col gap-4 sm:gap-5"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {[
-            { number: '500+', label: 'Pacientes em acompanhamento', desc: 'Fluxos orientados e suporte contínuo.' },
-            { number: '150+', label: 'Prescritores habilitados e validados', desc: 'CRM verificado e emissão segura.' },
-            { number: '99,9%', label: 'Disponibilidade da plataforma', desc: 'Infra segura para seus documentos.' },
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
-              className="text-center border border-cinza-claro rounded-xl p-5 bg-white/80 backdrop-blur"
-            >
-              <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">
-                {stat.number}
-              </p>
-              <p className="text-sm text-cinza-escuro mt-1 font-semibold">{stat.label}</p>
-              <p className="text-xs text-cinza-medio mt-1">{stat.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+      </motion.div>
+
+      {/* Stats abaixo do hero */}
+      <motion.div
+        className="relative z-10 max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {[
+          { number: '500+', label: 'Pacientes em acompanhamento', desc: 'Fluxos orientados e suporte contínuo.' },
+          { number: '150+', label: 'Prescritores habilitados e validados', desc: 'CRM verificado e emissão segura.' },
+          { number: '99,9%', label: 'Disponibilidade da plataforma', desc: 'Infra segura para seus documentos.' },
+        ].map((stat, index) => (
+          <motion.div
+            key={index}
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            className="text-center border border-cinza-claro rounded-xl p-5 bg-white/80 backdrop-blur"
+          >
+            <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">
+              {stat.number}
+            </p>
+            <p className="text-sm text-cinza-escuro mt-1 font-semibold">{stat.label}</p>
+            <p className="text-xs text-cinza-medio mt-1">{stat.desc}</p>
+          </motion.div>
+        ))}
       </motion.div>
     </section>
   );
