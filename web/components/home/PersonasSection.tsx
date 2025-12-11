@@ -1,6 +1,6 @@
 'use client';
 
-import { ShieldCheck, Stethoscope, Users } from 'lucide-react';
+import { ShieldCheck, Stethoscope, Users, Check } from 'lucide-react';
 
 const personas = [
   {
@@ -66,8 +66,13 @@ export default function PersonasSection() {
                 </div>
                 <ul className="space-y-2 text-sm text-cinza-medio leading-relaxed">
                   {persona.bullets.map((item) => (
-                    <li key={item} className="flex gap-2">
-                      <span className="text-verde-oliva mt-1">•</span>
+                    <li
+                      key={item}
+                      className="flex items-start gap-2 rounded-lg transition-all"
+                    >
+                      <span className="mt-0.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-verde-claro/30 text-verde-oliva">
+                        <Check className="w-3 h-3" />
+                      </span>
                       <span>{item}</span>
                     </li>
                   ))}
