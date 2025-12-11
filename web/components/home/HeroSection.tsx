@@ -29,7 +29,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
       {/* Background decorativo */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -46,12 +46,13 @@ export default function HeroSection() {
 
       {/* Conteúdo */}
       <motion.div
-        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start"
+        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center">
+        {/* Coluna texto */}
+        <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center lg:col-span-4">
           <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
               <span className="text-2xl">🌿</span>
@@ -78,7 +79,7 @@ export default function HeroSection() {
 
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center lg:items-start gap-3 mb-8"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"
           >
             {[
               { icon: ShieldCheck, label: 'LGPD + consentimento claro' },
@@ -98,10 +99,10 @@ export default function HeroSection() {
             })}
           </motion.div>
 
-        <motion.div
-          variants={itemVariants}
-          className="flex flex-col sm:flex-row gap-4"
-        >
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-4"
+          >
             <Button
               variant="primary"
               size="lg"
@@ -132,7 +133,7 @@ export default function HeroSection() {
         {/* Card do paciente */}
         <motion.div
           variants={itemVariants}
-          className="bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full"
+          className="lg:col-span-4 bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full"
           whileHover={{ y: -4 }}
         >
           <div className="flex items-center justify-between mb-4">
@@ -176,33 +177,33 @@ export default function HeroSection() {
             </div>
           </div>
         </motion.div>
-      </motion.div>
 
-      {/* Stats */}
-      <motion.div
-        className="relative z-10 max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-8 mt-8 border-t border-cinza-claro"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {[
-          { number: '500+', label: 'Pacientes em acompanhamento', desc: 'Fluxos orientados e suporte contínuo.' },
-          { number: '150+', label: 'Prescritores habilitados e validados', desc: 'CRM verificado e emissão segura.' },
-          { number: '99,9%', label: 'Disponibilidade da plataforma', desc: 'Infra segura para seus documentos.' },
-        ].map((stat, index) => (
-          <motion.div
-            key={index}
-            variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
-            className="text-center border border-cinza-claro rounded-xl p-5 bg-white/70 backdrop-blur"
-          >
-            <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">
-              {stat.number}
-            </p>
-            <p className="text-sm text-cinza-escuro mt-1 font-semibold">{stat.label}</p>
-            <p className="text-xs text-cinza-medio mt-1">{stat.desc}</p>
-          </motion.div>
-        ))}
+        {/* Stats col */}
+        <motion.div
+          className="lg:col-span-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-4 sm:gap-5 w-full"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {[
+            { number: '500+', label: 'Pacientes em acompanhamento', desc: 'Fluxos orientados e suporte contínuo.' },
+            { number: '150+', label: 'Prescritores habilitados e validados', desc: 'CRM verificado e emissão segura.' },
+            { number: '99,9%', label: 'Disponibilidade da plataforma', desc: 'Infra segura para seus documentos.' },
+          ].map((stat, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              className="text-center border border-cinza-claro rounded-xl p-5 bg-white/80 backdrop-blur"
+            >
+              <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">
+                {stat.number}
+              </p>
+              <p className="text-sm text-cinza-escuro mt-1 font-semibold">{stat.label}</p>
+              <p className="text-xs text-cinza-medio mt-1">{stat.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.div>
     </section>
   );
