@@ -46,13 +46,13 @@ export default function HeroSection() {
 
       {/* Conteúdo */}
       <motion.div
-        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <div className="text-center lg:text-left">
-          <motion.div variants={itemVariants} className="mb-6 flex justify-center lg:justify-start">
+        <div className="text-center lg:text-left space-y-4">
+          <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
               <span className="text-2xl">🌿</span>
               <span className="text-sm font-medium text-verde-oliva">Associação Medicinal • AbraCann</span>
@@ -122,7 +122,7 @@ export default function HeroSection() {
                   router.push('/#como-funciona');
                 }
               }}
-              className="transform transition duration-200 hover:scale-[1.01]"
+              className="transform transition duration-200 hover:scale-[1.01] border border-verde-oliva text-verde-oliva bg-white"
             >
               Entenda Como Funciona
             </Button>
@@ -132,7 +132,7 @@ export default function HeroSection() {
         {/* Card do paciente */}
         <motion.div
           variants={itemVariants}
-          className="bg-white/70 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full"
+          className="bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full"
           whileHover={{ y: -4 }}
         >
           <div className="flex items-center justify-between mb-4">
