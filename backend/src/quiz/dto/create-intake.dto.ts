@@ -22,7 +22,7 @@ const toBool = (value: unknown) =>
 
 export class CreateIntakeDto {
   @IsEnum(PerfilIntake)
-  perfil: PerfilIntake;
+  perfil!: PerfilIntake;
 
   @IsOptional()
   @IsString()
@@ -61,7 +61,7 @@ export class CreateIntakeDto {
   melhorHorario?: string;
 
   @IsEmail()
-  contatoEmail: string;
+  contatoEmail!: string;
 
   @IsOptional()
   @IsString()
@@ -77,7 +77,7 @@ export class CreateIntakeDto {
 
   @IsBoolean()
   @Transform(({ value }) => toBool(value))
-  consentiu: boolean;
+  consentiu: boolean = false;
 
   @IsOptional()
   @IsString()
