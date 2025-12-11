@@ -46,13 +46,13 @@ export default function HeroSection() {
 
       {/* Conteúdo */}
       <motion.div
-        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+        className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Coluna texto */}
-        <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center lg:col-span-4">
+        <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center">
           <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
               <span className="text-2xl">🌿</span>
@@ -133,7 +133,7 @@ export default function HeroSection() {
         {/* Card do paciente */}
         <motion.div
           variants={itemVariants}
-          className="lg:col-span-4 bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full"
+          className="bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full"
           whileHover={{ y: -4 }}
         >
           <div className="flex items-center justify-between mb-4">
@@ -180,7 +180,7 @@ export default function HeroSection() {
 
         {/* Stats col */}
         <motion.div
-          className="lg:col-span-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-4 sm:gap-5 w-full"
+          className="w-full flex flex-col gap-4 sm:gap-5"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
