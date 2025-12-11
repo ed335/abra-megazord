@@ -46,7 +46,7 @@ export default function HeroSection() {
 
       {/* Conteúdo */}
       <motion.div
-        className="relative z-10 max-w-5xl mx-auto text-center bg-white/60 backdrop-blur-sm border border-cinza-claro/60 rounded-3xl px-6 sm:px-10 py-10 shadow-lg"
+        className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -145,7 +145,7 @@ export default function HeroSection() {
               key={index}
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
-              className="text-center bg-off-white border border-cinza-claro rounded-xl p-5 shadow-sm"
+              className="text-center border border-cinza-claro rounded-xl p-5"
             >
               <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">
                 {stat.number}
