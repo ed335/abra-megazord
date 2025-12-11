@@ -28,7 +28,7 @@ export default function CTASection() {
         </motion.h2>
 
         <motion.p
-          className="text-xl text-off-white/90 mb-8 max-w-2xl mx-auto"
+          className="text-lg sm:text-xl text-off-white/90 mb-6 max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -37,31 +37,33 @@ export default function CTASection() {
           Comece com um cadastro simples. Vamos caminhar ao seu lado, com ciência, ética e cuidado em cada passo.
         </motion.p>
 
-        <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+        <motion.form
+          className="flex flex-col sm:flex-row gap-3 justify-center items-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, delay: 0.3 }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            router.push('/cadastro');
+          }}
         >
+          <input
+            type="email"
+            required
+            placeholder="seuemail@exemplo.com"
+            className="w-full sm:w-80 px-4 py-3 rounded-lg border border-off-white/60 bg-white text-cinza-escuro placeholder:text-off-white/70 focus:outline-none focus:ring-2 focus:ring-off-white"
+          />
           <Button
+            type="submit"
             variant="primary"
             size="lg"
-            className="bg-off-white text-verde-oliva hover:bg-cinza-claro group"
-            onClick={() => router.push('/cadastro')}
+            className="bg-off-white text-verde-oliva hover:bg-cinza-claro group w-full sm:w-auto"
           >
-            Criar meu cadastro
+            Quero me cadastrar
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button
-            variant="secondary"
-            size="lg"
-            className="border-off-white text-off-white hover:bg-off-white/10"
-            onClick={() => router.push('/contato')}
-          >
-            Fale Conosco
-          </Button>
-        </motion.div>
+        </motion.form>
 
         <motion.p
           className="text-sm text-off-white/70 mt-8"

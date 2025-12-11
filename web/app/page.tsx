@@ -6,14 +6,24 @@ import HowItWorksSection from '@/components/home/HowItWorksSection';
 import CTASection from '@/components/home/CTASection';
 import Footer from '@/components/shared/Footer';
 import PersonasSection from '@/components/home/PersonasSection';
+import AboutSection from '@/components/home/AboutSection';
+import BenefitsSection from '@/components/home/BenefitsSection';
+import SecuritySection from '@/components/home/SecuritySection';
+import KnowledgeSection from '@/components/home/KnowledgeSection';
+import FAQSection from '@/components/home/FAQSection';
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro">
       <HeroSection />
+      <AboutSection />
       <FeaturesSection />
       <PersonasSection />
       <HowItWorksSection />
+      <BenefitsSection />
+      <SecuritySection />
+      <KnowledgeSection />
+      <FAQSection />
       <CTASection />
       <Footer />
     </main>
