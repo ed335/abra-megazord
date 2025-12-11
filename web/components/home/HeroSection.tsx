@@ -64,7 +64,7 @@ export default function HeroSection() {
           variants={itemVariants}
           className="text-5xl sm:text-6xl lg:text-7xl font-bold text-cinza-escuro mb-6 leading-tight"
         >
-          Acesso Seguro à{' '}
+          Acesso seguro e acompanhado à{' '}
           <span className="bg-gradient-to-r from-verde-oliva to-verde-claro bg-clip-text text-transparent">
             Cannabis Medicinal
           </span>
@@ -73,9 +73,9 @@ export default function HeroSection() {
         {/* Descrição */}
         <motion.p
           variants={itemVariants}
-          className="text-xl sm:text-2xl text-cinza-medio mb-8 max-w-2xl mx-auto leading-relaxed"
+          className="text-xl sm:text-2xl text-cinza-medio mb-8 max-w-3xl mx-auto leading-relaxed"
         >
-          Bem-vindo a uma plataforma que cuida de você. Prescritores validados. Dados protegidos. Educação baseada em ciência.
+          Associação digital que conecta você a prescritores habilitados, organiza prescrições e documentos em um cartão seguro, e oferece educação responsável. Não somos clínica nem loja: atuamos com ciência, LGPD e acolhimento.
         </motion.p>
 
         {/* CTAs */}
@@ -89,15 +89,22 @@ export default function HeroSection() {
             className="group"
             onClick={() => router.push('/cadastro')}
           >
-            Começar Agora
+            Começar meu cadastro
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button
             variant="secondary"
             size="lg"
-            onClick={() => router.push('/contato')}
+            onClick={() => {
+              const target = document.getElementById('como-funciona');
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                router.push('/#como-funciona');
+              }
+            }}
           >
-            Saber Mais
+            Entender como funciona
           </Button>
         </motion.div>
 
@@ -107,13 +114,14 @@ export default function HeroSection() {
           className="grid grid-cols-3 gap-4 sm:gap-8 pt-12 border-t border-cinza-claro"
         >
           {[
-            { number: '500+', label: 'Pacientes Ativos' },
-            { number: '150+', label: 'Prescritores Validados' },
-            { number: '99.9%', label: 'Uptime' },
+            { number: '500+', label: 'Pacientes em acompanhamento' },
+            { number: '150+', label: 'Prescritores habilitados e validados' },
+            { number: '99,9%', label: 'Disponibilidade da plataforma' },
           ].map((stat, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
               className="text-center"
             >
               <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">

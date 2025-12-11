@@ -6,25 +6,32 @@ import { CheckCircle } from 'lucide-react';
 const steps = [
   {
     title: 'Cadastre-se',
-    description: 'Crie sua conta com validação de e-mail. Dados protegidos e consentimento LGPD.',
+    description:
+      'Crie sua conta, aceite o consentimento LGPD e valide seu e-mail. Tudo começa com segurança.',
   },
   {
-    title: 'Busque um Prescritor',
-    description: 'Escolha prescritores com CRM validado e veja a disponibilidade.',
+    title: 'Conecte-se a um prescritor',
+    description:
+      'Escolha um profissional com CRM validado. Marque consulta e compartilhe seus dados com controle.',
   },
   {
-    title: 'Receba Prescrição',
-    description: 'Receba prescrição digital com QR code e assinatura eletrônica.',
+    title: 'Receba sua documentação',
+    description:
+      'Receba prescrição e documentos em formato digital, com QR code e assinatura eletrônica.',
   },
   {
-    title: 'Acesse Benefícios',
-    description: 'Educação, suporte e acompanhamento contínuo em um só lugar.',
+    title: 'Acompanhe e organize',
+    description:
+      'Acesse cartão digital, histórico e educação segura. Conte com acompanhamento contínuo.',
   },
 ];
 
 export default function HowItWorksSection() {
   return (
-    <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-cinza-muito-claro">
+    <section
+      id="como-funciona"
+      className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-cinza-muito-claro"
+    >
       <div className="max-w-6xl mx-auto">
         <motion.div
           className="text-center mb-16"

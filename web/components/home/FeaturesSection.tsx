@@ -6,27 +6,27 @@ import { Shield, Lock, Users, Award } from 'lucide-react';
 const features = [
   {
     icon: Shield,
-    title: 'Segurança Garantida',
+    title: 'Segurança de Dados e LGPD',
     description:
-      'Criptografia AES-256, LGPD by design, consentimento granular e logs de auditoria.',
+      'Dados sensíveis protegidos, consentimento granular, trilha de auditoria e controles de acesso claros.',
   },
   {
     icon: Lock,
-    title: 'Prescrições Digitais',
+    title: 'Prescrições Digitais e Organização',
     description:
-      'Emita e valide prescrições com QR code e assinatura digital. Histórico sempre disponível.',
+      'Prescrições com QR code e assinatura digital, histórico organizado e cartão medicinal sempre à mão.',
   },
   {
     icon: Users,
-    title: 'Prescritores Validados',
+    title: 'Rede de Prescritores Validados',
     description:
-      'Verificação de CRM e fluxo de onboarding seguro para profissionais de saúde.',
+      'CRM verificado, fluxo seguro para emissão e comunicação com pacientes, tudo em um só lugar.',
   },
   {
     icon: Award,
-    title: 'Educação Baseada em Ciência',
+    title: 'Educação Médica e Orientação Segura',
     description:
-      'Artigos e orientações curadas por especialistas para pacientes e prescritores.',
+      'Conteúdos curados por especialistas, orientações responsáveis e alertas de segurança.',
   },
 ];
 
@@ -88,7 +88,8 @@ export default function FeaturesSection() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-off-white border border-cinza-claro rounded-lg p-6 hover:shadow-md transition-shadow"
+                whileHover={{ y: -4, scale: 1.01 }}
+                className="bg-off-white border border-cinza-claro rounded-lg p-6 hover:shadow-md transition-all"
               >
                 <div className="mb-4">
                   <Icon className="w-8 h-8 text-verde-oliva" />

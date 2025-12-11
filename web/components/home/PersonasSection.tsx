@@ -7,27 +7,27 @@ const personas = [
     icon: ShieldCheck,
     title: 'Pacientes',
     bullets: [
-      'Onboarding guiado e seguro (LGPD)',
-      'Prescrições digitais e QR code sempre à mão',
-      'Histórico e pedidos em um só lugar',
+      'Onboarding acolhedor, consentimento LGPD e validação rápida.',
+      'Prescrições digitais, laudos e QR code organizados em um cartão seguro.',
+      'Acompanhamento contínuo, educação responsável e suporte em caso de dúvida.',
     ],
   },
   {
     icon: Stethoscope,
     title: 'Prescritores',
     bullets: [
-      'Validação de CRM e assinatura digital',
-      'Fluxo rápido para emitir prescrições',
-      'Alertas de validade e acompanhamento do paciente',
+      'Validação de CRM, assinatura digital e fluxos seguros para prescrever.',
+      'Histórico do paciente organizado, com consentimento e auditoria.',
+      'Comunicação clara com pacientes e alertas de validade.',
     ],
   },
   {
     icon: Users,
     title: 'Clínicas & Admin',
     bullets: [
-      'Governança, logs e trilhas de auditoria',
-      'Políticas de acesso por perfil (RBAC)',
-      'Compliance LGPD e gestão de consentimento',
+      'Governança, RBAC, logs e trilhas de auditoria para compliance.',
+      'Políticas internas alinhadas à LGPD e consentimento documentado.',
+      'Relatórios e visão consolidada para gestão da associação.',
     ],
   },
 ];

@@ -24,7 +24,7 @@ export default function CTASection() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Pronto para Começar?
+          Pronto para ter orientação segura?
         </motion.h2>
 
         <motion.p
@@ -34,7 +34,7 @@ export default function CTASection() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          Junte-se a centenas de pacientes que já têm acesso seguro e responsável à cannabis medicinal.
+          Comece com um cadastro simples. Vamos caminhar ao seu lado, com ciência, ética e cuidado em cada passo.
         </motion.p>
 
         <motion.div
@@ -50,7 +50,7 @@ export default function CTASection() {
             className="bg-off-white text-verde-oliva hover:bg-cinza-claro group"
             onClick={() => router.push('/cadastro')}
           >
-            Cadastre-se Agora
+            Criar meu cadastro
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button
