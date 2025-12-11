@@ -9,9 +9,9 @@ export default function CTASection() {
   const router = useRouter();
 
   return (
-    <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
       <motion.div
-        className="max-w-4xl mx-auto bg-gradient-to-r from-verde-oliva to-verde-claro rounded-2xl p-12 sm:p-16 text-center"
+        className="max-w-4xl mx-auto bg-gradient-to-r from-verde-oliva to-verde-claro rounded-3xl p-12 sm:p-16 text-center shadow-lg"
         initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true, amount: 0.2 }}

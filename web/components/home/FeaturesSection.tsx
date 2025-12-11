@@ -52,7 +52,7 @@ export default function FeaturesSection() {
   };
 
   return (
-    <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           className="text-center mb-16"
@@ -63,13 +63,13 @@ export default function FeaturesSection() {
         >
           <motion.h2
             variants={itemVariants}
-            className="text-4xl sm:text-5xl font-bold text-cinza-escuro mb-4"
+            className="text-3xl sm:text-4xl font-semibold text-cinza-escuro mb-3"
           >
             Recursos Pensados para Você
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className="text-xl text-cinza-medio max-w-3xl mx-auto"
+            className="text-base sm:text-lg text-cinza-medio max-w-3xl mx-auto"
           >
             Tudo integrado em uma plataforma segura, acolhedora e completa — para quem quer orientação clara e documentos em ordem.
           </motion.p>
@@ -89,15 +89,15 @@ export default function FeaturesSection() {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -4, scale: 1.01 }}
-                className="bg-off-white border border-cinza-claro rounded-lg p-6 hover:shadow-md transition-all"
+                className="bg-off-white border border-cinza-claro rounded-xl p-6 hover:shadow-md transition-all h-full flex flex-col"
               >
-                <div className="mb-4">
-                  <Icon className="w-8 h-8 text-verde-oliva" />
+                <div className="mb-4 inline-flex items-center justify-center w-10 h-10 rounded-full bg-verde-claro/15 text-verde-oliva">
+                  <Icon className="w-5 h-5" />
                 </div>
                 <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-cinza-medio text-sm leading-relaxed">
+                <p className="text-cinza-medio text-sm leading-relaxed flex-1">
                   {feature.description}
                 </p>
               </motion.div>

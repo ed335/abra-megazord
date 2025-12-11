@@ -29,7 +29,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
       {/* Background decorativo */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -46,7 +46,7 @@ export default function HeroSection() {
 
       {/* Conteúdo */}
       <motion.div
-        className="relative z-10 max-w-4xl mx-auto text-center"
+        className="relative z-10 max-w-5xl mx-auto text-center bg-white/60 backdrop-blur-sm border border-cinza-claro/60 rounded-3xl px-6 sm:px-10 py-10 shadow-lg"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -62,7 +62,7 @@ export default function HeroSection() {
         {/* Heading Principal */}
         <motion.h1
           variants={itemVariants}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold text-cinza-escuro mb-6 leading-tight"
+          className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-cinza-escuro mb-4 leading-tight"
         >
           Acesso seguro e acompanhado à{' '}
           <span className="bg-gradient-to-r from-verde-oliva to-verde-claro bg-clip-text text-transparent">
@@ -73,7 +73,7 @@ export default function HeroSection() {
         {/* Descrição */}
         <motion.p
           variants={itemVariants}
-          className="text-xl sm:text-2xl text-cinza-medio mb-6 max-w-3xl mx-auto leading-relaxed"
+          className="text-base sm:text-lg text-cinza-medio mb-6 max-w-3xl mx-auto leading-relaxed"
         >
           Associação digital que conecta você a prescritores habilitados, organiza prescrições e documentos em um cartão seguro, e oferece educação responsável. Não somos clínica nem loja: atuamos com ciência, LGPD e acolhimento.
         </motion.p>
@@ -92,7 +92,7 @@ export default function HeroSection() {
             return (
               <span
                 key={item.label}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-cinza-claro text-sm text-cinza-escuro shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-off-white border border-cinza-claro text-sm text-cinza-escuro shadow-sm"
               >
                 <Icon className="w-4 h-4 text-verde-oliva" aria-hidden />
                 {item.label}
@@ -104,12 +104,12 @@ export default function HeroSection() {
         {/* CTAs */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+          className="flex flex-col sm:flex-row gap-4 justify-center mb-10"
         >
           <Button
             variant="primary"
             size="lg"
-            className="group"
+            className="group transform transition duration-200 hover:scale-[1.01] shadow-md"
             onClick={() => router.push('/cadastro')}
           >
             Começar meu cadastro
@@ -145,7 +145,7 @@ export default function HeroSection() {
               key={index}
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
-              className="text-center bg-white border border-cinza-claro rounded-xl p-4 shadow-sm"
+              className="text-center bg-off-white border border-cinza-claro rounded-xl p-5 shadow-sm"
             >
               <p className="text-3xl sm:text-4xl font-bold text-verde-oliva">
                 {stat.number}

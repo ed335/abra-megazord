@@ -30,7 +30,7 @@ export default function HowItWorksSection() {
   return (
     <section
       id="como-funciona"
-      className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-cinza-muito-claro"
+      className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-cinza-muito-claro"
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
@@ -40,10 +40,10 @@ export default function HowItWorksSection() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl font-bold text-cinza-escuro mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold text-cinza-escuro mb-4">
             Como Funciona
           </h2>
-          <p className="text-xl text-cinza-medio max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-cinza-medio max-w-2xl mx-auto">
             4 passos simples para ter acesso à cannabis medicinal.
           </p>
         </motion.div>
@@ -52,7 +52,7 @@ export default function HowItWorksSection() {
           {steps.map((step, index) => (
             <motion.div
               key={index}
-              className="relative"
+              className="relative bg-white border border-cinza-claro rounded-xl p-5 shadow-sm hover:shadow-md transition-all"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
@@ -60,7 +60,7 @@ export default function HowItWorksSection() {
             >
               {/* Número do passo */}
               <div className="mb-4">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-verde-oliva text-off-white rounded-full font-bold text-lg">
+                <div className="inline-flex items-center justify-center w-10 h-10 border border-verde-oliva text-verde-oliva rounded-full font-semibold text-base">
                   {index + 1}
                 </div>
               </div>
@@ -71,10 +71,10 @@ export default function HowItWorksSection() {
               )}
 
               {/* Card */}
-              <h3 className="text-lg font-semibold text-cinza-escuro mb-3">
+              <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
                 {step.title}
               </h3>
-              <p className="text-cinza-medio text-sm leading-relaxed mb-4">
+              <p className="text-cinza-medio text-sm leading-relaxed mb-2">
                 {step.description}
               </p>
 
