@@ -51,7 +51,7 @@ export default function HeroSection() {
         initial="hidden"
         animate="visible"
       >
-        <div className="text-center lg:text-left space-y-4">
+        <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center">
           <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
               <span className="text-2xl">🌿</span>
@@ -98,10 +98,10 @@ export default function HeroSection() {
             })}
           </motion.div>
 
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4"
-          >
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row gap-4"
+        >
             <Button
               variant="primary"
               size="lg"
