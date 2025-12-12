@@ -5,6 +5,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/shared/Button';
 import { API_URL, setToken } from '@/lib/auth';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Login | Abracanm - Associação Brasileira de Cannabis Medicinal',
+  description:
+    'Entre na sua conta Abracanm para acompanhar sua jornada de cannabis medicinal com segurança e acolhimento.',
+  alternates: { canonical: '/login' },
+};
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

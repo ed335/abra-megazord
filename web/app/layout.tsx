@@ -4,6 +4,36 @@ import "./globals.css";
 import Header from "@/components/shared/Header";
 
 const siteUrl = new URL("https://abracanm.com");
+const ogImage = `${siteUrl.toString().replace(/\/$/, "")}/og.jpg`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Abracanm - Associação Brasileira de Cannabis Medicinal",
+  url: siteUrl.toString(),
+  sameAs: [
+    "https://www.instagram.com/abracann_/",
+  ],
+  description:
+    "Abracanm: Associação Brasileira de Cannabis Medicinal. Informação segura, acolhimento e orientação para pacientes e prescritores no Brasil.",
+  logo: ogImage,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Brasília",
+    addressRegion: "DF",
+    addressCountry: "BR",
+  },
+};
+const webSiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  url: siteUrl.toString(),
+  name: "Abracanm - Associação Brasileira de Cannabis Medicinal",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${siteUrl.toString()}?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
@@ -46,12 +76,21 @@ export const metadata: Metadata = {
     description:
       "Abracanm: informação segura, acolhimento e orientação para pacientes e prescritores sobre cannabis medicinal no Brasil.",
     siteName: "Abracanm",
+    images: [
+      {
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Abracanm - Associação Brasileira de Cannabis Medicinal",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Abracanm - Associação Brasileira de Cannabis Medicinal",
     description:
       "Associação Brasileira de Cannabis Medicinal com foco em acolhimento, orientação e conteúdo seguro para pacientes e prescritores.",
+    images: [ogImage],
   },
 };
 
@@ -63,6 +102,14 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="bg-off-white text-cinza-escuro">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+        />
         <Header />
         {children}
       </body>

@@ -5,6 +5,14 @@ import Link from 'next/link';
 import Button from '@/components/shared/Button';
 import { useRouter } from 'next/navigation';
 import { API_URL, setToken } from '@/lib/auth';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cadastro | Abracanm - Associação Brasileira de Cannabis Medicinal',
+  description:
+    'Crie sua conta na Abracanm para acessar conteúdo, pré-anamnese e orientação segura sobre cannabis medicinal.',
+  alternates: { canonical: '/cadastro' },
+};
 
 const roles = [
   { value: 'PACIENTE', label: 'Paciente' },
