@@ -1,8 +1,8 @@
 const TOKEN_KEY = 'abracann_token';
 const COOKIE_NAME = 'auth_token';
 
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Use same-origin by default to evitar CORS entre www/apex; sobrescreva via NEXT_PUBLIC_API_URL se precisar.
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 const buildUrl = (path: string) =>
   path.startsWith('http') ? path : `${API_URL}${path}`;
