@@ -1,5 +1,3 @@
-import Link from 'next/link';
-import Button from '@/components/shared/Button';
 import type { Metadata } from 'next';
 import ContatoClient from './ContatoClient';
 
