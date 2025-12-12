@@ -4,8 +4,9 @@ import Link from "next/link";
 import Button from "@/components/shared/Button";
 import { clearToken } from "@/lib/auth";
 import useSWR from "swr";
-import { fetchWithAuth } from "@/lib/auth";
+import { fetchWithAuth, API_URL } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type MeResponse = {
   user: {
@@ -22,8 +23,8 @@ type MeResponse = {
 export default function DashboardPage() {
   const router = useRouter();
   const { data, error, isLoading } = useSWR<MeResponse>(
-    "/auth/me",
-    (url) => fetchWithAuth<MeResponse>(url.replace("/auth/me", "/auth/me")),
+    `${API_URL}/auth/me`,
+    (url) => fetchWithAuth<MeResponse>(url),
     { revalidateOnFocus: false }
   );
 
@@ -31,6 +32,12 @@ export default function DashboardPage() {
     clearToken();
     router.push("/login");
   };
+
+  useEffect(() => {
+    if ((error as Error & { code?: string })?.code === "UNAUTHORIZED") {
+      router.replace("/login");
+    }
+  }, [error, router]);
 
   if (isLoading) {
     return (

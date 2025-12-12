@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import Header from "@/components/shared/Header";
 
 const siteUrl = new URL("https://abracanm.com");
 
@@ -62,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="bg-off-white text-cinza-escuro">
+        <Header />
         {children}
       </body>
     </html>

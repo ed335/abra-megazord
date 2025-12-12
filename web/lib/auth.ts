@@ -4,10 +4,14 @@ const COOKIE_NAME = 'auth_token';
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+const buildUrl = (path: string) =>
+  path.startsWith('http') ? path : `${API_URL}${path}`;
+
 export function setToken(token: string) {
   if (typeof window === 'undefined') return;
   localStorage.setItem(TOKEN_KEY, token);
-  document.cookie = `${COOKIE_NAME}=${token}; path=/; SameSite=Lax`;
+  const secure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  document.cookie = `${COOKIE_NAME}=${token}; path=/; SameSite=Lax${secure ? '; Secure' : ''}`;
 }
 
 export function getToken(): string | null {
@@ -40,14 +44,16 @@ export async function fetchWithAuth<T = unknown>(
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(buildUrl(path), {
     ...options,
     headers,
   });
 
   if (response.status === 401) {
     clearToken();
-    throw new Error('Sessão expirada. Faça login novamente.');
+    const error = new Error('Sessão expirada. Faça login novamente.');
+    (error as Error & { code?: string }).code = 'UNAUTHORIZED';
+    throw error;
   }
 
   if (!response.ok) {
