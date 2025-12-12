@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { fetchWithAuth, API_URL } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ShieldCheck, Activity, Users } from "lucide-react";
 
 type MeResponse = {
   user: {
@@ -82,54 +83,104 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-16">
-      <div className="max-w-4xl mx-auto bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="text-sm text-verde-oliva font-medium">AbraCann Dashboard</p>
-            <h1 className="text-3xl sm:text-4xl font-bold text-cinza-escuro">
-              Sessão autenticada
-            </h1>
-            <p className="text-cinza-medio mt-2">
-              Sessão válida. Em breve adicionaremos cards e ações reais.
+      <div className="max-w-5xl mx-auto space-y-8">
+        <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12 flex flex-col gap-6">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="text-sm text-verde-oliva font-medium">Abracanm Dashboard</p>
+              <h1 className="text-3xl sm:text-4xl font-bold text-cinza-escuro">
+                Bem-vindo(a), {user.email}
+              </h1>
+              <p className="text-cinza-medio mt-2">
+                Sessão ativa. Veja status da conta e próximos passos.
+              </p>
+            </div>
+            <Button variant="secondary" onClick={handleLogout}>
+              Sair
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CardStat
+              icon={<ShieldCheck className="w-5 h-5 text-verde-oliva" />}
+              label="Status da conta"
+              value={user.ativo ? "Ativa" : "Inativa"}
+              hint={`E-mail verificado: ${user.emailVerificado ? "Sim" : "Não"}`}
+            />
+            <CardStat
+              icon={<Users className="w-5 h-5 text-verde-oliva" />}
+              label="Perfil"
+              value={user.role}
+              hint={`ID: ${user.id.slice(0, 8)}...`}
+            />
+            <CardStat
+              icon={<Activity className="w-5 h-5 text-verde-oliva" />}
+              label="Atualização"
+              value={new Date(user.atualizadoEm).toLocaleDateString("pt-BR")}
+              hint={`Criado em ${new Date(user.criadoEm).toLocaleDateString("pt-BR")}`}
+            />
+          </div>
+
+          <div className="border border-cinza-claro rounded-lg p-4 bg-cinza-muito-claro">
+            <p className="text-sm text-cinza-medio">Sessão</p>
+            <p className="text-lg font-semibold text-cinza-escuro break-all">{user.email}</p>
+            <p className="text-sm text-cinza-medio mt-1">
+              Token armazenado localmente. Mantenha seus dados seguros.
             </p>
           </div>
-          <Button variant="secondary" onClick={handleLogout}>
-            Sair
-          </Button>
-        </div>
 
-        <div className="border border-cinza-claro rounded-lg p-4 bg-cinza-muito-claro">
-          <p className="text-sm text-cinza-medio">Usuário</p>
-          <p className="text-lg font-semibold text-cinza-escuro">{user.email}</p>
-          <p className="text-sm text-cinza-medio mt-1">Role: {user.role}</p>
-          <p className="text-sm text-cinza-medio">ID: {user.id}</p>
-          <p className="text-sm text-cinza-medio">
-            Ativo: {user.ativo ? "Sim" : "Não"} | E-mail verificado:{" "}
-            {user.emailVerificado ? "Sim" : "Não"}
-          </p>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="border border-cinza-claro rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
-              Próximos passos
-            </h3>
-            <ul className="list-disc list-inside text-cinza-medio space-y-1 text-sm">
-              <li>Adicionar formulários de paciente/prescritor</li>
-              <li>Conectar com fluxo de prescrição</li>
-              <li>Dashboard com cards reais</li>
-            </ul>
-          </div>
-          <div className="border border-cinza-claro rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
-              Status da sessão
-            </h3>
-            <p className="text-sm text-cinza-medio">
-              Token armazenado em cookie/LocalStorage. Use este espaço para métricas ou atalhos.
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="border border-cinza-claro rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
+                Próximos passos
+              </h3>
+              <ul className="list-disc list-inside text-cinza-medio space-y-1 text-sm">
+                <li>Completar pré-anamnese</li>
+                <li>Atualizar perfil e dados de contato</li>
+                <li>Receber validação do prescritor</li>
+              </ul>
+            </div>
+            <div className="border border-cinza-claro rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-cinza-escuro mb-2">
+                Atalhos
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                <Button variant="primary" size="sm" onClick={() => router.push("/pre-anamnese")}>
+                  Pré-anamnese
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => router.push("/contato")}>
+                  Contato
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </main>
+  );
+}
+
+function CardStat({
+  icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  hint?: string;
+}) {
+  return (
+    <div className="border border-cinza-claro rounded-xl p-4 bg-white flex items-start gap-3 shadow-sm">
+      <div className="p-2 rounded-lg bg-verde-claro/10 border border-verde-claro/40">
+        {icon}
+      </div>
+      <div className="flex-1">
+        <p className="text-sm text-cinza-medio">{label}</p>
+        <p className="text-xl font-semibold text-cinza-escuro">{value}</p>
+        {hint && <p className="text-xs text-cinza-medio mt-1">{hint}</p>}
+      </div>
+    </div>
   );
 }

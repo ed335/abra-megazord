@@ -122,12 +122,24 @@ export default function QuizWizard() {
   };
 
   const canContinue = useMemo(() => {
-    if (!form.consentiu && step === 0) return false;
+    if (step === 0) return form.consentiu;
+    if (step === 1) return Boolean(form.condicaoPrincipal);
+    if (step === 5) return Boolean(form.preferenciaAcompanhamento || form.melhorHorario);
     if (step === totalSteps - 1) {
-      return Boolean(form.contatoEmail && form.consentiu);
+      return Boolean(form.contatoEmail && form.cidade && form.estado && form.consentiu);
     }
     return true;
-  }, [form.consentiu, form.contatoEmail, step, totalSteps]);
+  }, [
+    form.consentiu,
+    form.condicaoPrincipal,
+    form.preferenciaAcompanhamento,
+    form.melhorHorario,
+    form.contatoEmail,
+    form.cidade,
+    form.estado,
+    step,
+    totalSteps,
+  ]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
