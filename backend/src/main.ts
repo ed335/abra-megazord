@@ -7,16 +7,9 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
 
-  const allowedOrigins = (
-    process.env.CORS_ORIGINS ||
-    'http://localhost:3000,http://23.251.148.183:3000,http://23.251.148.183'
-  )
-    .split(',')
-    .map((o) => o.trim());
-
   app.enableCors({
-    origin: allowedOrigins,
-    credentials: false,
+    origin: true,
+    credentials: true,
   });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
