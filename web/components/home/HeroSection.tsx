@@ -9,25 +9,6 @@ import { useRouter } from 'next/navigation';
 export default function HeroSection() {
   const router = useRouter();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: 'easeOut' },
-    },
-  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
@@ -46,16 +27,13 @@ export default function HeroSection() {
       </div>
 
       {/* Conteúdo */}
-      <motion.div
+      <div
         className="relative z-10 max-w-6xl mx-auto flex flex-col gap-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           {/* Coluna texto */}
           <div className="text-center lg:text-left space-y-4 lg:space-y-5 flex flex-col justify-center">
-            <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
+            <div className="flex justify-center lg:justify-start">
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
                 <Image
                   src="https://abracann.org.br/_next/image?url=%2Flogo-header.png&w=256&q=75"
@@ -66,26 +44,24 @@ export default function HeroSection() {
                 />
                 <span className="text-sm font-medium text-verde-oliva">Associação Medicinal</span>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.h1
-              variants={itemVariants}
+            <h1
               className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-cinza-escuro mb-4 leading-tight max-w-2xl"
             >
               Acesso seguro à{' '}
               <span className="bg-gradient-to-r from-verde-oliva to-verde-claro bg-clip-text text-transparent">
                 Cannabis Medicinal
               </span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              variants={itemVariants}
+            <p
               className="text-base sm:text-lg text-cinza-medio mb-6 leading-relaxed max-w-2xl"
             >
               Associação medicinal que conecta pacientes e prescritores, organiza sua documentação e acompanha o tratamento com segurança jurídica, ética e acolhimento clínico. Não somos clínica nem loja.
-            </motion.p>
+            </p>
 
-            <motion.div variants={itemVariants} className="space-y-3">
+            <div className="space-y-3">
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   variant="primary"
@@ -122,12 +98,11 @@ export default function HeroSection() {
                   Iniciar pré-anamnese guiada
                 </Button>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Card do paciente */}
           <motion.div
-            variants={itemVariants}
             className="bg-white/80 backdrop-blur-md border border-cinza-claro/60 rounded-2xl p-6 shadow-lg max-w-md mx-auto w-full self-center lg:self-center"
             whileHover={{ y: -4 }}
           >
@@ -175,8 +150,7 @@ export default function HeroSection() {
         </div>
 
         {/* Badges abaixo do hero */}
-        <motion.div
-          variants={itemVariants}
+        <div
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4 max-w-5xl w-full mx-auto"
         >
           {[
@@ -195,15 +169,10 @@ export default function HeroSection() {
               </span>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Stats abaixo do hero */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-5xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-5xl mx-auto">
           {[
             { number: '500+', label: 'Pacientes em acompanhamento', desc: 'Fluxos orientados e suporte contínuo.' },
             { number: '150+', label: 'Prescritores habilitados e validados', desc: 'CRM verificado e emissão segura.' },
@@ -211,7 +180,6 @@ export default function HeroSection() {
           ].map((stat, index) => (
             <motion.div
               key={index}
-              variants={itemVariants}
               whileHover={{ scale: 1.02 }}
               className="text-center border border-cinza-claro rounded-xl p-5 bg-white/80 backdrop-blur"
             >
@@ -222,8 +190,8 @@ export default function HeroSection() {
               <p className="text-xs text-cinza-medio mt-1">{stat.desc}</p>
             </motion.div>
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }
