@@ -38,6 +38,7 @@ export default function Footer() {
               <Link href="/#como-funciona" className="hover:text-off-white">Como Funciona</Link>
               <Link href="/cadastro" className="hover:text-off-white">Associe-se</Link>
               <Link href="/contato" className="hover:text-off-white">Contato</Link>
+              <Link href="/doacoes" className="hover:text-off-white font-medium text-green-400">💚 Doe</Link>
               <Link href="/politica-privacidade" className="hover:text-off-white">Política de Privacidade</Link>
               <Link href="/termos-uso" className="hover:text-off-white">Termos de Uso</Link>
             </nav>
