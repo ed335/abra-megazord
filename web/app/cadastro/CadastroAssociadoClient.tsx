@@ -314,7 +314,7 @@ export default function CadastroAssociadoClient() {
         setToken(data.accessToken);
         setStatus('success');
         setMessage('Cadastro realizado com sucesso! Redirecionando...');
-        setTimeout(() => router.push('/dashboard'), 1500);
+        setTimeout(() => router.push('/cadastro/sucesso'), 1500);
       }
     } catch (error) {
       setStatus('error');

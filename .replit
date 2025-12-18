@@ -24,34 +24,19 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Web Frontend"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Backend API"
+args = "ABRACANM"
 
 [[workflows.workflow]]
-name = "Web Frontend"
+name = "ABRACANM"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd web && npm run dev -- -p 5000 -H 0.0.0.0"
+args = "bash start-dev.sh"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
-
-[[workflows.workflow]]
-name = "Backend API"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && npm run start:dev"
 
 [[ports]]
 localPort = 3001
