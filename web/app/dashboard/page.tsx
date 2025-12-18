@@ -224,8 +224,8 @@ export default function DashboardPage() {
         <section className="mb-8">
           <h2 className="text-lg font-semibold text-cinza-escuro mb-4">Etapas da sua jornada</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {journeySteps.map((step, index) => (
-              <StepCard key={step.id} step={step} stepNumber={index + 1} />
+            {journeySteps.map((step) => (
+              <StepCard key={step.id} step={step} />
             ))}
           </div>
         </section>
@@ -297,7 +297,7 @@ export default function DashboardPage() {
   );
 }
 
-function StepCard({ step, stepNumber }: { step: JourneyStep; stepNumber: number }) {
+function StepCard({ step }: { step: JourneyStep }) {
   const statusStyles = {
     completed: {
       bg: 'bg-verde-claro/10 border-verde-claro/30',
