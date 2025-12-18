@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
-import { getJWTSecret } from '@/lib/jwt';
+import { PrismaClient } from '@prisma/client';
+import * as jsonwebtoken from 'jsonwebtoken';
+
+const prisma = new PrismaClient();
+
+function getJWTSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET não configurado');
+  }
+  return secret;
+}
 
 async function verifyAdminToken(request: NextRequest) {
   const authHeader = request.headers.get('Authorization');
@@ -13,7 +22,7 @@ async function verifyAdminToken(request: NextRequest) {
   
   try {
     const jwtSecret = getJWTSecret();
-    const decoded = jwt.verify(token, jwtSecret) as { sub: string; role: string };
+    const decoded = jsonwebtoken.verify(token, jwtSecret) as { sub: string; role: string };
     
     if (decoded.role !== 'ADMIN') {
       return null;
@@ -52,7 +61,8 @@ export async function GET(request: NextRequest) {
               ativo: true,
               emailVerificado: true,
             }
-          }
+          },
+          preAnamnese: true
         }
       }),
       prisma.paciente.count()

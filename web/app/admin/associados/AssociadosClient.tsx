@@ -4,6 +4,31 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
+import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity } from 'lucide-react';
+
+type PreAnamnese = {
+  id: string;
+  perfil: string;
+  objetivoPrincipal: string;
+  gravidade: number;
+  tratamentosPrevios: string[];
+  comorbidades: string[];
+  notas: string;
+  preferenciaAcompanhamento: string;
+  melhorHorario: string;
+  diagnostico: {
+    titulo: string;
+    resumo: string;
+    nivelUrgencia: 'baixa' | 'moderada' | 'alta';
+    indicacoes: string[];
+    contraindicacoes: string[];
+    observacoes: string;
+  };
+  scorePrioridade: number;
+  recomendacoes: string[];
+  proximosPasso: string;
+  criadoEm: string;
+};
 
 type Associado = {
   id: string;
@@ -21,6 +46,7 @@ type Associado = {
     ativo: boolean;
     emailVerificado: boolean;
   };
+  preAnamnese: PreAnamnese | null;
 };
 
 type Pagination = {
@@ -36,6 +62,7 @@ export default function AssociadosClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const router = useRouter();
 
   const fetchAssociados = useCallback(async (page: number) => {
@@ -78,6 +105,18 @@ export default function AssociadosClient() {
     fetchAssociados(currentPage);
   }, [currentPage, fetchAssociados]);
 
+  const toggleRow = (id: string) => {
+    setExpandedRows(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -97,6 +136,33 @@ export default function AssociadosClient() {
     return whatsapp;
   };
 
+  const getUrgencyBadge = (nivel: string) => {
+    const styles = {
+      baixa: 'bg-green-100 text-green-800',
+      moderada: 'bg-yellow-100 text-yellow-800',
+      alta: 'bg-red-100 text-red-800',
+    };
+    const labels = {
+      baixa: 'Baixa',
+      moderada: 'Moderada',
+      alta: 'Alta',
+    };
+    return (
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[nivel as keyof typeof styles] || styles.baixa}`}>
+        {labels[nivel as keyof typeof labels] || nivel}
+      </span>
+    );
+  };
+
+  const getPerfilLabel = (perfil: string) => {
+    const labels: Record<string, string> = {
+      'PACIENTE_NOVO': 'Paciente Novo',
+      'EM_TRATAMENTO': 'Em Tratamento',
+      'CUIDADOR': 'Cuidador/Familiar',
+    };
+    return labels[perfil] || perfil;
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-7xl mx-auto">
@@ -113,8 +179,13 @@ export default function AssociadosClient() {
         </div>
 
         {pagination && (
-          <div className="mb-4 text-sm text-cinza-medio">
-            {pagination.total} associado(s) cadastrado(s)
+          <div className="mb-4 flex items-center gap-4 text-sm text-cinza-medio">
+            <span>{pagination.total} associado(s) cadastrado(s)</span>
+            <span className="text-cinza-claro">|</span>
+            <span className="flex items-center gap-1">
+              <FileText size={14} />
+              {associados.filter(a => a.preAnamnese).length} com pré-anamnese
+            </span>
           </div>
         )}
 
@@ -137,6 +208,9 @@ export default function AssociadosClient() {
                 <table className="w-full">
                   <thead className="bg-cinza-muito-claro">
                     <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider w-8">
+                        
+                      </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
                         Nome
                       </th>
@@ -150,10 +224,10 @@ export default function AssociadosClient() {
                         Patologia (CID)
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Já usa cannabis?
+                        Pré-Anamnese
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Termos
+                        Prioridade
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
                         Data Cadastro
@@ -165,60 +239,192 @@ export default function AssociadosClient() {
                   </thead>
                   <tbody className="divide-y divide-cinza-claro">
                     {associados.map((associado) => (
-                      <tr key={associado.id} className="hover:bg-cinza-muito-claro/50 transition-colors">
-                        <td className="px-4 py-4">
-                          <div>
-                            <p className="font-medium text-cinza-escuro">{associado.nome}</p>
-                            <p className="text-xs text-cinza-medio">{associado.email}</p>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-sm text-cinza-escuro">
-                          {formatWhatsApp(associado.whatsapp)}
-                        </td>
-                        <td className="px-4 py-4 text-sm text-cinza-escuro">
-                          {associado.cidade && associado.estado
-                            ? `${associado.cidade}/${associado.estado}`
-                            : '-'}
-                        </td>
-                        <td className="px-4 py-4 text-sm text-cinza-escuro">
-                          {associado.patologiaCID || '-'}
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            associado.jaUsaCannabis
-                              ? 'bg-verde-claro/20 text-verde-oliva'
-                              : 'bg-cinza-claro text-cinza-medio'
-                          }`}>
-                            {associado.jaUsaCannabis ? 'Sim' : 'Não'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex gap-1">
-                            {associado.termoAjuizamento && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-verde-claro/20 text-verde-oliva">
-                                Ajuiz.
+                      <>
+                        <tr 
+                          key={associado.id} 
+                          className={`hover:bg-cinza-muito-claro/50 transition-colors ${associado.preAnamnese ? 'cursor-pointer' : ''}`}
+                          onClick={() => associado.preAnamnese && toggleRow(associado.id)}
+                        >
+                          <td className="px-4 py-4">
+                            {associado.preAnamnese && (
+                              <button className="text-cinza-medio hover:text-cinza-escuro">
+                                {expandedRows.has(associado.id) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                              </button>
+                            )}
+                          </td>
+                          <td className="px-4 py-4">
+                            <div>
+                              <p className="font-medium text-cinza-escuro">{associado.nome}</p>
+                              <p className="text-xs text-cinza-medio">{associado.email}</p>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-sm text-cinza-escuro">
+                            {formatWhatsApp(associado.whatsapp)}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-cinza-escuro">
+                            {associado.cidade && associado.estado
+                              ? `${associado.cidade}/${associado.estado}`
+                              : '-'}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-cinza-escuro">
+                            {associado.patologiaCID || '-'}
+                          </td>
+                          <td className="px-4 py-4">
+                            {associado.preAnamnese ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-verde-claro/20 text-verde-oliva">
+                                <FileText size={12} />
+                                Respondida
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-cinza-claro text-cinza-medio">
+                                <Clock size={12} />
+                                Pendente
                               </span>
                             )}
-                            {associado.consenteLGPD && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-verde-claro/20 text-verde-oliva">
-                                LGPD
-                              </span>
+                          </td>
+                          <td className="px-4 py-4">
+                            {associado.preAnamnese ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-16 bg-cinza-claro rounded-full h-2">
+                                  <div 
+                                    className={`h-2 rounded-full ${
+                                      associado.preAnamnese.scorePrioridade >= 70 ? 'bg-red-500' :
+                                      associado.preAnamnese.scorePrioridade >= 40 ? 'bg-yellow-500' : 'bg-green-500'
+                                    }`}
+                                    style={{ width: `${associado.preAnamnese.scorePrioridade}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs text-cinza-medio">{associado.preAnamnese.scorePrioridade}</span>
+                              </div>
+                            ) : (
+                              <span className="text-cinza-claro">-</span>
                             )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-sm text-cinza-escuro">
-                          {formatDate(associado.criadoEm)}
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            associado.usuario.ativo
-                              ? 'bg-sucesso/20 text-sucesso'
-                              : 'bg-erro/20 text-erro'
-                          }`}>
-                            {associado.usuario.ativo ? 'Ativo' : 'Inativo'}
-                          </span>
-                        </td>
-                      </tr>
+                          </td>
+                          <td className="px-4 py-4 text-sm text-cinza-escuro">
+                            {formatDate(associado.criadoEm)}
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              associado.usuario.ativo
+                                ? 'bg-sucesso/20 text-sucesso'
+                                : 'bg-erro/20 text-erro'
+                            }`}>
+                              {associado.usuario.ativo ? 'Ativo' : 'Inativo'}
+                            </span>
+                          </td>
+                        </tr>
+                        
+                        {expandedRows.has(associado.id) && associado.preAnamnese && (
+                          <tr key={`${associado.id}-details`} className="bg-cinza-muito-claro/30">
+                            <td colSpan={9} className="px-4 py-6">
+                              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div className="bg-white rounded-xl p-4 border border-cinza-claro">
+                                  <h4 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
+                                    <Activity size={16} className="text-verde-oliva" />
+                                    Diagnóstico ABRACANM
+                                  </h4>
+                                  <div className="space-y-3">
+                                    <div>
+                                      <p className="text-sm font-medium text-cinza-escuro">{associado.preAnamnese.diagnostico.titulo}</p>
+                                      <p className="text-xs text-cinza-medio mt-1">{associado.preAnamnese.diagnostico.resumo}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-cinza-medio">Urgência:</span>
+                                      {getUrgencyBadge(associado.preAnamnese.diagnostico.nivelUrgencia)}
+                                    </div>
+                                    {associado.preAnamnese.diagnostico.observacoes && (
+                                      <p className="text-xs text-cinza-medio italic">{associado.preAnamnese.diagnostico.observacoes}</p>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="bg-white rounded-xl p-4 border border-cinza-claro">
+                                  <h4 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
+                                    <FileText size={16} className="text-verde-oliva" />
+                                    Respostas da Pré-Anamnese
+                                  </h4>
+                                  <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                      <span className="text-cinza-medio">Perfil:</span>
+                                      <span className="font-medium text-cinza-escuro">{getPerfilLabel(associado.preAnamnese.perfil)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-cinza-medio">Objetivo:</span>
+                                      <span className="font-medium text-cinza-escuro text-right max-w-[200px]">{associado.preAnamnese.objetivoPrincipal}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-cinza-medio">Gravidade:</span>
+                                      <span className="font-medium text-cinza-escuro">{associado.preAnamnese.gravidade}/5</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-cinza-medio">Preferência:</span>
+                                      <span className="font-medium text-cinza-escuro">{associado.preAnamnese.preferenciaAcompanhamento}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-cinza-medio">Horário:</span>
+                                      <span className="font-medium text-cinza-escuro">{associado.preAnamnese.melhorHorario}</span>
+                                    </div>
+                                    {associado.preAnamnese.tratamentosPrevios.length > 0 && (
+                                      <div>
+                                        <span className="text-cinza-medio">Tratamentos prévios:</span>
+                                        <p className="text-xs text-cinza-escuro mt-1">{associado.preAnamnese.tratamentosPrevios.join(', ')}</p>
+                                      </div>
+                                    )}
+                                    {associado.preAnamnese.comorbidades.length > 0 && (
+                                      <div>
+                                        <span className="text-cinza-medio">Comorbidades:</span>
+                                        <p className="text-xs text-cinza-escuro mt-1">{associado.preAnamnese.comorbidades.join(', ')}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="bg-white rounded-xl p-4 border border-cinza-claro">
+                                  <h4 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
+                                    <AlertCircle size={16} className="text-verde-oliva" />
+                                    Indicações e Próximos Passos
+                                  </h4>
+                                  <div className="space-y-3">
+                                    {associado.preAnamnese.diagnostico.indicacoes.length > 0 && (
+                                      <div>
+                                        <p className="text-xs font-medium text-verde-oliva mb-1">Indicações:</p>
+                                        <ul className="text-xs text-cinza-medio space-y-1">
+                                          {associado.preAnamnese.diagnostico.indicacoes.map((ind, i) => (
+                                            <li key={i} className="flex items-start gap-1">
+                                              <span className="text-verde-oliva mt-0.5">•</span>
+                                              {ind}
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                    {associado.preAnamnese.diagnostico.contraindicacoes.length > 0 && (
+                                      <div>
+                                        <p className="text-xs font-medium text-erro mb-1">Contraindicações:</p>
+                                        <ul className="text-xs text-cinza-medio space-y-1">
+                                          {associado.preAnamnese.diagnostico.contraindicacoes.map((contra, i) => (
+                                            <li key={i} className="flex items-start gap-1">
+                                              <span className="text-erro mt-0.5">•</span>
+                                              {contra}
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                    <div className="pt-2 border-t border-cinza-claro">
+                                      <p className="text-xs font-medium text-cinza-escuro mb-1">Próximo passo:</p>
+                                      <p className="text-xs text-cinza-medio">{associado.preAnamnese.proximosPasso}</p>
+                                    </div>
+                                    <div className="text-xs text-cinza-claro">
+                                      Respondido em: {formatDate(associado.preAnamnese.criadoEm)}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     ))}
                   </tbody>
                 </table>
