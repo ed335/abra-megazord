@@ -1,12 +1,6 @@
-import QuizWizard from '@/components/quiz/QuizWizard';
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Pré-anamnese | Abracanm - Associação Brasileira de Cannabis Medicinal',
-  description:
-    'Responda à pré-anamnese guiada da Abracanm para direcionar seu cuidado com cannabis medicinal com segurança e LGPD.',
-  alternates: { canonical: '/pre-anamnese' },
-};
+import QuizWizard from '@/components/quiz/QuizWizard';
 
 export default function PreAnamnesePage() {
   return (
