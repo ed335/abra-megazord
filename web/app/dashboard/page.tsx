@@ -215,7 +215,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <section className="grid md:grid-cols-2 gap-4 mb-8">
+        <section className="grid md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-lg">
@@ -247,6 +247,21 @@ export default function DashboardPage() {
             >
               Falar com a ouvidoria →
             </a>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-sm p-5 border border-green-200">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-lg">
+                💚
+              </div>
+              <h3 className="font-semibold text-green-800">Apoie a ABRACANM</h3>
+            </div>
+            <p className="text-green-700 text-sm mb-4">
+              Sua contribuição ajuda a manter nosso trabalho de acolhimento.
+            </p>
+            <Link href="/doacoes" className="text-green-800 font-medium text-sm hover:underline">
+              Fazer uma doação →
+            </Link>
           </div>
         </section>
 
