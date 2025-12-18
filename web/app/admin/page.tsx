@@ -27,8 +27,8 @@ type Stats = {
     novosEsteMes: number;
     novosMesPassado: number;
     crescimento: number;
-    comAnamnese: number;
-    semAnamnese: number;
+    comDocumentosMedicos: number;
+    semDocumentosMedicos: number;
   };
   porEstado: { estado: string; total: number }[];
   porPatologia: { patologia: string; total: number }[];
@@ -178,29 +178,29 @@ export default function AdminDashboard() {
 
           <div className="bg-white border border-cinza-claro rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-cinza-medio text-sm">Com Pré-Anamnese</span>
+              <span className="text-cinza-medio text-sm">Com Laudos Médicos</span>
               <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
                 <FileText size={20} className="text-amber-600" />
               </div>
             </div>
-            <p className="text-3xl font-bold text-cinza-escuro">{stats.resumo.comAnamnese}</p>
+            <p className="text-3xl font-bold text-cinza-escuro">{stats.resumo.comDocumentosMedicos}</p>
             <div className="mt-2 text-sm text-cinza-medio">
               {stats.resumo.total > 0 
-                ? `${Math.round((stats.resumo.comAnamnese / stats.resumo.total) * 100)}% do total`
+                ? `${Math.round((stats.resumo.comDocumentosMedicos / stats.resumo.total) * 100)}% do total`
                 : '0% do total'}
             </div>
           </div>
 
           <div className="bg-white border border-cinza-claro rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-cinza-medio text-sm">Sem Pré-Anamnese</span>
+              <span className="text-cinza-medio text-sm">Sem Laudos Médicos</span>
               <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                 <Activity size={20} className="text-red-600" />
               </div>
             </div>
-            <p className="text-3xl font-bold text-cinza-escuro">{stats.resumo.semAnamnese}</p>
+            <p className="text-3xl font-bold text-cinza-escuro">{stats.resumo.semDocumentosMedicos}</p>
             <div className="mt-2 text-sm text-cinza-medio">
-              Pendente de avaliação
+              Pendente de documentação
             </div>
           </div>
         </div>
