@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download } from 'lucide-react';
 
 type PreAnamnese = {
   id: string;
@@ -63,6 +63,7 @@ export default function AssociadosClient() {
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [exporting, setExporting] = useState(false);
   const router = useRouter();
 
   const fetchAssociados = useCallback(async (page: number) => {
@@ -115,6 +116,41 @@ export default function AssociadosClient() {
       }
       return next;
     });
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    const token = getToken();
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/associados/export', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao exportar');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `associados_abracanm_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao exportar');
+    } finally {
+      setExporting(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -173,9 +209,19 @@ export default function AssociadosClient() {
               Lista de Associados
             </h1>
           </div>
-          <Link href="/dashboard" className="text-sm text-verde-oliva hover:underline">
-            Voltar ao Dashboard
-          </Link>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleExport}
+              disabled={exporting || loading}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+            >
+              <Download size={16} />
+              {exporting ? 'Exportando...' : 'Exportar Planilha'}
+            </button>
+            <Link href="/dashboard" className="text-sm text-verde-oliva hover:underline">
+              Voltar ao Dashboard
+            </Link>
+          </div>
         </div>
 
         {pagination && (

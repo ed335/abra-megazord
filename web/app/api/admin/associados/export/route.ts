@@ -1,0 +1,177 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import * as jsonwebtoken from 'jsonwebtoken';
+
+const prisma = new PrismaClient();
+
+function getJWTSecret(): string {
+  return process.env.JWT_SECRET || 'abracanm-secret-key-2024';
+}
+
+async function verifyAdminToken(request: NextRequest) {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+
+  const token = authHeader.split(' ')[1];
+  
+  try {
+    const jwtSecret = getJWTSecret();
+    const decoded = jsonwebtoken.verify(token, jwtSecret) as { sub: string; role: string };
+    
+    if (decoded.role !== 'ADMIN') {
+      return null;
+    }
+    
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function escapeCSV(value: string | null | undefined): string {
+  if (!value) return '';
+  const escaped = value.replace(/"/g, '""');
+  if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
+    return `"${escaped}"`;
+  }
+  return escaped;
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const decoded = await verifyAdminToken(request);
+    
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Acesso não autorizado' },
+        { status: 403 }
+      );
+    }
+
+    const associados = await prisma.paciente.findMany({
+      orderBy: { criadoEm: 'desc' },
+      include: {
+        usuario: {
+          select: {
+            ativo: true,
+            emailVerificado: true,
+          }
+        },
+        preAnamnese: true
+      }
+    });
+
+    const headers = [
+      'Nome',
+      'Email',
+      'WhatsApp',
+      'Cidade',
+      'Estado',
+      'Patologia (CID)',
+      'Já usa cannabis',
+      'Termo Ajuizamento',
+      'Consentiu LGPD',
+      'Data Cadastro',
+      'Status',
+      'Pré-Anamnese',
+      'Perfil Anamnese',
+      'Objetivo Principal',
+      'Gravidade',
+      'Tratamentos Prévios',
+      'Comorbidades',
+      'Preferência Acompanhamento',
+      'Melhor Horário',
+      'Score Prioridade',
+      'Nível Urgência',
+      'Diagnóstico Título',
+      'Diagnóstico Resumo',
+      'Indicações',
+      'Contraindicações',
+      'Próximo Passo',
+      'Data Pré-Anamnese'
+    ];
+
+    const rows = associados.map(a => {
+      const preAnamnese = a.preAnamnese as {
+        perfil?: string;
+        objetivoPrincipal?: string;
+        gravidade?: number;
+        tratamentosPrevios?: string[];
+        comorbidades?: string[];
+        preferenciaAcompanhamento?: string;
+        melhorHorario?: string;
+        scorePrioridade?: number;
+        diagnostico?: {
+          titulo?: string;
+          resumo?: string;
+          nivelUrgencia?: string;
+          indicacoes?: string[];
+          contraindicacoes?: string[];
+        };
+        proximosPasso?: string;
+        criadoEm?: Date;
+      } | null;
+
+      return [
+        escapeCSV(a.nome),
+        escapeCSV(a.email),
+        escapeCSV(a.whatsapp),
+        escapeCSV(a.cidade),
+        escapeCSV(a.estado),
+        escapeCSV(a.patologiaCID),
+        a.jaUsaCannabis ? 'Sim' : 'Não',
+        a.termoAjuizamento ? 'Sim' : 'Não',
+        a.consenteLGPD ? 'Sim' : 'Não',
+        formatDate(a.criadoEm),
+        a.usuario.ativo ? 'Ativo' : 'Inativo',
+        preAnamnese ? 'Respondida' : 'Pendente',
+        escapeCSV(preAnamnese?.perfil),
+        escapeCSV(preAnamnese?.objetivoPrincipal),
+        preAnamnese?.gravidade?.toString() || '',
+        escapeCSV(preAnamnese?.tratamentosPrevios?.join('; ')),
+        escapeCSV(preAnamnese?.comorbidades?.join('; ')),
+        escapeCSV(preAnamnese?.preferenciaAcompanhamento),
+        escapeCSV(preAnamnese?.melhorHorario),
+        preAnamnese?.scorePrioridade?.toString() || '',
+        escapeCSV(preAnamnese?.diagnostico?.nivelUrgencia),
+        escapeCSV(preAnamnese?.diagnostico?.titulo),
+        escapeCSV(preAnamnese?.diagnostico?.resumo),
+        escapeCSV(preAnamnese?.diagnostico?.indicacoes?.join('; ')),
+        escapeCSV(preAnamnese?.diagnostico?.contraindicacoes?.join('; ')),
+        escapeCSV(preAnamnese?.proximosPasso),
+        preAnamnese?.criadoEm ? formatDate(new Date(preAnamnese.criadoEm)) : ''
+      ].join(',');
+    });
+
+    const csv = [headers.join(','), ...rows].join('\n');
+    const bom = '\uFEFF';
+    
+    const today = new Date().toISOString().split('T')[0];
+    
+    return new NextResponse(bom + csv, {
+      headers: {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': `attachment; filename="associados_abracanm_${today}.csv"`,
+      },
+    });
+
+  } catch (error) {
+    console.error('Erro ao exportar associados:', error);
+    return NextResponse.json(
+      { error: 'Erro ao exportar associados' },
+      { status: 500 }
+    );
+  }
+}
