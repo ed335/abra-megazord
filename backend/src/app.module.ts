@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { QuizModule } from './quiz/quiz.module';
 import { UploadModule } from './upload/upload.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UploadModule } from './upload/upload.module';
     AuthModule,
     QuizModule,
     UploadModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

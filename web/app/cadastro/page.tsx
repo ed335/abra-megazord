@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import CadastroClient from './CadastroClient';
+import CadastroAssociadoClient from './CadastroAssociadoClient';
 
 export const metadata: Metadata = {
-  title: 'Cadastro | Abracanm - Associação Brasileira de Cannabis Medicinal',
+  title: 'Cadastro de Associado | ABRACANN',
   description:
-    'Crie sua conta na Abracanm para acessar conteúdo, pré-anamnese e orientação segura sobre cannabis medicinal.',
+    'Torne-se um associado da ABRACANN para acessar tratamento seguro com cannabis medicinal.',
   alternates: { canonical: '/cadastro' },
 };
 
 export default function Page() {
-  return <CadastroClient />;
+  return <CadastroAssociadoClient />;
 }
