@@ -64,10 +64,21 @@ cd backend && npx prisma db push
 
 ### Other Features
 - User registration and login with JWT authentication
-- Pre-anamnese quiz (7 steps) - disponível no dashboard do usuário
-- Dashboard with user session info
+- Pre-anamnese otimizada (6 steps) - usa dados do cadastro, sem duplicação
+- Diagnóstico ABRACANM personalizado - gerado após pré-anamnese
+- Dashboard com diagnóstico, indicações, recomendações e próximo passo
 - Admin panel with member list (protected by role-based access)
 - All data saved to PostgreSQL database
+
+### Pre-Anamnese System
+- Pré-anamnese vinculada ao Paciente (modelo PreAnamnese)
+- Não coleta dados já cadastrados (email, whatsapp, cidade, estado)
+- Gera diagnóstico personalizado baseado em:
+  - Patologia do paciente (CID)
+  - Se já usa cannabis medicinal
+  - Intensidade dos sintomas (gravidade)
+  - Comorbidades e contraindicações
+- Dashboard exibe: título, resumo, indicações, contraindicações, recomendações, próximo passo, score de prioridade
 
 ## Patologias Comuns (CID)
 - Epilepsia (G40)

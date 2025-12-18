@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import QuizWizard from '@/components/quiz/QuizWizard';
+import PatientQuizWizard from '@/components/quiz/PatientQuizWizard';
 
 export default function PreAnamnesePage() {
   return (
@@ -32,11 +32,11 @@ export default function PreAnamnesePage() {
               Inicie sua pré-anamnese com segurança e acolhimento
             </h1>
             <p className="text-base text-cinza-medio max-w-3xl mx-auto">
-              Responda poucas perguntas para entendermos seu contexto, sempre com LGPD, clareza e foco em ciência.
+              Responda poucas perguntas para entendermos seu contexto. Seus dados de cadastro já estão salvos - aqui você só precisa completar informações sobre seu tratamento.
             </p>
           </div>
 
-          <QuizWizard />
+          <PatientQuizWizard />
         </div>
       </div>
     </main>

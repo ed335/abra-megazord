@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getToken, clearToken } from '@/lib/auth';
+import { getToken, clearToken, fetchWithAuth } from '@/lib/auth';
 import { 
   Leaf, 
   LogOut, 
@@ -16,7 +16,11 @@ import {
   Heart,
   ArrowRight,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Calendar,
+  Activity,
+  AlertTriangle,
+  Target
 } from 'lucide-react';
 
 type User = {
@@ -35,11 +39,34 @@ type JourneyStep = {
   icon: React.ReactNode;
 };
 
+interface Diagnostico {
+  titulo: string;
+  resumo: string;
+  nivelUrgencia: 'baixa' | 'moderada' | 'alta';
+  indicacoes: string[];
+  contraindicacoes: string[];
+  observacoes: string;
+}
+
+interface PreAnamneseData {
+  id: string;
+  perfil: string;
+  objetivoPrincipal: string;
+  gravidade: number;
+  diagnostico: Diagnostico;
+  recomendacoes: string[];
+  proximosPasso: string;
+  scorePrioridade: number;
+  criadoEm: string;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [preAnamnese, setPreAnamnese] = useState<PreAnamneseData | null>(null);
+  const [preAnamneseCompleted, setPreAnamneseCompleted] = useState(false);
 
   useEffect(() => {
     const token = getToken();
@@ -49,15 +76,22 @@ export default function DashboardPage() {
       return;
     }
 
-    fetch('/api/auth/me', {
-      headers: { 'Authorization': `Bearer ${token}` },
-    })
-      .then(async (res) => {
+    Promise.all([
+      fetch('/api/auth/me', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      }).then(async (res) => {
         if (!res.ok) throw new Error('Sessão inválida');
         return res.json();
-      })
-      .then((data) => {
-        setUser(data);
+      }),
+      fetchWithAuth<{ completed: boolean; preAnamnese?: PreAnamneseData }>('/api/pre-anamnese')
+        .catch(() => ({ completed: false, preAnamnese: undefined }))
+    ])
+      .then(([userData, preAnamneseData]) => {
+        setUser(userData);
+        if (preAnamneseData.completed && preAnamneseData.preAnamnese) {
+          setPreAnamnese(preAnamneseData.preAnamnese);
+          setPreAnamneseCompleted(true);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -123,16 +157,20 @@ export default function DashboardPage() {
     {
       id: 'pre-anamnese',
       title: 'Pré-Anamnese',
-      description: 'Conte-nos sobre sua saúde para melhor atendimento',
-      status: 'current',
+      description: preAnamneseCompleted 
+        ? 'Diagnóstico ABRACANM gerado' 
+        : 'Conte-nos sobre sua saúde para melhor atendimento',
+      status: preAnamneseCompleted ? 'completed' : 'current',
       href: '/pre-anamnese',
       icon: <ClipboardList className="w-5 h-5" />,
     },
     {
       id: 'consulta',
       title: 'Consulta Médica',
-      description: 'Em breve - Atendimento humanizado com especialistas',
-      status: 'pending',
+      description: preAnamneseCompleted 
+        ? 'Agende sua consulta com um médico prescritor'
+        : 'Em breve - Atendimento humanizado com especialistas',
+      status: preAnamneseCompleted ? 'current' : 'pending',
       href: '#',
       icon: <Stethoscope className="w-5 h-5" />,
     },
@@ -149,6 +187,12 @@ export default function DashboardPage() {
   const currentStep = journeySteps.find(s => s.status === 'current');
   const completedCount = journeySteps.filter(s => s.status === 'completed').length;
   const progress = (completedCount / journeySteps.length) * 100;
+
+  const urgencyConfig = {
+    baixa: { color: 'text-sucesso', bg: 'bg-sucesso/10', label: 'Baixa prioridade' },
+    moderada: { color: 'text-dourado', bg: 'bg-dourado/10', label: 'Prioridade moderada' },
+    alta: { color: 'text-erro', bg: 'bg-erro/10', label: 'Alta prioridade' },
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro">
@@ -220,6 +264,107 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
+
+        {preAnamnese && preAnamnese.diagnostico && (
+          <section className="bg-white rounded-xl shadow-sm p-6 md:p-8 mb-8 border-2 border-verde-oliva/20">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-verde-oliva/10 rounded-full flex items-center justify-center">
+                <Activity className="w-6 h-6 text-verde-oliva" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-cinza-escuro">Seu Diagnóstico ABRACANM</h2>
+                <p className="text-sm text-cinza-medio">Análise personalizada baseada na sua pré-anamnese</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="bg-verde-claro/10 rounded-xl p-4">
+                  <h3 className="font-semibold text-verde-oliva mb-2">{preAnamnese.diagnostico.titulo}</h3>
+                  <p className="text-sm text-cinza-escuro">{preAnamnese.diagnostico.resumo}</p>
+                </div>
+
+                <div className={`rounded-xl p-4 ${urgencyConfig[preAnamnese.diagnostico.nivelUrgencia].bg}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className={`w-5 h-5 ${urgencyConfig[preAnamnese.diagnostico.nivelUrgencia].color}`} />
+                    <span className={`font-semibold ${urgencyConfig[preAnamnese.diagnostico.nivelUrgencia].color}`}>
+                      {urgencyConfig[preAnamnese.diagnostico.nivelUrgencia].label}
+                    </span>
+                  </div>
+                  <p className="text-sm text-cinza-escuro">{preAnamnese.diagnostico.observacoes}</p>
+                </div>
+
+                {preAnamnese.diagnostico.indicacoes.length > 0 && (
+                  <div className="bg-info/10 rounded-xl p-4">
+                    <h4 className="font-semibold text-info mb-2 flex items-center gap-2">
+                      <Target className="w-4 h-4" />
+                      Indicações identificadas
+                    </h4>
+                    <ul className="space-y-1">
+                      {preAnamnese.diagnostico.indicacoes.map((indicacao, idx) => (
+                        <li key={idx} className="text-sm text-cinza-escuro flex items-start gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-info flex-shrink-0 mt-0.5" />
+                          {indicacao}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {preAnamnese.diagnostico.contraindicacoes.length > 0 && (
+                  <div className="bg-erro/10 rounded-xl p-4">
+                    <h4 className="font-semibold text-erro mb-2 flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4" />
+                      Pontos de atenção
+                    </h4>
+                    <ul className="space-y-1">
+                      {preAnamnese.diagnostico.contraindicacoes.map((contra, idx) => (
+                        <li key={idx} className="text-sm text-cinza-escuro flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-erro flex-shrink-0 mt-0.5" />
+                          {contra}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-dourado/10 rounded-xl p-4">
+                  <h4 className="font-semibold text-dourado mb-3 flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    Próximo passo
+                  </h4>
+                  <p className="text-sm text-cinza-escuro mb-4">{preAnamnese.proximosPasso}</p>
+                  <button className="w-full bg-verde-oliva text-white px-4 py-3 rounded-lg font-medium hover:bg-verde-claro transition flex items-center justify-center gap-2">
+                    <Stethoscope className="w-5 h-5" />
+                    Agendar Consulta
+                  </button>
+                </div>
+
+                <div className="bg-off-white rounded-xl p-4">
+                  <h4 className="font-semibold text-cinza-escuro mb-3">Recomendações</h4>
+                  <ul className="space-y-2">
+                    {preAnamnese.recomendacoes.map((rec, idx) => (
+                      <li key={idx} className="text-sm text-cinza-escuro flex items-start gap-2">
+                        <span className="w-5 h-5 bg-verde-oliva/10 rounded-full flex items-center justify-center text-verde-oliva text-xs font-bold flex-shrink-0">
+                          {idx + 1}
+                        </span>
+                        {rec}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-cinza-muito-claro rounded-xl p-4 text-center">
+                  <p className="text-xs text-cinza-medio mb-1">Score de prioridade</p>
+                  <div className="text-3xl font-bold text-verde-oliva">{preAnamnese.scorePrioridade}</div>
+                  <p className="text-xs text-cinza-medio">de 100</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="mb-8">
           <h2 className="text-lg font-semibold text-cinza-escuro mb-4">Etapas da sua jornada</h2>
