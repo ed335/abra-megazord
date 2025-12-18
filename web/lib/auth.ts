@@ -10,8 +10,7 @@ const buildUrl = (path: string) =>
 export function setToken(token: string) {
   if (typeof window === 'undefined') return;
   localStorage.setItem(TOKEN_KEY, token);
-  const secure = typeof window !== 'undefined' && window.location.protocol === 'https:';
-  document.cookie = `${COOKIE_NAME}=${token}; path=/; SameSite=Lax${secure ? '; Secure' : ''}`;
+  document.cookie = `${COOKIE_NAME}=${token}; path=/; SameSite=None; Secure`;
 }
 
 export function getToken(): string | null {
