@@ -10,7 +10,10 @@ function getJWTSecret(): string {
 
 async function verifyAdminToken(request: NextRequest) {
   const authHeader = request.headers.get('Authorization');
+  console.log('Auth header:', authHeader ? 'present' : 'missing');
+  
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.log('No valid auth header');
     return null;
   }
 
@@ -19,13 +22,16 @@ async function verifyAdminToken(request: NextRequest) {
   try {
     const jwtSecret = getJWTSecret();
     const decoded = jsonwebtoken.verify(token, jwtSecret) as { sub: string; role: string };
+    console.log('Token decoded, role:', decoded.role);
     
     if (decoded.role !== 'ADMIN') {
+      console.log('User is not admin');
       return null;
     }
     
     return decoded;
-  } catch {
+  } catch (err) {
+    console.log('Token verification failed:', err);
     return null;
   }
 }
