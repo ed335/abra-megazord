@@ -1,7 +1,9 @@
-# AbraCann Project
+# ABRACANM - Associação Brasileira de Cannabis Medicinal
 
 ## Overview
-AbraCann is a full-stack application for medical cannabis patient management. It features a Next.js frontend and a NestJS backend with PostgreSQL database.
+ABRACANM é uma plataforma completa para gestão de pacientes de cannabis medicinal. O sistema oferece cadastro de associados com documentação médica, agendamento de consultas, integração com Stripe para pagamentos, consultas por vídeo e geração de prescrições digitais.
+
+**Missão:** Acolher pacientes em busca de qualidade de vida através da medicina canábica, quebrando barreiras e tabus com ciência, segurança e humanidade.
 
 ## Project Structure
 - `/web` - Next.js 14 frontend (React, Tailwind CSS)
@@ -24,7 +26,6 @@ AbraCann is a full-stack application for medical cannabis patient management. It
 - `API_PORT` - Backend port (default: 3001)
 - `API_HOST` - Backend host (default: localhost)
 - `JWT_SECRET` - JWT signing secret
-- `NEXT_PUBLIC_API_URL` - Backend API URL for frontend (http://localhost:3001)
 
 ### Database
 Uses PostgreSQL with Prisma ORM. Schema is in `/backend/prisma/schema.prisma`.
@@ -36,15 +37,14 @@ cd backend && npx prisma db push
 
 ## API Endpoints
 
-### Auth
-- `POST /auth/register` - Basic user registration
-- `POST /auth/register-associado` - Complete member registration with medical info
-- `POST /auth/login` - User login
-- `GET /auth/me` - Get current user (protected)
+### Auth (via Next.js API Routes → Backend proxy)
+- `POST /api/auth/register-associado` - Complete member registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user (protected)
 
-### Upload
-- `POST /upload/documento-identidade` - Upload ID document (single file, max 10MB)
-- `POST /upload/documentos-medicos` - Upload medical documents (up to 5 files, max 10MB each)
+### Upload (via Next.js API Routes)
+- `POST /api/upload/documento-identidade` - Upload ID document (max 10MB)
+- `POST /api/upload/documentos-medicos` - Upload medical documents (up to 5 files)
 
 ### Admin (Role: ADMIN only)
 - `GET /admin/associados` - List all members (paginated)
@@ -55,35 +55,50 @@ cd backend && npx prisma db push
 - `POST /quiz/intake` - Submit intake quiz
 
 ## Working Features
+
+### Member Registration (4 steps)
+1. **Dados e Termos** - Nome, WhatsApp, email, senha + confirmação (sem copiar/colar), aceite de LGPD/Termos/Política de Privacidade
+2. **Endereço** - CEP com auto-preenchimento via ViaCEP
+3. **Documento** - Upload de documento de identidade com foto
+4. **Informações Médicas** - Dropdown de patologias comuns com CID + opção "Outras", uso de cannabis, documentos médicos
+
+### Other Features
 - User registration and login with JWT authentication
-- **NEW**: Complete member registration flow (5 steps):
-  1. Personal data (name, email, password, WhatsApp)
-  2. Address with CEP auto-fill (ViaCEP integration)
-  3. ID document upload
-  4. Medical information (pathology with CID, existing cannabis use, medical documents)
-  5. Legal terms (ajuizamento + LGPD consent)
-- Pre-anamnese quiz (7 steps) with data persistence
+- Pre-anamnese quiz (7 steps) - disponível no dashboard do usuário
 - Dashboard with user session info
-- **NEW**: Admin panel with member list (protected by role-based access)
+- Admin panel with member list (protected by role-based access)
 - All data saved to PostgreSQL database
 
-## Paciente Model Fields
-Key fields for member registration:
-- `nome`, `email`, `whatsapp` (required)
-- `cep`, `rua`, `numero`, `bairro`, `cidade`, `estado` (address)
-- `documentoIdentidadeUrl` (ID document)
-- `jaUsaCannabis`, `patologiaCID` (medical info)
-- `documentosMedicosUrls` (array of medical document URLs)
-- `termoAjuizamento`, `termoAjuizamentoEm` (legal term)
-- `consenteLGPD`, `consentimentoEm` (LGPD consent)
+## Patologias Comuns (CID)
+- Epilepsia (G40)
+- Dor crônica (R52.1)
+- Ansiedade (F41)
+- Fibromialgia (M79.7)
+- Esclerose Múltipla (G35)
+- Parkinson (G20)
+- Autismo (F84.0)
+- TDAH (F90)
+- Insônia (G47.0)
+- Artrite Reumatoide (M06.9)
+- Dor Oncológica (C80)
+- Depressão (F32)
+- TEPT (F43.1)
+- Síndrome de Tourette (F95.2)
+- Alzheimer (G30)
+
+## Branding & Communication
+- **Nome**: ABRACANM - Associação Brasileira de Cannabis Medicinal
+- **Email**: ouvidoria@abracanm.org.br
+- **Tom**: Acolhedor, medicinal, neutro - foco em saúde, qualidade de vida e longevidade
+- **Objetivo**: Quebrar barreiras e tabus, ser acessível a todos os públicos
 
 ## Recent Changes (Dec 2024)
-- Configured for Replit environment
-- Updated CORS to allow all origins
-- Updated Next.js config for Replit proxy compatibility
-- Synchronized database schema with Prisma (all tables created)
-- Tested end-to-end: registration, login, quiz submission
-- **NEW**: Added complete member registration system with 5-step wizard
-- **NEW**: Added file upload API (ID + medical documents)
-- **NEW**: Added admin panel with member list
-- **NEW**: Added role-based access control (RolesGuard)
+- Configured for Replit environment with API Routes proxy
+- Updated branding to ABRACANM
+- Reorganized registration: terms on step 1, 4 steps total
+- Added password confirmation with copy/paste prevention
+- Added dropdown with common pathologies and CID codes
+- Removed pre-anamnese from home (now in dashboard only)
+- Updated footer with ouvidoria email and "Fale com o Presida" button
+- Updated all texts with welcoming, medical, and neutral tone
+- Added role-based access control (RolesGuard) for admin endpoints

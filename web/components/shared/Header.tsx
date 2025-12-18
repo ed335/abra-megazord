@@ -33,14 +33,14 @@ export default function Header() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/" className="text-xl font-bold text-cinza-escuro">
-            Abracanm
+            ABRACANM
           </Link>
           <nav className="hidden sm:flex items-center gap-4 text-sm text-cinza-medio">
             <Link href="/#como-funciona" className="hover:text-cinza-escuro">
               Como funciona
             </Link>
-            <Link href="/pre-anamnese" className="hover:text-cinza-escuro">
-              Pré-anamnese
+            <Link href="/#sobre" className="hover:text-cinza-escuro">
+              Sobre nós
             </Link>
             <Link href="/contato" className="hover:text-cinza-escuro">
               Contato
@@ -51,7 +51,7 @@ export default function Header() {
           {isAuth ? (
             <>
               <Link href="/dashboard" className="hidden sm:inline text-sm text-cinza-escuro underline">
-                Dashboard
+                Minha Área
               </Link>
               <Button variant="secondary" size="sm" onClick={handleLogout}>
                 Sair
@@ -63,7 +63,7 @@ export default function Header() {
                 Entrar
               </Link>
               <Button variant="primary" size="sm" onClick={() => router.push('/cadastro')}>
-                Criar conta
+                Associe-se
               </Button>
             </>
           )}

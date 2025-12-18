@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/shared/Button';
-import { API_URL, setToken } from '@/lib/auth';
+import { setToken } from '@/lib/auth';
 
 export default function LoginClient() {
   const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ export default function LoginClient() {
     setMessage('');
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -53,7 +53,7 @@ export default function LoginClient() {
       <div className="max-w-2xl mx-auto bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-sm text-verde-oliva font-medium mb-2">Abracanm</p>
+            <p className="text-sm text-verde-oliva font-medium mb-2">ABRACANM</p>
             <h1 className="text-3xl sm:text-4xl font-bold text-cinza-escuro">
               Entrar
             </h1>

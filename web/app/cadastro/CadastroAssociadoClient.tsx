@@ -4,13 +4,36 @@ import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
-import { API_URL, setToken } from '@/lib/auth';
+import { setToken } from '@/lib/auth';
+
+const PATOLOGIAS_COMUNS = [
+  { label: 'Epilepsia', cid: 'G40' },
+  { label: 'Dor crônica', cid: 'R52.1' },
+  { label: 'Transtorno de Ansiedade', cid: 'F41' },
+  { label: 'Fibromialgia', cid: 'M79.7' },
+  { label: 'Esclerose Múltipla', cid: 'G35' },
+  { label: 'Doença de Parkinson', cid: 'G20' },
+  { label: 'Transtorno do Espectro Autista', cid: 'F84.0' },
+  { label: 'TDAH', cid: 'F90' },
+  { label: 'Insônia', cid: 'G47.0' },
+  { label: 'Artrite Reumatoide', cid: 'M06.9' },
+  { label: 'Dor Oncológica', cid: 'C80' },
+  { label: 'Depressão', cid: 'F32' },
+  { label: 'Transtorno de Estresse Pós-Traumático', cid: 'F43.1' },
+  { label: 'Síndrome de Tourette', cid: 'F95.2' },
+  { label: 'Alzheimer', cid: 'G30' },
+  { label: 'Outra (especificar)', cid: '' },
+];
 
 type FormData = {
   nome: string;
   email: string;
   senha: string;
+  confirmarSenha: string;
   whatsapp: string;
+  termoAjuizamento: boolean;
+  termoConsentimento: boolean;
+  termoPoliticaPrivacidade: boolean;
   cep: string;
   rua: string;
   numero: string;
@@ -20,17 +43,20 @@ type FormData = {
   estado: string;
   documentoIdentidadeUrl: string;
   jaUsaCannabis: boolean;
-  patologiaCID: string;
+  patologiaSelecionada: string;
+  patologiaPersonalizada: string;
   documentosMedicosUrls: string[];
-  termoAjuizamento: boolean;
-  termoConsentimento: boolean;
 };
 
 const initialFormData: FormData = {
   nome: '',
   email: '',
   senha: '',
+  confirmarSenha: '',
   whatsapp: '',
+  termoAjuizamento: false,
+  termoConsentimento: false,
+  termoPoliticaPrivacidade: false,
   cep: '',
   rua: '',
   numero: '',
@@ -40,18 +66,16 @@ const initialFormData: FormData = {
   estado: '',
   documentoIdentidadeUrl: '',
   jaUsaCannabis: false,
-  patologiaCID: '',
+  patologiaSelecionada: '',
+  patologiaPersonalizada: '',
   documentosMedicosUrls: [],
-  termoAjuizamento: false,
-  termoConsentimento: false,
 };
 
 const steps = [
-  { id: 1, title: 'Dados Pessoais' },
+  { id: 1, title: 'Dados e Termos' },
   { id: 2, title: 'Endereço' },
   { id: 3, title: 'Documento' },
   { id: 4, title: 'Informações Médicas' },
-  { id: 5, title: 'Termos Legais' },
 ];
 
 export default function CadastroAssociadoClient() {
@@ -104,6 +128,11 @@ export default function CadastroAssociadoClient() {
     } finally {
       setCepLoading(false);
     }
+  };
+
+  const preventPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    setMessage('Por segurança, digite a senha novamente sem copiar e colar.');
   };
 
   const handleDocumentoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,6 +206,14 @@ export default function CadastroAssociadoClient() {
     }
   };
 
+  const getPatologiaCID = (): string => {
+    if (formData.patologiaSelecionada === 'Outra (especificar)') {
+      return formData.patologiaPersonalizada;
+    }
+    const patologia = PATOLOGIAS_COMUNS.find(p => p.label === formData.patologiaSelecionada);
+    return patologia ? `${patologia.label} (${patologia.cid})` : '';
+  };
+
   const validateStep = (step: number): boolean => {
     switch (step) {
       case 1:
@@ -186,6 +223,14 @@ export default function CadastroAssociadoClient() {
         }
         if (formData.senha.length < 8) {
           setMessage('A senha deve ter pelo menos 8 caracteres');
+          return false;
+        }
+        if (formData.senha !== formData.confirmarSenha) {
+          setMessage('As senhas não coincidem');
+          return false;
+        }
+        if (!formData.termoAjuizamento || !formData.termoConsentimento || !formData.termoPoliticaPrivacidade) {
+          setMessage('Você deve aceitar todos os termos para continuar');
           return false;
         }
         break;
@@ -202,14 +247,12 @@ export default function CadastroAssociadoClient() {
         }
         break;
       case 4:
-        if (!formData.patologiaCID) {
-          setMessage('Informe a patologia com CID');
+        if (!formData.patologiaSelecionada) {
+          setMessage('Selecione uma patologia');
           return false;
         }
-        break;
-      case 5:
-        if (!formData.termoAjuizamento || !formData.termoConsentimento) {
-          setMessage('Você deve aceitar os termos para continuar');
+        if (formData.patologiaSelecionada === 'Outra (especificar)' && !formData.patologiaPersonalizada) {
+          setMessage('Informe a patologia com CID');
           return false;
         }
         break;
@@ -220,7 +263,7 @@ export default function CadastroAssociadoClient() {
 
   const nextStep = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 5));
+      setCurrentStep(prev => Math.min(prev + 1, 4));
     }
   };
 
@@ -230,13 +273,13 @@ export default function CadastroAssociadoClient() {
   };
 
   const handleSubmit = async () => {
-    if (!validateStep(5)) return;
+    if (!validateStep(4)) return;
 
     setStatus('loading');
     setMessage('');
 
     try {
-      const response = await fetch(`${API_URL}/auth/register-associado`, {
+      const response = await fetch('/api/auth/register-associado', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -254,7 +297,7 @@ export default function CadastroAssociadoClient() {
           estado: formData.estado,
           documentoIdentidadeUrl: formData.documentoIdentidadeUrl,
           jaUsaCannabis: formData.jaUsaCannabis,
-          patologiaCID: formData.patologiaCID,
+          patologiaCID: getPatologiaCID(),
           documentosMedicosUrls: formData.documentosMedicosUrls,
           termoAjuizamento: formData.termoAjuizamento,
           consenteLGPD: formData.termoConsentimento,
@@ -281,16 +324,20 @@ export default function CadastroAssociadoClient() {
 
   const inputClass = "w-full rounded-lg border border-cinza-claro px-3 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva";
   const labelClass = "text-sm font-medium text-cinza-escuro";
+  const checkboxLabelClass = "flex items-start gap-3 cursor-pointer text-sm text-cinza-escuro";
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="text-sm text-verde-oliva font-medium mb-1">ABRACANN</p>
+            <p className="text-sm text-verde-oliva font-medium mb-1">ABRACANM</p>
             <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro">
               Cadastro de Associado
             </h1>
+            <p className="text-sm text-cinza-medio mt-1">
+              Seu primeiro passo para uma vida com mais saúde e qualidade
+            </p>
           </div>
           <Link href="/" className="text-sm text-verde-oliva hover:underline">
             Voltar
@@ -319,7 +366,7 @@ export default function CadastroAssociadoClient() {
         <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-6 sm:p-8">
           {currentStep === 1 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Dados Pessoais</h2>
+              <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Dados Pessoais e Termos</h2>
               
               <div className="space-y-4">
                 <label className="flex flex-col gap-1.5">
@@ -367,6 +414,65 @@ export default function CadastroAssociadoClient() {
                     minLength={8}
                   />
                 </label>
+
+                <label className="flex flex-col gap-1.5">
+                  <span className={labelClass}>Confirmar Senha *</span>
+                  <input
+                    type="password"
+                    value={formData.confirmarSenha}
+                    onChange={(e) => updateField('confirmarSenha', e.target.value)}
+                    onPaste={preventPaste}
+                    onCopy={(e) => e.preventDefault()}
+                    onCut={(e) => e.preventDefault()}
+                    className={inputClass}
+                    placeholder="Digite a senha novamente"
+                    minLength={8}
+                  />
+                </label>
+
+                <div className="border-t border-cinza-claro pt-4 mt-6">
+                  <h3 className="text-lg font-medium text-cinza-escuro mb-4">Termos e Consentimentos</h3>
+                  
+                  <div className="space-y-4">
+                    <label className={checkboxLabelClass}>
+                      <input
+                        type="checkbox"
+                        checked={formData.termoAjuizamento}
+                        onChange={(e) => updateField('termoAjuizamento', e.target.checked)}
+                        className="w-5 h-5 mt-0.5 text-verde-oliva rounded border-cinza-claro focus:ring-verde-oliva"
+                      />
+                      <span>
+                        Li e aceito o <a href="/termos-uso" target="_blank" className="text-verde-oliva underline">Termo de Uso</a> da ABRACANM, 
+                        incluindo as condições para ajuizamento de ações coletivas em meu benefício.
+                      </span>
+                    </label>
+
+                    <label className={checkboxLabelClass}>
+                      <input
+                        type="checkbox"
+                        checked={formData.termoConsentimento}
+                        onChange={(e) => updateField('termoConsentimento', e.target.checked)}
+                        className="w-5 h-5 mt-0.5 text-verde-oliva rounded border-cinza-claro focus:ring-verde-oliva"
+                      />
+                      <span>
+                        Consinto com o tratamento dos meus dados pessoais e de saúde conforme a 
+                        <a href="/lgpd" target="_blank" className="text-verde-oliva underline ml-1">Lei Geral de Proteção de Dados (LGPD)</a>.
+                      </span>
+                    </label>
+
+                    <label className={checkboxLabelClass}>
+                      <input
+                        type="checkbox"
+                        checked={formData.termoPoliticaPrivacidade}
+                        onChange={(e) => updateField('termoPoliticaPrivacidade', e.target.checked)}
+                        className="w-5 h-5 mt-0.5 text-verde-oliva rounded border-cinza-claro focus:ring-verde-oliva"
+                      />
+                      <span>
+                        Li e aceito a <a href="/politica-privacidade" target="_blank" className="text-verde-oliva underline">Política de Privacidade</a> da ABRACANM.
+                      </span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -552,19 +658,37 @@ export default function CadastroAssociadoClient() {
                 </div>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>Para qual patologia (com CID)? *</span>
-                  <input
-                    type="text"
-                    value={formData.patologiaCID}
-                    onChange={(e) => updateField('patologiaCID', e.target.value)}
+                  <span className={labelClass}>Qual sua condição de saúde? *</span>
+                  <select
+                    value={formData.patologiaSelecionada}
+                    onChange={(e) => updateField('patologiaSelecionada', e.target.value)}
                     className={inputClass}
-                    placeholder="Ex: Epilepsia (G40)"
-                  />
+                  >
+                    <option value="">Selecione uma condição</option>
+                    {PATOLOGIAS_COMUNS.map((patologia) => (
+                      <option key={patologia.label} value={patologia.label}>
+                        {patologia.cid ? `${patologia.label} (${patologia.cid})` : patologia.label}
+                      </option>
+                    ))}
+                  </select>
                 </label>
 
+                {formData.patologiaSelecionada === 'Outra (especificar)' && (
+                  <label className="flex flex-col gap-1.5">
+                    <span className={labelClass}>Informe sua condição com CID *</span>
+                    <input
+                      type="text"
+                      value={formData.patologiaPersonalizada}
+                      onChange={(e) => updateField('patologiaPersonalizada', e.target.value)}
+                      className={inputClass}
+                      placeholder="Ex: Neuropatia (G62.9)"
+                    />
+                  </label>
+                )}
+
                 <div className="space-y-2">
-                  <span className={labelClass}>Anexar receita médica, laudo/relatório e autorização da Anvisa</span>
-                  <p className="text-xs text-cinza-medio">Até 5 arquivos. Máximo 10MB por arquivo.</p>
+                  <span className={labelClass}>Anexar documentos médicos (opcional)</span>
+                  <p className="text-xs text-cinza-medio">Receita médica, laudo, autorização da Anvisa. Até 5 arquivos, máximo 10MB cada.</p>
                   
                   <div className="border-2 border-dashed border-cinza-claro rounded-lg p-6 text-center">
                     {formData.documentosMedicosUrls.length > 0 ? (
@@ -592,6 +716,7 @@ export default function CadastroAssociadoClient() {
                           <p className="text-cinza-medio">
                             {uploadingMedicos ? 'Enviando...' : 'Clique para selecionar os arquivos'}
                           </p>
+                          <p className="text-xs text-cinza-medio">JPG, PNG ou PDF</p>
                         </div>
                         <input
                           type="file"
@@ -609,62 +734,11 @@ export default function CadastroAssociadoClient() {
             </div>
           )}
 
-          {currentStep === 5 && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Termos Legais</h2>
-              
-              <div className="space-y-6">
-                <div className="bg-cinza-muito-claro rounded-lg p-4 space-y-3">
-                  <h3 className="font-medium text-cinza-escuro">Termo de Ajuizamento</h3>
-                  <div className="text-sm text-cinza-medio max-h-40 overflow-y-auto">
-                    <p>
-                      Na qualidade de associado da ABRACANN - Associação Brasileira de Cannabis e Saúde - declaro que autorizo e concordo com ajuizamento da Ação frente a UNIÃO FEDERAL, para reconhecimento do direito ao cultivo de Cannabis sp, para finalidade medicinal, declarando ainda, que o representado é portador de moléstia conforme documentos anexos e que é beneficiado pelo óleo flor ou extrato de Cannabis sp, produzido pela ABRACANN e disponibilizado para seu exclusivo consumo em prol de sua saúde.
-                    </p>
-                    <p className="mt-2 font-medium">
-                      Por ser a expressão da verdade, subscrevemos sob as penas da Lei.
-                    </p>
-                  </div>
-                  <label className="flex items-start gap-3 cursor-pointer mt-3">
-                    <input
-                      type="checkbox"
-                      checked={formData.termoAjuizamento}
-                      onChange={(e) => updateField('termoAjuizamento', e.target.checked)}
-                      className="w-5 h-5 mt-0.5 text-verde-oliva rounded"
-                    />
-                    <span className="text-sm text-cinza-escuro">
-                      Li e concordo com o Termo de Ajuizamento *
-                    </span>
-                  </label>
-                </div>
-
-                <div className="bg-cinza-muito-claro rounded-lg p-4 space-y-3">
-                  <h3 className="font-medium text-cinza-escuro">Termo de Consentimento (LGPD)</h3>
-                  <div className="text-sm text-cinza-medio">
-                    <p>
-                      Declaro que as informações prestadas são verdadeiras e autorizo a ABRACANN a utilizá-las exclusivamente para acompanhamento terapêutico e regularização do uso e cultivo medicinal conforme a LGPD.
-                    </p>
-                  </div>
-                  <label className="flex items-start gap-3 cursor-pointer mt-3">
-                    <input
-                      type="checkbox"
-                      checked={formData.termoConsentimento}
-                      onChange={(e) => updateField('termoConsentimento', e.target.checked)}
-                      className="w-5 h-5 mt-0.5 text-verde-oliva rounded"
-                    />
-                    <span className="text-sm text-cinza-escuro">
-                      Li e concordo com o Termo de Consentimento *
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-
           {message && (
             <div className={`mt-4 p-3 rounded-lg text-sm ${
-              status === 'error' || (!status || status === 'idle') && message 
-                ? 'bg-erro/10 text-erro border border-erro/30' 
-                : 'bg-sucesso/10 text-sucesso border border-sucesso/30'
+              status === 'success' ? 'bg-sucesso/10 text-sucesso' :
+              status === 'error' ? 'bg-erro/10 text-erro' :
+              'bg-alerta/10 text-alerta'
             }`}>
               {message}
             </div>
@@ -672,25 +746,24 @@ export default function CadastroAssociadoClient() {
 
           <div className="flex justify-between mt-8">
             {currentStep > 1 ? (
-              <Button type="button" variant="secondary" onClick={prevStep}>
+              <Button variant="secondary" onClick={prevStep}>
                 Voltar
               </Button>
             ) : (
-              <div></div>
+              <div />
             )}
-
-            {currentStep < 5 ? (
-              <Button type="button" variant="primary" onClick={nextStep}>
-                Próximo
+            
+            {currentStep < 4 ? (
+              <Button variant="primary" onClick={nextStep}>
+                Continuar
               </Button>
             ) : (
               <Button 
-                type="button" 
                 variant="primary" 
                 onClick={handleSubmit}
                 disabled={status === 'loading'}
               >
-                {status === 'loading' ? 'Enviando...' : 'Finalizar Cadastro'}
+                {status === 'loading' ? 'Cadastrando...' : 'Finalizar Cadastro'}
               </Button>
             )}
           </div>

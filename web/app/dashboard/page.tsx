@@ -4,7 +4,7 @@ import Link from "next/link";
 import Button from "@/components/shared/Button";
 import { clearToken } from "@/lib/auth";
 import useSWR from "swr";
-import { fetchWithAuth, API_URL } from "@/lib/auth";
+import { fetchWithAuth } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ShieldCheck, Activity, Users } from "lucide-react";
@@ -24,7 +24,7 @@ type MeResponse = {
 export default function DashboardPage() {
   const router = useRouter();
   const { data, error, isLoading } = useSWR<MeResponse>(
-    `${API_URL}/auth/me`,
+    '/api/auth/me',
     (url) => fetchWithAuth<MeResponse>(url),
     { revalidateOnFocus: false }
   );
@@ -87,7 +87,7 @@ export default function DashboardPage() {
         <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12 flex flex-col gap-6">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div>
-              <p className="text-sm text-verde-oliva font-medium">Abracanm Dashboard</p>
+              <p className="text-sm text-verde-oliva font-medium">ABRACANM - Minha Área</p>
               <h1 className="text-3xl sm:text-4xl font-bold text-cinza-escuro">
                 Bem-vindo(a), {user.email}
               </h1>

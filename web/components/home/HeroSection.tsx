@@ -37,12 +37,12 @@ export default function HeroSection() {
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-verde-claro/10 border border-verde-claro rounded-full">
                 <Image
                   src="https://abracann.org.br/_next/image?url=%2Flogo-header.png&w=256&q=75"
-                  alt="AbraCann"
+                  alt="ABRACANM"
                   width={88}
                   height={28}
                   className="object-contain h-7 w-auto"
                 />
-                <span className="text-sm font-medium text-verde-oliva">Associação Medicinal</span>
+                <span className="text-sm font-medium text-verde-oliva">Cannabis Medicinal</span>
               </div>
             </div>
 
@@ -58,7 +58,9 @@ export default function HeroSection() {
             <p
               className="text-base sm:text-lg text-cinza-medio mb-6 leading-relaxed max-w-2xl"
             >
-              Associação medicinal que conecta pacientes e prescritores, organiza sua documentação e acompanha o tratamento com segurança jurídica, ética e acolhimento clínico. Não somos clínica nem loja.
+              A ABRACANM é uma associação que acolhe pacientes em busca de qualidade de vida através da medicina canábica. 
+              Conectamos você a prescritores qualificados, organizamos sua documentação e acompanhamos seu tratamento 
+              com segurança, ciência e humanidade.
             </p>
 
             <div className="space-y-3">
@@ -69,7 +71,7 @@ export default function HeroSection() {
                   className="group transform transition duration-200 hover:scale-[1.01] shadow-md"
                   onClick={() => router.push('/cadastro')}
                 >
-                  Começar Agora
+                  Quero me Associar
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button
@@ -85,17 +87,7 @@ export default function HeroSection() {
                   }}
                   className="transform transition duration-200 hover:scale-[1.01] border border-verde-oliva text-verde-oliva bg-white"
                 >
-                  Entenda Como Funciona
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  variant="tertiary"
-                  size="md"
-                  className="text-verde-oliva underline underline-offset-4 px-0"
-                  onClick={() => router.push('/pre-anamnese')}
-                >
-                  Iniciar pré-anamnese guiada
+                  Saiba Como Funciona
                 </Button>
               </div>
             </div>
@@ -138,7 +130,7 @@ export default function HeroSection() {
               <div className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-verde-oliva" />
                 <div className="text-sm">
-                  <p className="font-semibold text-cinza-escuro">Cartão AbraCann</p>
+                  <p className="font-semibold text-cinza-escuro">Cartão ABRACANM</p>
                   <p className="text-xs text-cinza-medio">Prescrição digital e documentos</p>
                 </div>
               </div>
