@@ -18,6 +18,34 @@ const nextConfig = {
     "localhost",
     "0.0.0.0"
   ],
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:3001/:path*',
+      },
+      {
+        source: '/upload/:path*',
+        destination: 'http://localhost:3001/upload/:path*',
+      },
+      {
+        source: '/auth/:path*',
+        destination: 'http://localhost:3001/auth/:path*',
+      },
+      {
+        source: '/admin/:path*',
+        destination: 'http://localhost:3001/admin/:path*',
+      },
+      {
+        source: '/quiz/:path*',
+        destination: 'http://localhost:3001/quiz/:path*',
+      },
+      {
+        source: '/uploads/:path*',
+        destination: 'http://localhost:3001/uploads/:path*',
+      },
+    ];
+  },
   headers: async () => {
     return [
       {
