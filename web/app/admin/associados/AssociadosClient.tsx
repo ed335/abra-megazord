@@ -146,7 +146,7 @@ export default function AssociadosClient() {
 
   useEffect(() => {
     fetchAssociados(currentPage, filters);
-  }, [currentPage]);
+  }, [currentPage, fetchAssociados, filters]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

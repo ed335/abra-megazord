@@ -287,7 +287,7 @@ export default function WhatsAppPage() {
                   <MessageCircle size={32} className="text-cinza-claro" />
                 </div>
                 <p className="text-cinza-medio">
-                  Configure o template e clique em "Gerar Mensagens"
+                  Configure o template e clique em &quot;Gerar Mensagens&quot;
                 </p>
               </div>
             ) : (
