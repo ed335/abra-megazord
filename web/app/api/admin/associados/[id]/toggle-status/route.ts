@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
+import { registrarLog } from '@/lib/audit-log';
 
 const prisma = getPrismaClient();
 
@@ -34,6 +35,14 @@ export async function POST(
     await prisma.usuario.update({
       where: { id: associado.usuarioId },
       data: { ativo: novoStatus }
+    });
+
+    await registrarLog({
+      usuarioId: decoded.sub,
+      acao: novoStatus ? 'ATIVAR_ASSOCIADO' : 'DESATIVAR_ASSOCIADO',
+      recurso: 'ASSOCIADO',
+      recursoId: params.id,
+      detalhes: { nome: associado.nome, statusAnterior: !novoStatus, novoStatus },
     });
 
     return NextResponse.json({ 

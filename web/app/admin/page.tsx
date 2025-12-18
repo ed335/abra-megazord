@@ -14,7 +14,8 @@ import {
   Activity,
   ChevronRight,
   BarChart3,
-  Calendar
+  ClipboardList,
+  MessageCircle
 } from 'lucide-react';
 
 type Stats = {
@@ -313,29 +314,35 @@ export default function AdminDashboard() {
             </div>
           </Link>
 
-          <div className="bg-white border border-cinza-claro rounded-xl p-5 opacity-50 cursor-not-allowed">
+          <Link 
+            href="/admin/whatsapp"
+            className="bg-white border border-cinza-claro rounded-xl p-5 hover:border-verde-oliva transition-colors group"
+          >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-cinza-claro rounded-lg flex items-center justify-center">
-                <Calendar size={24} className="text-cinza-medio" />
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                <MessageCircle size={24} className="text-green-600" />
               </div>
               <div>
-                <p className="font-medium text-cinza-escuro">Agendamentos</p>
-                <p className="text-sm text-cinza-medio">Em breve</p>
+                <p className="font-medium text-cinza-escuro">WhatsApp</p>
+                <p className="text-sm text-cinza-medio">Mensagens em massa</p>
               </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="bg-white border border-cinza-claro rounded-xl p-5 opacity-50 cursor-not-allowed">
+          <Link 
+            href="/admin/logs"
+            className="bg-white border border-cinza-claro rounded-xl p-5 hover:border-verde-oliva transition-colors group"
+          >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-cinza-claro rounded-lg flex items-center justify-center">
-                <BarChart3 size={24} className="text-cinza-medio" />
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                <ClipboardList size={24} className="text-purple-600" />
               </div>
               <div>
-                <p className="font-medium text-cinza-escuro">Relatórios</p>
-                <p className="text-sm text-cinza-medio">Em breve</p>
+                <p className="font-medium text-cinza-escuro">Logs de Atividade</p>
+                <p className="text-sm text-cinza-medio">Auditoria do sistema</p>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </main>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
+import { registrarLog } from '@/lib/audit-log';
 
 const prisma = getPrismaClient();
 
@@ -93,6 +94,14 @@ export async function PUT(
       }
     });
 
+    await registrarLog({
+      usuarioId: decoded.sub,
+      acao: 'EDICAO_ASSOCIADO',
+      recurso: 'ASSOCIADO',
+      recursoId: params.id,
+      detalhes: { nome: body.nome || associado.nome, camposAlterados: Object.keys(body) },
+    });
+
     return NextResponse.json(associado);
   } catch (error) {
     console.error('Erro ao atualizar associado:', error);
@@ -141,6 +150,14 @@ export async function DELETE(
       await tx.usuario.delete({
         where: { id: associado.usuarioId }
       });
+    });
+
+    await registrarLog({
+      usuarioId: decoded.sub,
+      acao: 'EXCLUSAO_ASSOCIADO',
+      recurso: 'ASSOCIADO',
+      recursoId: params.id,
+      detalhes: { nome: associado.nome, email: associado.email },
     });
 
     return NextResponse.json({ success: true, message: 'Associado excluído com sucesso' });

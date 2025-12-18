@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
+import { registrarLog } from '@/lib/audit-log';
 import bcrypt from 'bcrypt';
 
 const prisma = getPrismaClient();
@@ -94,6 +95,14 @@ export async function POST(request: NextRequest) {
       });
 
       return { user, admin };
+    });
+
+    await registrarLog({
+      usuarioId: decoded.sub,
+      acao: 'CADASTRO_ADMIN',
+      recurso: 'ADMIN',
+      recursoId: result.admin.id,
+      detalhes: { email: email.toLowerCase(), nome: nome || null },
     });
 
     return NextResponse.json({

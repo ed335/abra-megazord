@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
+import { registrarLog } from '@/lib/audit-log';
 
 const prisma = getPrismaClient();
 
@@ -52,6 +53,14 @@ export async function DELETE(
       await tx.usuario.delete({
         where: { id: admin.usuarioId }
       });
+    });
+
+    await registrarLog({
+      usuarioId: decoded.sub,
+      acao: 'EXCLUSAO_ADMIN',
+      recurso: 'ADMIN',
+      recursoId: params.id,
+      detalhes: { email: admin.usuario.email },
     });
 
     return NextResponse.json({
