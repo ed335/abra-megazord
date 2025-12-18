@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
-import { getJWTSecret } from '@/lib/jwt';
+import { PrismaClient } from '@prisma/client';
+import * as jsonwebtoken from 'jsonwebtoken';
+
+const prisma = new PrismaClient();
 
 interface PreAnamneseRequest {
   perfil: 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';
@@ -21,6 +22,14 @@ interface DiagnosticoResult {
   indicacoes: string[];
   contraindicacoes: string[];
   observacoes: string;
+}
+
+function getJWTSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET não configurado');
+  }
+  return secret;
 }
 
 function generateDiagnostico(data: PreAnamneseRequest, patologiaCID: string | null, jaUsaCannabis: boolean): DiagnosticoResult {
@@ -139,7 +148,7 @@ async function verifyToken(request: NextRequest) {
   
   try {
     const jwtSecret = getJWTSecret();
-    const decoded = jwt.verify(token, jwtSecret) as { sub: string };
+    const decoded = jsonwebtoken.verify(token, jwtSecret) as { sub: string };
     return decoded;
   } catch {
     return null;
@@ -168,7 +177,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingPreAnamnese = await (prisma as any).preAnamnese.findUnique({
+    const existingPreAnamnese = await (prisma as unknown as { preAnamnese: { findUnique: (args: { where: { pacienteId: string } }) => Promise<unknown> } }).preAnamnese.findUnique({
       where: { pacienteId: paciente.id }
     });
 
@@ -186,7 +195,7 @@ export async function POST(request: NextRequest) {
     const proximoPasso = generateProximoPasso(body.preferenciaAcompanhamento);
     const scorePrioridade = calculateScorePrioridade(body, diagnostico);
 
-    await (prisma as any).preAnamnese.create({
+    await (prisma as unknown as { preAnamnese: { create: (args: { data: Record<string, unknown> }) => Promise<unknown> } }).preAnamnese.create({
       data: {
         pacienteId: paciente.id,
         perfil: body.perfil,
@@ -246,7 +255,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const preAnamnese = await (prisma as any).preAnamnese.findUnique({
+    const preAnamnese = await (prisma as unknown as { preAnamnese: { findUnique: (args: { where: { pacienteId: string } }) => Promise<unknown> } }).preAnamnese.findUnique({
       where: { pacienteId: paciente.id }
     });
 
