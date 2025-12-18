@@ -85,13 +85,17 @@ model Paciente {
   usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   
   // Dados pessoais
-  cpf             String    @unique  // Criptografado
+  cpf             String?   @unique // Criptografado (opcional, mas único se preenchido)
   nome            String
   email           String    @unique
-  telefone        String    // Criptografado (opcional)
-  dataNascimento  DateTime
+  telefone        String?   // Criptografado (opcional)
+  whatsapp        String    // WhatsApp obrigatório
+  dataNascimento  DateTime?
   
-  // LGPD & Privacidade
+  // Documento de identidade (validação obrigatória na API)
+  documentoIdentidadeUrl String? // URL do documento com foto
+
+  // LGPD & Privacidade (usa consenteLGPD para termo de consentimento LGPD)
   consenteLGPD    Boolean   @default(false)
   consentimentoEm DateTime?
   dataDelecaoAgendada DateTime? // Para direito ao esquecimento
@@ -100,14 +104,22 @@ model Paciente {
   rua             String?
   numero          String?
   complemento     String?
+  bairro          String?
   cidade          String?
   estado          String?
   cep             String?
   
   // Dados médicos (sensíveis)
-  condicoes       String[] @default([])  // JSON array
-  alergias        String[] @default([])
-  medicamentos    String[] @default([])
+  jaUsaCannabis       Boolean   @default(false) // Já é paciente de cannabis medicinal?
+  patologiaCID        String?   // Patologia com código CID
+  condicoes           String[]  @default([])  // JSON array
+  alergias            String[]  @default([])
+  medicamentos        String[]  @default([])
+  documentosMedicosUrls String[] @default([]) // URLs dos documentos médicos (receita, laudo, anvisa)
+  
+  // Termos legais
+  termoAjuizamento    Boolean   @default(false) // Aceite do termo de ajuizamento
+  termoAjuizamentoEm  DateTime? // Data/hora do aceite
   
   // Relacionamentos
   prescricoes     Prescricao[]
@@ -118,6 +130,7 @@ model Paciente {
   
   @@index([usuarioId])
   @@index([cpf])
+  @@index([whatsapp])
 }
 
 model Prescritor {
