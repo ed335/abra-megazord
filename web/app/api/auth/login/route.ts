@@ -1,30 +1,65 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const BACKEND_URL = process.env.API_URL || 'http://localhost:3001';
+const JWT_SECRET = process.env.JWT_SECRET || 'abracanm-secret-key-2024';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const { email, password } = body;
 
-    const response = await fetch(`${BACKEND_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return NextResponse.json(data, { status: response.status });
+    if (!email || !password) {
+      return NextResponse.json(
+        { message: 'Email e senha são obrigatórios' },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(data);
+    const usuario = await prisma.usuario.findUnique({
+      where: { email },
+      include: { paciente: true, prescritor: true, admin: true },
+    });
+
+    if (!usuario) {
+      return NextResponse.json(
+        { message: 'Credenciais inválidas' },
+        { status: 401 }
+      );
+    }
+
+    const passwordValid = await bcrypt.compare(password, usuario.password);
+    if (!passwordValid) {
+      return NextResponse.json(
+        { message: 'Credenciais inválidas' },
+        { status: 401 }
+      );
+    }
+
+    const token = jwt.sign(
+      { sub: usuario.id, email: usuario.email, role: usuario.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    let nome = '';
+    if (usuario.paciente) nome = usuario.paciente.nome;
+    else if (usuario.prescritor) nome = usuario.prescritor.nome;
+
+    return NextResponse.json({
+      access_token: token,
+      user: {
+        id: usuario.id,
+        email: usuario.email,
+        role: usuario.role,
+        nome,
+      },
+    });
   } catch (error) {
-    console.error('Login proxy error:', error);
+    console.error('Login error:', error);
     return NextResponse.json(
-      { message: 'Erro ao conectar com o servidor' },
+      { message: 'Erro ao processar login' },
       { status: 500 }
     );
   }

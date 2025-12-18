@@ -1,30 +1,110 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const BACKEND_URL = process.env.API_URL || 'http://localhost:3001';
+const JWT_SECRET = process.env.JWT_SECRET || 'abracanm-secret-key-2024';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    const {
+      nome,
+      email,
+      whatsapp,
+      senha,
+      consenteLGPD,
+      aceitaTermos,
+      aceitaPolitica,
+      cep,
+      rua,
+      numero,
+      complemento,
+      bairro,
+      cidade,
+      estado,
+      documentoIdentidadeUrl,
+      patologiaCID,
+      jaUsaCannabis,
+      documentosMedicosUrls,
+    } = body;
 
-    const response = await fetch(`${BACKEND_URL}/auth/register-associado`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return NextResponse.json(data, { status: response.status });
+    if (!nome || !email || !whatsapp || !senha) {
+      return NextResponse.json(
+        { message: 'Dados obrigatórios não informados' },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(data);
+    const existingUser = await prisma.usuario.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { message: 'Email já cadastrado' },
+        { status: 400 }
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(senha, 10);
+
+    const usuario = await prisma.usuario.create({
+      data: {
+        email,
+        password: hashedPassword,
+        role: 'PACIENTE',
+        paciente: {
+          create: {
+            nome,
+            email,
+            whatsapp,
+            consenteLGPD: consenteLGPD || false,
+            consentimentoEm: consenteLGPD ? new Date() : null,
+            cep: cep || null,
+            rua: rua || null,
+            numero: numero || null,
+            complemento: complemento || null,
+            bairro: bairro || null,
+            cidade: cidade || null,
+            estado: estado || null,
+            documentoIdentidadeUrl: documentoIdentidadeUrl || null,
+            patologiaCID: patologiaCID || null,
+            jaUsaCannabis: jaUsaCannabis || false,
+            documentosMedicosUrls: documentosMedicosUrls || [],
+          },
+        },
+      },
+      include: {
+        paciente: true,
+      },
+    });
+
+    const token = jwt.sign(
+      { 
+        sub: usuario.id, 
+        email: usuario.email, 
+        role: usuario.role 
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return NextResponse.json({
+      message: 'Cadastro realizado com sucesso',
+      user: {
+        id: usuario.id,
+        email: usuario.email,
+        role: usuario.role,
+        nome: usuario.paciente?.nome,
+      },
+      access_token: token,
+    });
   } catch (error) {
-    console.error('Register associado proxy error:', error);
+    console.error('Register error:', error);
     return NextResponse.json(
-      { message: 'Erro ao conectar com o servidor' },
+      { message: 'Erro ao processar cadastro' },
       { status: 500 }
     );
   }
