@@ -1,14 +1,27 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard, Roles } from '../auth/roles.guard';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
+  @Get('setup/check')
+  checkAdminExists() {
+    return this.adminService.checkAdminExists();
+  }
+
+  @Post('setup')
+  createFirstAdmin(
+    @Body() body: { email: string; password: string; nome: string },
+  ) {
+    return this.adminService.createFirstAdmin(body.email, body.password, body.nome);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
 
   @Get('associados')
   getAssociados(
