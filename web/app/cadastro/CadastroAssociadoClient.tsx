@@ -120,7 +120,7 @@ export default function CadastroAssociadoClient() {
     formDataUpload.append('file', file);
 
     try {
-      const response = await fetch(`${API_URL}/upload/documento-identidade`, {
+      const response = await fetch('/api/upload/documento-identidade', {
         method: 'POST',
         body: formDataUpload,
       });
@@ -129,7 +129,7 @@ export default function CadastroAssociadoClient() {
         updateField('documentoIdentidadeUrl', data.data.url);
         setMessage('');
       } else {
-        setMessage('Erro ao enviar documento');
+        setMessage(data.message || 'Erro ao enviar documento');
       }
     } catch (error) {
       setMessage('Erro ao enviar documento');
@@ -159,7 +159,7 @@ export default function CadastroAssociadoClient() {
     Array.from(files).forEach(file => formDataUpload.append('files', file));
 
     try {
-      const response = await fetch(`${API_URL}/upload/documentos-medicos`, {
+      const response = await fetch('/api/upload/documentos-medicos', {
         method: 'POST',
         body: formDataUpload,
       });
@@ -168,7 +168,7 @@ export default function CadastroAssociadoClient() {
         updateField('documentosMedicosUrls', data.data.urls);
         setMessage('');
       } else {
-        setMessage('Erro ao enviar documentos médicos');
+        setMessage(data.message || 'Erro ao enviar documentos médicos');
       }
     } catch (error) {
       setMessage('Erro ao enviar documentos médicos');
