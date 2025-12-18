@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingPreAnamnese = await prisma.preAnamnese.findUnique({
+    const existingPreAnamnese = await (prisma as any).preAnamnese.findUnique({
       where: { pacienteId: paciente.id }
     });
 
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
     const proximoPasso = generateProximoPasso(body.preferenciaAcompanhamento);
     const scorePrioridade = calculateScorePrioridade(body, diagnostico);
 
-    await prisma.preAnamnese.create({
+    await (prisma as any).preAnamnese.create({
       data: {
         pacienteId: paciente.id,
         perfil: body.perfil,
@@ -246,7 +246,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const preAnamnese = await prisma.preAnamnese.findUnique({
+    const preAnamnese = await (prisma as any).preAnamnese.findUnique({
       where: { pacienteId: paciente.id }
     });
 

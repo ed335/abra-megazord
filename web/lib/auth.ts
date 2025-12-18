@@ -56,8 +56,8 @@ export async function fetchWithAuth<T = unknown>(
   }
 
   if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    const message = error?.message || 'Erro ao comunicar com o servidor';
+    const errorData = await response.json().catch(() => null);
+    const message = errorData?.error || errorData?.message || 'Erro ao comunicar com o servidor';
     throw new Error(message);
   }
 
