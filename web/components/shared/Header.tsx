@@ -5,13 +5,40 @@ import { useEffect, useState } from 'react';
 import Button from './Button';
 import { clearToken, getToken } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
+import { Shield } from 'lucide-react';
+
+function parseJwt(token: string): { role?: string } | null {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
+}
 
 export default function Header() {
   const router = useRouter();
   const [isAuth, setIsAuth] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsAuth(!!getToken());
+    const check = () => {
+      const token = getToken();
+      setIsAuth(!!token);
+      if (token) {
+        const payload = parseJwt(token);
+        setIsAdmin(payload?.role === 'ADMIN');
+      } else {
+        setIsAdmin(false);
+      }
+    };
     check();
     const onStorage = (event: StorageEvent) => {
       if (event.key === 'abracann_token') {
@@ -25,6 +52,7 @@ export default function Header() {
   const handleLogout = () => {
     clearToken();
     setIsAuth(false);
+    setIsAdmin(false);
     router.push('/login');
   };
 
@@ -50,6 +78,15 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {isAuth ? (
             <>
+              {isAdmin && (
+                <Link 
+                  href="/admin/associados" 
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-lg text-sm font-medium hover:bg-amber-200 transition-colors"
+                >
+                  <Shield size={14} />
+                  <span className="hidden sm:inline">Admin</span>
+                </Link>
+              )}
               <Link href="/dashboard" className="hidden sm:inline text-sm text-cinza-escuro underline">
                 Minha Área
               </Link>
