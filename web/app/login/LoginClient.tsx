@@ -31,16 +31,15 @@ export default function LoginClient() {
       }
 
       const data = await response.json();
-      if (data.accessToken) {
-        setToken(data.accessToken);
+      if (data.access_token) {
+        setToken(data.access_token);
         setStatus('success');
         setMessage('Login realizado com sucesso. Redirecionando...');
         setTimeout(() => router.push('/dashboard'), 800);
-        return;
+      } else {
+        setStatus('error');
+        setMessage('Erro ao obter token de acesso');
       }
-
-      setStatus('success');
-      setMessage('Login realizado.');
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Erro ao entrar';
       setStatus('error');
