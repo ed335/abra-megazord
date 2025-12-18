@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { API_URL, getToken } from '@/lib/auth';
+import { getToken } from '@/lib/auth';
 
 type Associado = {
   id: string;
@@ -49,7 +49,7 @@ export default function AssociadosClient() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/admin/associados?page=${page}&limit=20`, {
+      const response = await fetch(`/api/admin/associados?page=${page}&limit=20`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
