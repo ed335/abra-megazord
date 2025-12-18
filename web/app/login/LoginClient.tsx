@@ -35,7 +35,12 @@ export default function LoginClient() {
         setToken(data.access_token);
         setStatus('success');
         setMessage('Login realizado com sucesso. Redirecionando...');
-        setTimeout(() => router.push('/dashboard'), 800);
+        
+        const redirectPath = data.user?.role === 'ADMIN' 
+          ? '/admin/associados' 
+          : '/dashboard';
+        
+        setTimeout(() => router.push(redirectPath), 800);
       } else {
         setStatus('error');
         setMessage('Erro ao obter token de acesso');
