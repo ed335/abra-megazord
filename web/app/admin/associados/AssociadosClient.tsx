@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, Power, Trash2, Eye, Image } from 'lucide-react';
 
 type PreAnamnese = {
   id: string;
@@ -56,6 +56,21 @@ type Pagination = {
   totalPages: number;
 };
 
+type Filters = {
+  search: string;
+  cidade: string;
+  estado: string;
+  patologia: string;
+  status: string;
+  temAnamnese: string;
+};
+
+const ESTADOS_BR = [
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 
+  'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 
+  'SP', 'SE', 'TO'
+];
+
 export default function AssociadosClient() {
   const [associados, setAssociados] = useState<Associado[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -66,9 +81,33 @@ export default function AssociadosClient() {
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ success: number; errors: { linha: number; email: string; erro: string }[]; skipped: number } | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<Filters>({
+    search: '',
+    cidade: '',
+    estado: '',
+    patologia: '',
+    status: '',
+    temAnamnese: '',
+  });
   const router = useRouter();
 
-  const fetchAssociados = useCallback(async (page: number) => {
+  const buildQueryString = useCallback((page: number, currentFilters: Filters) => {
+    const params = new URLSearchParams();
+    params.set('page', page.toString());
+    params.set('limit', '20');
+    
+    if (currentFilters.search) params.set('search', currentFilters.search);
+    if (currentFilters.cidade) params.set('cidade', currentFilters.cidade);
+    if (currentFilters.estado) params.set('estado', currentFilters.estado);
+    if (currentFilters.patologia) params.set('patologia', currentFilters.patologia);
+    if (currentFilters.status) params.set('status', currentFilters.status);
+    if (currentFilters.temAnamnese) params.set('temAnamnese', currentFilters.temAnamnese);
+    
+    return params.toString();
+  }, []);
+
+  const fetchAssociados = useCallback(async (page: number, currentFilters: Filters = filters) => {
     setLoading(true);
     setError('');
 
@@ -79,7 +118,8 @@ export default function AssociadosClient() {
     }
 
     try {
-      const response = await fetch(`/api/admin/associados?page=${page}&limit=20`, {
+      const queryString = buildQueryString(page, currentFilters);
+      const response = await fetch(`/api/admin/associados?${queryString}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -102,11 +142,190 @@ export default function AssociadosClient() {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, buildQueryString, filters]);
 
   useEffect(() => {
-    fetchAssociados(currentPage);
-  }, [currentPage, fetchAssociados]);
+    fetchAssociados(currentPage, filters);
+  }, [currentPage]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentPage(1);
+    fetchAssociados(1, filters);
+  };
+
+  const handleFilterChange = (key: keyof Filters, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const clearFilters = () => {
+    const emptyFilters: Filters = {
+      search: '',
+      cidade: '',
+      estado: '',
+      patologia: '',
+      status: '',
+      temAnamnese: '',
+    };
+    setFilters(emptyFilters);
+    setCurrentPage(1);
+    fetchAssociados(1, emptyFilters);
+  };
+
+  const hasActiveFilters = Object.values(filters).some(v => v !== '');
+
+  const [editingAssociado, setEditingAssociado] = useState<Associado | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    nome: '',
+    whatsapp: '',
+    cpf: '',
+    dataNascimento: '',
+    cep: '',
+    rua: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+    patologiaCID: '',
+    jaUsaCannabis: false,
+  });
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [showDocsModal, setShowDocsModal] = useState(false);
+  const [docsLoading, setDocsLoading] = useState(false);
+  const [docsData, setDocsData] = useState<{
+    associado: { id: string; nome: string };
+    documentos: { tipo: string; url: string; nome: string }[];
+  } | null>(null);
+
+  const handleViewDocs = async (id: string) => {
+    setDocsLoading(true);
+    setShowDocsModal(true);
+    const token = getToken();
+
+    try {
+      const response = await fetch(`/api/admin/associados/${id}/documentos`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao carregar documentos');
+      }
+
+      const data = await response.json();
+      setDocsData(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao carregar documentos');
+      setShowDocsModal(false);
+    } finally {
+      setDocsLoading(false);
+    }
+  };
+
+  const handleEdit = (associado: Associado) => {
+    setEditingAssociado(associado);
+    setEditForm({
+      nome: associado.nome || '',
+      whatsapp: associado.whatsapp || '',
+      cpf: (associado as any).cpf || '',
+      dataNascimento: (associado as any).dataNascimento ? new Date((associado as any).dataNascimento).toISOString().split('T')[0] : '',
+      cep: (associado as any).cep || '',
+      rua: (associado as any).rua || '',
+      numero: (associado as any).numero || '',
+      complemento: (associado as any).complemento || '',
+      bairro: (associado as any).bairro || '',
+      cidade: associado.cidade || '',
+      estado: associado.estado || '',
+      patologiaCID: associado.patologiaCID || '',
+      jaUsaCannabis: associado.jaUsaCannabis || false,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingAssociado) return;
+    
+    setSaving(true);
+    const token = getToken();
+    
+    try {
+      const response = await fetch(`/api/admin/associados/${editingAssociado.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editForm),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao salvar');
+      }
+
+      setShowEditModal(false);
+      setEditingAssociado(null);
+      fetchAssociados(currentPage, filters);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao salvar');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleStatus = async (id: string) => {
+    setTogglingId(id);
+    const token = getToken();
+    
+    try {
+      const response = await fetch(`/api/admin/associados/${id}/toggle-status`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao alterar status');
+      }
+
+      fetchAssociados(currentPage, filters);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao alterar status');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    const token = getToken();
+    
+    try {
+      const response = await fetch(`/api/admin/associados/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao excluir');
+      }
+
+      setConfirmDelete(null);
+      fetchAssociados(currentPage, filters);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao excluir');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const toggleRow = (id: string) => {
     setExpandedRows(prev => {
@@ -220,8 +439,8 @@ export default function AssociadosClient() {
       }
 
       setImportResult(data.results);
-      fetchAssociados(1);
       setCurrentPage(1);
+      fetchAssociados(1, filters);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao importar');
     } finally {
@@ -327,6 +546,118 @@ export default function AssociadosClient() {
           </div>
         </div>
 
+        <form onSubmit={handleSearch} className="mb-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-cinza-medio" size={18} />
+              <input
+                type="text"
+                placeholder="Buscar por nome, email ou WhatsApp..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva text-sm"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-2.5 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors text-sm font-medium"
+            >
+              Buscar
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 border rounded-lg transition-colors text-sm font-medium ${
+                showFilters || hasActiveFilters
+                  ? 'border-verde-oliva bg-verde-oliva/10 text-verde-oliva'
+                  : 'border-cinza-claro text-cinza-escuro hover:bg-cinza-muito-claro'
+              }`}
+            >
+              <Filter size={16} />
+              Filtros
+              {hasActiveFilters && (
+                <span className="w-2 h-2 rounded-full bg-verde-oliva" />
+              )}
+            </button>
+          </div>
+
+          {showFilters && (
+            <div className="mt-3 p-4 bg-white border border-cinza-claro rounded-xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div>
+                  <label className="block text-xs text-cinza-medio mb-1">Cidade</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: São Paulo"
+                    value={filters.cidade}
+                    onChange={(e) => handleFilterChange('cidade', e.target.value)}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-cinza-medio mb-1">Estado</label>
+                  <select
+                    value={filters.estado}
+                    onChange={(e) => handleFilterChange('estado', e.target.value)}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  >
+                    <option value="">Todos</option>
+                    {ESTADOS_BR.map(uf => (
+                      <option key={uf} value={uf}>{uf}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-cinza-medio mb-1">Patologia</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Ansiedade, F41"
+                    value={filters.patologia}
+                    onChange={(e) => handleFilterChange('patologia', e.target.value)}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-cinza-medio mb-1">Status</label>
+                  <select
+                    value={filters.status}
+                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  >
+                    <option value="">Todos</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-cinza-medio mb-1">Pré-Anamnese</label>
+                  <select
+                    value={filters.temAnamnese}
+                    onChange={(e) => handleFilterChange('temAnamnese', e.target.value)}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  >
+                    <option value="">Todos</option>
+                    <option value="sim">Respondida</option>
+                    <option value="nao">Pendente</option>
+                  </select>
+                </div>
+              </div>
+              {hasActiveFilters && (
+                <div className="mt-3 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="inline-flex items-center gap-1 text-sm text-erro hover:underline"
+                  >
+                    <X size={14} />
+                    Limpar filtros
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </form>
+
         {importResult && (
           <div className="mb-4 p-4 bg-white border border-cinza-claro rounded-xl">
             <h3 className="font-semibold text-cinza-escuro mb-2">Resultado da Importação</h3>
@@ -410,6 +741,9 @@ export default function AssociadosClient() {
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
                         Status
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
+                        Ações
                       </th>
                     </tr>
                   </thead>
@@ -500,11 +834,67 @@ export default function AssociadosClient() {
                               {associado.usuario.ativo ? 'Ativo' : 'Inativo'}
                             </span>
                           </td>
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                onClick={() => handleViewDocs(associado.id)}
+                                className="p-1.5 text-cinza-medio hover:text-blue-600 hover:bg-blue-100 rounded transition-colors"
+                                title="Ver documentos"
+                              >
+                                <Eye size={14} />
+                              </button>
+                              <button
+                                onClick={() => handleEdit(associado)}
+                                className="p-1.5 text-cinza-medio hover:text-verde-oliva hover:bg-verde-oliva/10 rounded transition-colors"
+                                title="Editar"
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                              <button
+                                onClick={() => handleToggleStatus(associado.id)}
+                                disabled={togglingId === associado.id}
+                                className={`p-1.5 rounded transition-colors ${
+                                  associado.usuario.ativo 
+                                    ? 'text-cinza-medio hover:text-amber-600 hover:bg-amber-100' 
+                                    : 'text-cinza-medio hover:text-sucesso hover:bg-sucesso/10'
+                                }`}
+                                title={associado.usuario.ativo ? 'Desativar' : 'Ativar'}
+                              >
+                                <Power size={14} />
+                              </button>
+                              {confirmDelete === associado.id ? (
+                                <div className="flex items-center gap-1 bg-erro/10 rounded px-2 py-1">
+                                  <span className="text-xs text-erro">Confirmar?</span>
+                                  <button
+                                    onClick={() => handleDelete(associado.id)}
+                                    disabled={deletingId === associado.id}
+                                    className="text-xs text-erro font-medium hover:underline"
+                                  >
+                                    Sim
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmDelete(null)}
+                                    className="text-xs text-cinza-medio hover:underline"
+                                  >
+                                    Não
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmDelete(associado.id)}
+                                  className="p-1.5 text-cinza-medio hover:text-erro hover:bg-erro/10 rounded transition-colors"
+                                  title="Excluir"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
+                            </div>
+                          </td>
                         </tr>
                         
                         {expandedRows.has(associado.id) && associado.preAnamnese && (
                           <tr key={`${associado.id}-details`} className="bg-cinza-muito-claro/30">
-                            <td colSpan={9} className="px-4 py-6">
+                            <td colSpan={10} className="px-4 py-6">
                               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 <div className="bg-white rounded-xl p-4 border border-cinza-claro">
                                   <h4 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
@@ -643,6 +1033,240 @@ export default function AssociadosClient() {
           </>
         )}
       </div>
+
+      {showEditModal && editingAssociado && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-cinza-claro flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-cinza-escuro">Editar Associado</h2>
+              <button
+                onClick={() => { setShowEditModal(false); setEditingAssociado(null); }}
+                className="p-2 text-cinza-medio hover:text-cinza-escuro hover:bg-cinza-muito-claro rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Nome completo</label>
+                  <input
+                    type="text"
+                    value={editForm.nome}
+                    onChange={(e) => setEditForm({ ...editForm, nome: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">WhatsApp</label>
+                  <input
+                    type="text"
+                    value={editForm.whatsapp}
+                    onChange={(e) => setEditForm({ ...editForm, whatsapp: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">CPF</label>
+                  <input
+                    type="text"
+                    value={editForm.cpf}
+                    onChange={(e) => setEditForm({ ...editForm, cpf: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Data de Nascimento</label>
+                  <input
+                    type="date"
+                    value={editForm.dataNascimento}
+                    onChange={(e) => setEditForm({ ...editForm, dataNascimento: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">CEP</label>
+                  <input
+                    type="text"
+                    value={editForm.cep}
+                    onChange={(e) => setEditForm({ ...editForm, cep: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Rua</label>
+                  <input
+                    type="text"
+                    value={editForm.rua}
+                    onChange={(e) => setEditForm({ ...editForm, rua: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Número</label>
+                  <input
+                    type="text"
+                    value={editForm.numero}
+                    onChange={(e) => setEditForm({ ...editForm, numero: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Complemento</label>
+                  <input
+                    type="text"
+                    value={editForm.complemento}
+                    onChange={(e) => setEditForm({ ...editForm, complemento: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Bairro</label>
+                  <input
+                    type="text"
+                    value={editForm.bairro}
+                    onChange={(e) => setEditForm({ ...editForm, bairro: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Cidade</label>
+                  <input
+                    type="text"
+                    value={editForm.cidade}
+                    onChange={(e) => setEditForm({ ...editForm, cidade: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Estado</label>
+                  <select
+                    value={editForm.estado}
+                    onChange={(e) => setEditForm({ ...editForm, estado: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  >
+                    <option value="">Selecione</option>
+                    {ESTADOS_BR.map(uf => (
+                      <option key={uf} value={uf}>{uf}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Patologia (CID)</label>
+                  <input
+                    type="text"
+                    value={editForm.patologiaCID}
+                    onChange={(e) => setEditForm({ ...editForm, patologiaCID: e.target.value })}
+                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={editForm.jaUsaCannabis}
+                      onChange={(e) => setEditForm({ ...editForm, jaUsaCannabis: e.target.checked })}
+                      className="w-4 h-4 text-verde-oliva border-cinza-claro rounded focus:ring-verde-oliva"
+                    />
+                    <span className="text-sm text-cinza-escuro">Já utiliza cannabis medicinal</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 border-t border-cinza-claro flex justify-end gap-3">
+              <button
+                onClick={() => { setShowEditModal(false); setEditingAssociado(null); }}
+                className="px-4 py-2 text-sm text-cinza-medio hover:text-cinza-escuro transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={saving}
+                className="px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors disabled:opacity-50 text-sm font-medium"
+              >
+                {saving ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDocsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-cinza-claro flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-cinza-escuro">
+                {docsLoading ? 'Carregando...' : `Documentos de ${docsData?.associado.nome || ''}`}
+              </h2>
+              <button
+                onClick={() => { setShowDocsModal(false); setDocsData(null); }}
+                className="p-2 text-cinza-medio hover:text-cinza-escuro hover:bg-cinza-muito-claro rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6">
+              {docsLoading ? (
+                <div className="text-center py-8">
+                  <p className="text-cinza-medio">Carregando documentos...</p>
+                </div>
+              ) : docsData && docsData.documentos.length > 0 ? (
+                <div className="grid gap-4">
+                  {docsData.documentos.map((doc, index) => (
+                    <div key={index} className="border border-cinza-claro rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <Image size={20} className="text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-cinza-escuro">{doc.tipo}</p>
+                            <p className="text-xs text-cinza-medio">{doc.url.split('/').pop()}</p>
+                          </div>
+                        </div>
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors text-sm font-medium"
+                        >
+                          <Eye size={14} />
+                          Abrir
+                        </a>
+                      </div>
+                      {(doc.url.endsWith('.jpg') || doc.url.endsWith('.jpeg') || doc.url.endsWith('.png') || doc.url.endsWith('.gif')) && (
+                        <div className="mt-2 rounded-lg overflow-hidden bg-cinza-muito-claro">
+                          <img 
+                            src={doc.url} 
+                            alt={doc.tipo}
+                            className="max-w-full h-auto max-h-64 mx-auto object-contain"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-cinza-muito-claro rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FileText size={32} className="text-cinza-claro" />
+                  </div>
+                  <p className="text-cinza-medio">Nenhum documento enviado</p>
+                </div>
+              )}
+            </div>
+            <div className="p-6 border-t border-cinza-claro flex justify-end">
+              <button
+                onClick={() => { setShowDocsModal(false); setDocsData(null); }}
+                className="px-4 py-2 text-sm text-cinza-medio hover:text-cinza-escuro transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

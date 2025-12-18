@@ -80,7 +80,7 @@ export default function Header() {
             <>
               {isAdmin && (
                 <Link 
-                  href="/admin/associados" 
+                  href="/admin" 
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-lg text-sm font-medium hover:bg-amber-200 transition-colors"
                 >
                   <Shield size={14} />

@@ -1,40 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import * as jsonwebtoken from 'jsonwebtoken';
+import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
 
-const prisma = new PrismaClient();
-
-function getJWTSecret(): string {
-  return process.env.JWT_SECRET || 'abracanm-secret-key-2024';
-}
-
-async function verifyAdminToken(request: NextRequest) {
-  const authHeader = request.headers.get('Authorization');
-  console.log('Auth header:', authHeader ? 'present' : 'missing');
-  
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.log('No valid auth header');
-    return null;
-  }
-
-  const token = authHeader.split(' ')[1];
-  
-  try {
-    const jwtSecret = getJWTSecret();
-    const decoded = jsonwebtoken.verify(token, jwtSecret) as { sub: string; role: string };
-    console.log('Token decoded, role:', decoded.role);
-    
-    if (decoded.role !== 'ADMIN') {
-      console.log('User is not admin');
-      return null;
-    }
-    
-    return decoded;
-  } catch (err) {
-    console.log('Token verification failed:', err);
-    return null;
-  }
-}
+const prisma = getPrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
@@ -51,9 +18,51 @@ export async function GET(request: NextRequest) {
     const page = parseInt(url.searchParams.get('page') || '1');
     const limit = parseInt(url.searchParams.get('limit') || '20');
     const skip = (page - 1) * limit;
+    
+    const search = url.searchParams.get('search') || '';
+    const cidade = url.searchParams.get('cidade') || '';
+    const estado = url.searchParams.get('estado') || '';
+    const patologia = url.searchParams.get('patologia') || '';
+    const status = url.searchParams.get('status') || '';
+    const temAnamnese = url.searchParams.get('temAnamnese') || '';
+
+    const where: any = {};
+    
+    if (search) {
+      where.OR = [
+        { nome: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { whatsapp: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    
+    if (cidade) {
+      where.cidade = { contains: cidade, mode: 'insensitive' };
+    }
+    
+    if (estado) {
+      where.estado = estado.toUpperCase();
+    }
+    
+    if (patologia) {
+      where.patologiaCID = { contains: patologia, mode: 'insensitive' };
+    }
+    
+    if (status === 'ativo') {
+      where.usuario = { ativo: true };
+    } else if (status === 'inativo') {
+      where.usuario = { ativo: false };
+    }
+    
+    if (temAnamnese === 'sim') {
+      where.preAnamnese = { isNot: null };
+    } else if (temAnamnese === 'nao') {
+      where.preAnamnese = null;
+    }
 
     const [associados, total] = await Promise.all([
       prisma.paciente.findMany({
+        where,
         skip,
         take: limit,
         orderBy: { criadoEm: 'desc' },
@@ -67,7 +76,7 @@ export async function GET(request: NextRequest) {
           preAnamnese: true
         }
       }),
-      prisma.paciente.count()
+      prisma.paciente.count({ where })
     ]);
 
     const totalPages = Math.ceil(total / limit);
