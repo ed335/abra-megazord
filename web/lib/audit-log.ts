@@ -14,14 +14,18 @@ export type AcaoAuditoria =
   | 'CADASTRO_ADMIN'
   | 'EXCLUSAO_ADMIN'
   | 'EXPORTAR_DADOS'
-  | 'ENVIO_WHATSAPP';
+  | 'ENVIO_WHATSAPP'
+  | 'CRIAR'
+  | 'ATUALIZAR'
+  | 'EXCLUIR';
 
 export type RecursoAuditoria = 
   | 'ASSOCIADO'
   | 'ADMIN'
   | 'SISTEMA'
   | 'DOCUMENTOS'
-  | 'WHATSAPP';
+  | 'WHATSAPP'
+  | 'AGENDAMENTO';
 
 export async function registrarLog(params: {
   usuarioId: string;

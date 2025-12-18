@@ -124,6 +124,7 @@ model Paciente {
   // Relacionamentos
   prescricoes     Prescricao[]
   consentimentos  ConsentimentoLGPD[]
+  agendamentos    Agendamento[]
   
   criadoEm        DateTime  @default(now())
   atualizadoEm    DateTime  @updatedAt
@@ -299,6 +300,54 @@ model ConsentimentoLGPD {
   criadoEm        DateTime  @default(now())
   
   @@index([pacienteId])
+}
+
+enum StatusAgendamento {
+  AGENDADO
+  CONFIRMADO
+  EM_ANDAMENTO
+  CONCLUIDO
+  CANCELADO
+  FALTOU
+}
+
+enum TipoConsulta {
+  PRIMEIRA_CONSULTA
+  RETORNO
+  ACOMPANHAMENTO
+  URGENTE
+}
+
+model Agendamento {
+  id              String    @id @default(cuid())
+  
+  pacienteId      String
+  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  
+  dataHora        DateTime
+  duracao         Int       @default(30) // Duração em minutos
+  
+  tipo            TipoConsulta @default(PRIMEIRA_CONSULTA)
+  status          StatusAgendamento @default(AGENDADO)
+  
+  // Informações da consulta
+  motivo          String?
+  observacoes     String?
+  
+  // Confirmação
+  confirmadoEm    DateTime?
+  lembreteEnviado Boolean   @default(false)
+  lembreteEm      DateTime?
+  
+  // Para consulta por vídeo
+  linkVideo       String?
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([pacienteId])
+  @@index([dataHora])
+  @@index([status])
 }
 
 // ============= Índices & Constraints =============

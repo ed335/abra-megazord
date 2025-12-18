@@ -132,6 +132,29 @@ cd backend && npx prisma db push
 - **Admin Panel Completo**: dashboard com estatísticas, gráficos, busca/filtros, CRUD, visualização de documentos, multi-admin
 - **Segurança aprimorada**: autenticação JWT centralizada sem fallback, validação de admin ativo no banco
 
+### Audit Logs
+- Registro de todas as ações dos administradores
+- Tipos de ação: LOGIN, LOGOUT, CRIAR, ATUALIZAR, EXCLUIR, VISUALIZAR, ATIVAR, DESATIVAR, ENVIO_WHATSAPP
+- Filtros por tipo de ação, recurso e período
+- Acesso via `/admin/logs`
+
+### WhatsApp Mass Messaging
+- Templates com variáveis dinâmicas: {nome}, {primeiro_nome}, {cidade}, {estado}, {patologia}
+- Filtros de destinatários por estado, cidade, patologia e status
+- Validação de números de telefone (mínimo 10 dígitos)
+- Gera links wa.me para envio direto
+- Acesso via `/admin/whatsapp`
+
+### Scheduling Module (Agendamentos)
+- Agendamento de consultas com data, hora e duração
+- Tipos de consulta: Primeira Consulta, Retorno, Acompanhamento, Urgente
+- Status: Agendado, Confirmado, Em Andamento, Concluído, Cancelado, Faltou
+- Dashboard com estatísticas: hoje, semana, mês
+- Filtros por status, tipo e período
+- Link para videochamada (opcional)
+- Integração com pacientes cadastrados
+- Acesso via `/admin/agendamentos`
+
 ## Security Notes
 - JWT_SECRET must be configured as environment variable (no fallback)
 - Admin tokens are validated against database to ensure account exists and is active

@@ -15,7 +15,8 @@ import {
   ChevronRight,
   BarChart3,
   ClipboardList,
-  MessageCircle
+  MessageCircle,
+  Calendar
 } from 'lucide-react';
 
 type Stats = {
@@ -283,7 +284,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <Link 
             href="/admin/associados"
             className="bg-white border border-cinza-claro rounded-xl p-5 hover:border-verde-oliva transition-colors group"
@@ -295,6 +296,21 @@ export default function AdminDashboard() {
               <div>
                 <p className="font-medium text-cinza-escuro">Gerenciar Associados</p>
                 <p className="text-sm text-cinza-medio">Buscar, editar, exportar</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link 
+            href="/admin/agendamentos"
+            className="bg-white border border-cinza-claro rounded-xl p-5 hover:border-verde-oliva transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                <Calendar size={24} className="text-blue-600" />
+              </div>
+              <div>
+                <p className="font-medium text-cinza-escuro">Agendamentos</p>
+                <p className="text-sm text-cinza-medio">Consultas e retornos</p>
               </div>
             </div>
           </Link>
