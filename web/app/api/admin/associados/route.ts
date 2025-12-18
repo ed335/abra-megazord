@@ -55,9 +55,9 @@ export async function GET(request: NextRequest) {
     }
     
     if (temAnamnese === 'sim') {
-      where.preAnamnese = { isNot: null };
+      where.documentosMedicosUrls = { isEmpty: false };
     } else if (temAnamnese === 'nao') {
-      where.preAnamnese = null;
+      where.documentosMedicosUrls = { isEmpty: true };
     }
 
     const [associados, total] = await Promise.all([
@@ -72,8 +72,7 @@ export async function GET(request: NextRequest) {
               ativo: true,
               emailVerificado: true,
             }
-          },
-          preAnamnese: true
+          }
         }
       }),
       prisma.paciente.count({ where })

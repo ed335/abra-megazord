@@ -28,8 +28,7 @@ export async function GET(
             ativo: true,
             emailVerificado: true,
           }
-        },
-        preAnamnese: true
+        }
       }
     });
 
@@ -139,10 +138,6 @@ export async function DELETE(
     }
 
     await prisma.$transaction(async (tx) => {
-      await tx.preAnamnese.deleteMany({
-        where: { pacienteId: params.id }
-      });
-      
       await tx.paciente.delete({
         where: { id: params.id }
       });

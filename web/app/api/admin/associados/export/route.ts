@@ -68,8 +68,7 @@ export async function GET(request: NextRequest) {
             ativo: true,
             emailVerificado: true,
           }
-        },
-        preAnamnese: true
+        }
       }
     });
 
@@ -77,81 +76,51 @@ export async function GET(request: NextRequest) {
       'Nome',
       'Email',
       'WhatsApp',
+      'CPF',
+      'Data Nascimento',
+      'CEP',
+      'Rua',
+      'Número',
+      'Complemento',
+      'Bairro',
       'Cidade',
       'Estado',
       'Patologia (CID)',
       'Já usa cannabis',
+      'Condições',
+      'Alergias',
+      'Medicamentos',
+      'Documentos Médicos',
       'Termo Ajuizamento',
       'Consentiu LGPD',
       'Data Cadastro',
-      'Status',
-      'Pré-Anamnese',
-      'Perfil Anamnese',
-      'Objetivo Principal',
-      'Gravidade',
-      'Tratamentos Prévios',
-      'Comorbidades',
-      'Preferência Acompanhamento',
-      'Melhor Horário',
-      'Score Prioridade',
-      'Nível Urgência',
-      'Diagnóstico Título',
-      'Diagnóstico Resumo',
-      'Indicações',
-      'Contraindicações',
-      'Próximo Passo',
-      'Data Pré-Anamnese'
+      'Status'
     ];
 
     const rows = associados.map(a => {
-      const preAnamnese = a.preAnamnese as {
-        perfil?: string;
-        objetivoPrincipal?: string;
-        gravidade?: number;
-        tratamentosPrevios?: string[];
-        comorbidades?: string[];
-        preferenciaAcompanhamento?: string;
-        melhorHorario?: string;
-        scorePrioridade?: number;
-        diagnostico?: {
-          titulo?: string;
-          resumo?: string;
-          nivelUrgencia?: string;
-          indicacoes?: string[];
-          contraindicacoes?: string[];
-        };
-        proximosPasso?: string;
-        criadoEm?: Date;
-      } | null;
-
       return [
         escapeCSV(a.nome),
         escapeCSV(a.email),
         escapeCSV(a.whatsapp),
+        escapeCSV(a.cpf),
+        a.dataNascimento ? formatDate(a.dataNascimento) : '',
+        escapeCSV(a.cep),
+        escapeCSV(a.rua),
+        escapeCSV(a.numero),
+        escapeCSV(a.complemento),
+        escapeCSV(a.bairro),
         escapeCSV(a.cidade),
         escapeCSV(a.estado),
         escapeCSV(a.patologiaCID),
         a.jaUsaCannabis ? 'Sim' : 'Não',
+        escapeCSV(a.condicoes?.join('; ')),
+        escapeCSV(a.alergias?.join('; ')),
+        escapeCSV(a.medicamentos?.join('; ')),
+        a.documentosMedicosUrls?.length > 0 ? 'Sim' : 'Não',
         a.termoAjuizamento ? 'Sim' : 'Não',
         a.consenteLGPD ? 'Sim' : 'Não',
         formatDate(a.criadoEm),
-        a.usuario.ativo ? 'Ativo' : 'Inativo',
-        preAnamnese ? 'Respondida' : 'Pendente',
-        escapeCSV(preAnamnese?.perfil),
-        escapeCSV(preAnamnese?.objetivoPrincipal),
-        preAnamnese?.gravidade?.toString() || '',
-        escapeCSV(preAnamnese?.tratamentosPrevios?.join('; ')),
-        escapeCSV(preAnamnese?.comorbidades?.join('; ')),
-        escapeCSV(preAnamnese?.preferenciaAcompanhamento),
-        escapeCSV(preAnamnese?.melhorHorario),
-        preAnamnese?.scorePrioridade?.toString() || '',
-        escapeCSV(preAnamnese?.diagnostico?.nivelUrgencia),
-        escapeCSV(preAnamnese?.diagnostico?.titulo),
-        escapeCSV(preAnamnese?.diagnostico?.resumo),
-        escapeCSV(preAnamnese?.diagnostico?.indicacoes?.join('; ')),
-        escapeCSV(preAnamnese?.diagnostico?.contraindicacoes?.join('; ')),
-        escapeCSV(preAnamnese?.proximosPasso),
-        preAnamnese?.criadoEm ? formatDate(new Date(preAnamnese.criadoEm)) : ''
+        a.usuario.ativo ? 'Ativo' : 'Inativo'
       ].join(',');
     });
 
