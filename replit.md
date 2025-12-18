@@ -47,8 +47,16 @@ cd backend && npx prisma db push
 - `POST /api/upload/documentos-medicos` - Upload medical documents (up to 5 files)
 
 ### Admin (Role: ADMIN only)
-- `GET /admin/associados` - List all members (paginated)
-- `GET /admin/associados/:id` - Get member details
+- `GET /api/admin/stats` - Dashboard statistics
+- `GET /api/admin/associados` - List all members (paginated, with filters)
+- `GET /api/admin/associados/:id` - Get member details
+- `PUT /api/admin/associados/:id` - Update member
+- `DELETE /api/admin/associados/:id` - Delete member
+- `POST /api/admin/associados/:id/toggle-status` - Toggle active/inactive
+- `GET /api/admin/associados/:id/documentos` - View member documents
+- `GET /api/admin/admins` - List administrators
+- `POST /api/admin/admins` - Create administrator
+- `DELETE /api/admin/admins/:id` - Delete administrator
 
 ### Other
 - `GET /health` - Health check
@@ -67,8 +75,16 @@ cd backend && npx prisma db push
 - Pre-anamnese otimizada (6 steps) - usa dados do cadastro, sem duplicação
 - Diagnóstico ABRACANM personalizado - gerado após pré-anamnese
 - Dashboard com diagnóstico, indicações, recomendações e próximo passo
-- Admin panel with member list (protected by role-based access)
 - All data saved to PostgreSQL database
+
+### Admin Panel (Role: ADMIN only)
+- **Dashboard** com estatísticas: total de associados, ativos/inativos, novos no mês, crescimento
+- **Gráficos**: cadastros por mês, distribuição por estado, distribuição por patologia
+- **Busca e Filtros**: nome, email, WhatsApp, cidade, estado, patologia, status, pré-anamnese
+- **CRUD de Associados**: editar dados, ativar/desativar, excluir com confirmação
+- **Visualizador de Documentos**: RG e laudos médicos com preview de imagens
+- **Multi-administradores**: criar e gerenciar múltiplos admins
+- **Autenticação centralizada**: verificação de token JWT + validação de admin ativo
 
 ### Pre-Anamnese System
 - Pré-anamnese vinculada ao Paciente (modelo PreAnamnese)
@@ -113,3 +129,10 @@ cd backend && npx prisma db push
 - Updated footer with ouvidoria email and "Fale com o Presida" button
 - Updated all texts with welcoming, medical, and neutral tone
 - Added role-based access control (RolesGuard) for admin endpoints
+- **Admin Panel Completo**: dashboard com estatísticas, gráficos, busca/filtros, CRUD, visualização de documentos, multi-admin
+- **Segurança aprimorada**: autenticação JWT centralizada sem fallback, validação de admin ativo no banco
+
+## Security Notes
+- JWT_SECRET must be configured as environment variable (no fallback)
+- Admin tokens are validated against database to ensure account exists and is active
+- Centralized authentication utility in `web/lib/admin-auth.ts`
