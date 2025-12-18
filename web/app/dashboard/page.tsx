@@ -117,7 +117,7 @@ export default function DashboardPage() {
       title: 'Cadastro',
       description: 'Seus dados estão seguros conosco',
       status: 'completed',
-      href: '/perfil',
+      href: '#',
       icon: <CheckCircle2 className="w-5 h-5" />,
     },
     {
@@ -131,17 +131,17 @@ export default function DashboardPage() {
     {
       id: 'consulta',
       title: 'Consulta Médica',
-      description: 'Atendimento humanizado com especialistas',
+      description: 'Em breve - Atendimento humanizado com especialistas',
       status: 'pending',
-      href: '/agendamento',
+      href: '#',
       icon: <Stethoscope className="w-5 h-5" />,
     },
     {
       id: 'prescricao',
       title: 'Prescrição',
-      description: 'Tratamento personalizado para você',
+      description: 'Em breve - Tratamento personalizado para você',
       status: 'pending',
-      href: '/prescricoes',
+      href: '#',
       icon: <FileText className="w-5 h-5" />,
     },
   ];

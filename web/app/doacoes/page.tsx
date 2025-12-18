@@ -52,11 +52,11 @@ export default function DoacoesPage() {
             ABRACANM
           </Link>
           <Link 
-            href="/dashboard"
+            href="/"
             className="flex items-center gap-2 text-sm text-verde-oliva hover:text-verde-claro transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            Voltar ao Dashboard
+            Voltar
           </Link>
         </div>
       </header>
