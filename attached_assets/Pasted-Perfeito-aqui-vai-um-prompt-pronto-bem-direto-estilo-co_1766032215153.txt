@@ -1,0 +1,148 @@
+Perfeito — aqui vai um prompt pronto (bem direto, estilo “copiar e colar”) pro Replit implementar isso no seu webapp abracann-megazord. Ele já orienta: onde colocar, como montar o payload Pix, recalcular CRC e atualizar o Copia e Cola + QR em tempo real.
+
+⸻
+
+Prompt para o Replit (abracann-megazord)
+
+Objetivo: criar um componente/tela de doação Pix onde o usuário escolhe um valor e o sistema gera automaticamente um “Pix Copia e Cola” válido (EMV) com aquele valor, recalculando o CRC16, e renderiza um QR Code.
+
+Requisitos funcionais
+	1.	Criar uma página/rota “Doação” (ou um componente reutilizável) com:
+
+	•	Botões de valores pré-definidos: 10, 25, 50, 100, 150
+	•	Campo “Outro valor” (input number) com máscara/validação (mínimo 1,00)
+	•	Área exibindo:
+	•	Texto “Pix Copia e Cola” (readonly + botão “Copiar”)
+	•	QR Code gerado a partir do payload (atualiza sempre que o valor muda)
+
+	2.	Ao selecionar um valor (botão ou input), o app deve:
+
+	•	Gerar o payload EMV do Pix com:
+	•	Chave Pix: saudeabracann@gmail.com
+	•	Nome recebedor (campo 59): ASSOCIACAO BRASILEIRA DE
+	•	Cidade (campo 60): BRASILIA
+	•	Moeda: 986
+	•	Valor (campo 54): sempre no formato 0.00 com ponto
+	•	Txid (campo 62/05): pode ser DOACAO<VALOR> (ex: DOACAO25) ou ***
+	•	Recalcular o CRC16/CCITT-FALSE no final (63 com tamanho 04 + 4 hex)
+
+	3.	Mostrar o Copia e Cola sempre válido.
+	4.	Se o usuário apagar o valor e deixar vazio, permitir modo “sem valor fixo” (opcional): remover campo 54 e gerar payload sem valor.
+
+⸻
+
+Especificação técnica Pix (implementação)
+
+O Pix “Copia e Cola” é um payload EMV com campos ID + LEN + VALUE.
+
+Funções necessárias:
+
+1) Função EMV
+
+function emv(id, value) {
+  const len = value.length.toString().padStart(2, "0");
+  return `${id}${len}${value}`;
+}
+
+2) CRC16/CCITT-FALSE
+	•	polinômio: 0x1021
+	•	init: 0xFFFF
+	•	sem xor final
+	•	resultado: 4 chars hex uppercase
+
+function crc16ccitt(str) {
+  let crc = 0xFFFF;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= (str.charCodeAt(i) << 8);
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, "0");
+}
+
+3) Função geradora do Pix (com valor)
+
+function gerarPixCopiaECola({ chave, nome, cidade, valor, txid="***", descricao="" }) {
+  const gui = emv("00", "br.gov.bcb.pix");
+  const key = emv("01", chave);
+  const desc = descricao ? emv("02", descricao) : "";
+  const merchantAccountInfo = emv("26", gui + key + desc);
+
+  const mcc = emv("52", "0000");
+  const moeda = emv("53", "986");
+
+  const v = valor !== null && valor !== undefined && valor !== ""
+    ? Number(valor).toFixed(2)
+    : null;
+
+  const amount = v ? emv("54", v) : "";
+
+  const country = emv("58", "BR");
+  const merchantName = emv("59", nome);
+  const merchantCity = emv("60", cidade);
+
+  const additionalData = emv("62", emv("05", txid));
+
+  const payloadSemCrc =
+    emv("00", "01") +
+    merchantAccountInfo +
+    mcc +
+    moeda +
+    amount +
+    country +
+    merchantName +
+    merchantCity +
+    additionalData +
+    "6304";
+
+  const crc = crc16ccitt(payloadSemCrc);
+  return payloadSemCrc + crc;
+}
+
+
+⸻
+
+UI/Integração no webapp
+	•	Sempre que valorSelecionado mudar, gerar novamente:
+
+const pix = gerarPixCopiaECola({
+  chave: "saudeabracann@gmail.com",
+  nome: "ASSOCIACAO BRASILEIRA DE",
+  cidade: "BRASILIA",
+  valor: valorSelecionado,
+  txid: `DOACAO${String(valorSelecionado).replace(/\D/g, "")}`
+});
+
+	•	QR Code: usar uma biblioteca (preferência):
+	•	Front-end: qrcode (NPM)
+	•	Renderizar em <canvas> ou <img>
+
+Exemplo:
+
+npm i qrcode
+
+import QRCode from "qrcode";
+QRCode.toCanvas(canvasRef.current, pix);
+
+
+⸻
+
+Regras e validações
+	•	Valor mínimo: 1.00
+	•	Máximo opcional: 99999.99
+	•	Botão “Copiar” usa navigator.clipboard.writeText(pix)
+	•	Exibir toast/feedback “Copiado!”
+
+⸻
+
+Entregáveis
+	1.	Componente/rota DonationPix (ou DoacaoPix)
+	2.	Geração do payload Pix funcionando e validável em bancos
+	3.	QR atualiza em tempo real ao mudar valor
+	4.	Código limpo, com comentários e sem hardcode espalhado (usar constantes no topo)
+
+⸻
+
+Se você quiser, eu também adapto esse prompt 100% no padrão do seu stack atual do abracann-megazord (ex: React/Inertia, Next, Vue, Blade etc.). Mas com esse texto acima o Replit já consegue implementar do jeito certo.
