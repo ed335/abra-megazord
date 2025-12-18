@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import Header from "@/components/shared/Header";
 
 const siteUrl = new URL("https://abracanm.com");
 const ogImage = `${siteUrl.toString().replace(/\/$/, "")}/og.jpg`;
@@ -110,7 +109,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
         />
-        <Header />
         {children}
       </body>
     </html>

@@ -5,6 +5,7 @@ import FeaturesSection from '@/components/home/FeaturesSection';
 import HowItWorksSection from '@/components/home/HowItWorksSection';
 import CTASection from '@/components/home/CTASection';
 import Footer from '@/components/shared/Footer';
+import Header from '@/components/shared/Header';
 import PersonasSection from '@/components/home/PersonasSection';
 import AboutSection from '@/components/home/AboutSection';
 import BenefitsSection from '@/components/home/BenefitsSection';
@@ -16,6 +17,7 @@ import DonationSection from '@/components/home/DonationSection';
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro">
+      <Header />
       <HeroSection />
       <AboutSection />
       <FeaturesSection />
