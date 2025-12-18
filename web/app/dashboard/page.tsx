@@ -10,15 +10,10 @@ import { useEffect } from "react";
 import { ShieldCheck, Activity, Users } from "lucide-react";
 
 type MeResponse = {
-  user: {
-    id: string;
-    email: string;
-    role: string;
-    ativo: boolean;
-    emailVerificado: boolean;
-    criadoEm: string;
-    atualizadoEm: string;
-  } | null;
+  id: string;
+  email: string;
+  role: string;
+  nome: string;
 };
 
 export default function DashboardPage() {
@@ -48,7 +43,7 @@ export default function DashboardPage() {
     );
   }
 
-  if (error || !data?.user) {
+  if (error || !data) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-3xl mx-auto bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12">
@@ -79,7 +74,7 @@ export default function DashboardPage() {
     );
   }
 
-  const user = data.user;
+  const user = data;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-16">
@@ -89,7 +84,7 @@ export default function DashboardPage() {
             <div>
               <p className="text-sm text-verde-oliva font-medium">ABRACANM - Minha Área</p>
               <h1 className="text-3xl sm:text-4xl font-bold text-cinza-escuro">
-                Bem-vindo(a), {user.email}
+                Bem-vindo(a), {user.nome || user.email}
               </h1>
               <p className="text-cinza-medio mt-2">
                 Sessão ativa. Veja status da conta e próximos passos.
@@ -104,20 +99,20 @@ export default function DashboardPage() {
             <CardStat
               icon={<ShieldCheck className="w-5 h-5 text-verde-oliva" />}
               label="Status da conta"
-              value={user.ativo ? "Ativa" : "Inativa"}
-              hint={`E-mail verificado: ${user.emailVerificado ? "Sim" : "Não"}`}
+              value="Ativa"
+              hint={user.email}
             />
             <CardStat
               icon={<Users className="w-5 h-5 text-verde-oliva" />}
               label="Perfil"
-              value={user.role}
+              value={user.role === 'PACIENTE' ? 'Associado' : user.role}
               hint={`ID: ${user.id.slice(0, 8)}...`}
             />
             <CardStat
               icon={<Activity className="w-5 h-5 text-verde-oliva" />}
-              label="Atualização"
-              value={new Date(user.atualizadoEm).toLocaleDateString("pt-BR")}
-              hint={`Criado em ${new Date(user.criadoEm).toLocaleDateString("pt-BR")}`}
+              label="Nome"
+              value={user.nome || '-'}
+              hint="Dados do perfil"
             />
           </div>
 
