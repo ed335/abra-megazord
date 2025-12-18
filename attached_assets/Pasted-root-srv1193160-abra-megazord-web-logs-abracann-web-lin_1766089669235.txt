@@ -1,0 +1,163 @@
+root@srv1193160:~/abra-megazord/web# logs abracann-web --lines 50
+Command 'logs' not found, but can be installed with:
+snap install logs
+root@srv1193160:~/abra-megazord/web# snap install logs
+logs 0.0.9 from Paula Gawargious (paulageorge21) installed
+root@srv1193160:~/abra-megazord/web# cd /root/abra-megazord/web
+
+# confirme o DATABASE_URL
+grep DATABASE_URL .env.local
+
+# cria as tabelas do schema do web (inclui PreAnamnese)
+npx prisma db push
+npx prisma generate
+
+npm run build
+pm2 restart abracann-web --update-env
+pm2 save
+DATABASE_URL="postgresql://abracann_user:abracann_password@localhost:5432/abracann_dev"
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database
+
+Error: Prisma schema validation - (get-config wasm)
+Error code: P1012
+error: Environment variable not found: DATABASE_URL.
+  -->  prisma/schema.prisma:7
+   | 
+ 6 |   provider = "postgresql"
+ 7 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+[Context: getConfig]
+
+Prisma CLI Version : 5.22.0
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 677ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+
+
+> abracann-web@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.33
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+ ✓ Linting and checking validity of types    
+ ✓ Collecting page data    
+   Generating static pages (0/29)  [    ]Erro ao exportar associados: B [Error]: Dynamic server usage: Route /api/admin/associados/export couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at p (/root/abra-megazord/web/.next/server/app/api/admin/associados/export/route.js:1:749)
+    at g (/root/abra-megazord/web/.next/server/app/api/admin/associados/export/route.js:1:1270)
+    at /root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /root/abra-megazord/web/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+  description: "Route /api/admin/associados/export couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (0/29)  [=   ]Erro ao buscar associados: B [Error]: Dynamic server usage: Route /api/admin/associados couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at l (/root/abra-megazord/web/.next/server/app/api/admin/associados/route.js:1:749)
+    at p (/root/abra-megazord/web/.next/server/app/api/admin/associados/route.js:1:1224)
+    at /root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /root/abra-megazord/web/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+  description: "Route /api/admin/associados couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Erro ao gerar template: B [Error]: Dynamic server usage: Route /api/admin/associados/template couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at u (/root/abra-megazord/web/.next/server/app/api/admin/associados/template/route.js:1:668)
+    at d (/root/abra-megazord/web/.next/server/app/api/admin/associados/template/route.js:1:934)
+    at /root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /root/abra-megazord/web/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+  description: "Route /api/admin/associados/template couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Me error: B [Error]: Dynamic server usage: Route /api/auth/me couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at d (/root/abra-megazord/web/.next/server/app/api/auth/me/route.js:1:800)
+    at /root/abra-megazord/web/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /root/abra-megazord/web/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/root/abra-megazord/web/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+    at /root/abra-megazord/web/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/auth/me couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+ ✓ Generating static pages (29/29)
+ ✓ Collecting build traces    
+ ✓ Finalizing page optimization    
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    17.8 kB         146 kB
+├ ○ /_not-found                          873 B          88.2 kB
+├ ○ /admin/associados                    6.53 kB         103 kB
+├ ○ /admin/setup                         3.01 kB        99.1 kB
+├ ƒ /api/admin/associados                0 B                0 B
+├ ƒ /api/admin/associados/export         0 B                0 B
+├ ƒ /api/admin/associados/import         0 B                0 B
+├ ƒ /api/admin/associados/template       0 B                0 B
+├ ƒ /api/admin/setup                     0 B                0 B
+├ ○ /api/admin/setup/check               0 B                0 B
+├ ƒ /api/auth/login                      0 B                0 B
+├ ƒ /api/auth/me                         0 B                0 B
+├ ƒ /api/auth/register-associado         0 B                0 B
+├ ƒ /api/pre-anamnese                    0 B                0 B
+├ ƒ /api/upload/documento-identidade     0 B                0 B
+├ ƒ /api/upload/documentos-medicos       0 B                0 B
+├ ○ /cadastro                            6.73 kB         103 kB
+├ ○ /cadastro/sucesso                    1.91 kB        89.2 kB
+├ ○ /contato                             1.22 kB        97.3 kB
+├ ○ /dashboard                           6.74 kB         103 kB
+├ ○ /doacoes                             12.8 kB         109 kB
+├ ○ /educacao                            2.14 kB        98.2 kB
+├ ○ /login                               3.07 kB        99.1 kB
+├ ○ /manifest.webmanifest                0 B                0 B
+├ ○ /pre-anamnese                        7.4 kB          103 kB
+├ ○ /robots.txt                          0 B                0 B
+└ ○ /sitemap.xml                         0 B                0 B
++ First Load JS shared by all            87.3 kB
+  ├ chunks/117-978fbe6ff93f0522.js       31.7 kB
+  ├ chunks/fd9d1056-d22a852a8a2fb290.js  53.6 kB
+  └ other shared chunks (total)          1.95 kB
+
+
+ƒ Middleware                             26.4 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+[PM2] Applying action restartProcessId on app [abracann-web](ids: [ 5 ])
+[PM2] [abracann-web](5) ✓
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 4  │ abracann-api    │ default     │ N/A     │ fork    │ 1172216  │ 10m    │ 45   │ online    │ 0%       │ 52.7mb   │ root     │ disabled │
+│ 5  │ abracann-web    │ default     │ N/A     │ fork    │ 1174823  │ 0s     │ 44   │ online    │ 0%       │ 776.0kb  │ root     │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+root@srv1193160:~/abra-megazord/web# 
