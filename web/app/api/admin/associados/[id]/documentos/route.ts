@@ -22,8 +22,8 @@ export async function GET(
       select: {
         id: true,
         nome: true,
-        documentoIdentidade: true,
-        documentosMedicos: true,
+        documentoIdentidadeUrl: true,
+        documentosMedicosUrls: true,
       }
     });
 
@@ -36,16 +36,16 @@ export async function GET(
 
     const documentos = [];
     
-    if (associado.documentoIdentidade) {
+    if (associado.documentoIdentidadeUrl) {
       documentos.push({
         tipo: 'Documento de Identidade',
-        url: associado.documentoIdentidade,
+        url: associado.documentoIdentidadeUrl,
         nome: 'documento_identidade',
       });
     }
 
-    if (associado.documentosMedicos && Array.isArray(associado.documentosMedicos)) {
-      associado.documentosMedicos.forEach((doc: string, index: number) => {
+    if (associado.documentosMedicosUrls && Array.isArray(associado.documentosMedicosUrls)) {
+      associado.documentosMedicosUrls.forEach((doc: string, index: number) => {
         documentos.push({
           tipo: `Documento Médico ${index + 1}`,
           url: doc,
