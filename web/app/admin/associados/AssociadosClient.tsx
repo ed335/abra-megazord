@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle } from 'lucide-react';
 
 type PreAnamnese = {
   id: string;
@@ -249,6 +249,14 @@ export default function AssociadosClient() {
     return whatsapp;
   };
 
+  const getWhatsAppLink = (whatsapp: string, nome: string) => {
+    const numbers = whatsapp.replace(/\D/g, '');
+    const phone = numbers.startsWith('55') ? numbers : `55${numbers}`;
+    const firstName = nome.split(' ')[0];
+    const message = encodeURIComponent(`Olá ${firstName}! Aqui é da ABRACANM - Associação Brasileira de Cannabis Medicinal. Tudo bem com você?`);
+    return `https://wa.me/${phone}?text=${message}`;
+  };
+
   const getUrgencyBadge = (nivel: string) => {
     const styles = {
       baixa: 'bg-green-100 text-green-800',
@@ -427,7 +435,19 @@ export default function AssociadosClient() {
                             </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-cinza-escuro">
-                            {formatWhatsApp(associado.whatsapp)}
+                            <div className="flex items-center gap-2">
+                              <a
+                                href={getWhatsAppLink(associado.whatsapp, associado.nome)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors"
+                                title="Enviar mensagem no WhatsApp"
+                              >
+                                <MessageCircle size={16} />
+                              </a>
+                              <span>{formatWhatsApp(associado.whatsapp)}</span>
+                            </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-cinza-escuro">
                             {associado.cidade && associado.estado
