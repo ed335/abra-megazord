@@ -11,6 +11,7 @@ import BenefitsSection from '@/components/home/BenefitsSection';
 import SecuritySection from '@/components/home/SecuritySection';
 import KnowledgeSection from '@/components/home/KnowledgeSection';
 import FAQSection from '@/components/home/FAQSection';
+import DonationSection from '@/components/home/DonationSection';
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
       <BenefitsSection />
       <SecuritySection />
       <KnowledgeSection />
+      <DonationSection />
       <FAQSection />
       <CTASection />
       <Footer />

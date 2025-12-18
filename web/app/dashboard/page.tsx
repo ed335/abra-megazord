@@ -4,6 +4,20 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getToken, clearToken } from '@/lib/auth';
+import { 
+  Leaf, 
+  LogOut, 
+  CheckCircle2, 
+  ClipboardList, 
+  Stethoscope, 
+  FileText, 
+  BookOpen, 
+  MessageCircle, 
+  Heart,
+  ArrowRight,
+  Loader2,
+  AlertCircle
+} from 'lucide-react';
 
 type User = {
   id: string;
@@ -18,7 +32,7 @@ type JourneyStep = {
   description: string;
   status: 'completed' | 'current' | 'pending';
   href: string;
-  icon: string;
+  icon: React.ReactNode;
 };
 
 export default function DashboardPage() {
@@ -60,10 +74,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-white">
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-off-white to-cinza-muito-claro">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando sua área...</p>
+          <Loader2 className="w-12 h-12 text-verde-oliva animate-spin mx-auto" />
+          <p className="mt-4 text-cinza-medio">Carregando sua área...</p>
         </div>
       </main>
     );
@@ -71,23 +85,23 @@ export default function DashboardPage() {
 
   if (error || !user) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-white px-4 py-16">
-        <div className="max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">⚠️</span>
+      <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 py-16">
+        <div className="max-w-lg mx-auto bg-white rounded-xl shadow-md p-8 text-center">
+          <div className="w-16 h-16 bg-erro/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-erro" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Sessão expirada</h1>
-          <p className="text-gray-600 mb-6">{error || 'Faça login para continuar.'}</p>
+          <h1 className="text-2xl font-bold text-cinza-escuro mb-2">Sessão expirada</h1>
+          <p className="text-cinza-medio mb-6">{error || 'Faça login para continuar.'}</p>
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => router.push('/login')}
-              className="px-6 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-800 transition"
+              className="px-6 py-3 bg-verde-oliva text-white rounded-lg font-medium hover:bg-verde-claro transition"
             >
               Fazer login
             </button>
             <button
               onClick={() => router.push('/cadastro')}
-              className="px-6 py-3 border border-green-700 text-green-700 rounded-lg font-medium hover:bg-green-50 transition"
+              className="px-6 py-3 border border-verde-oliva text-verde-oliva rounded-lg font-medium hover:bg-verde-claro/10 transition"
             >
               Criar conta
             </button>
@@ -104,7 +118,7 @@ export default function DashboardPage() {
       description: 'Seus dados estão seguros conosco',
       status: 'completed',
       href: '/perfil',
-      icon: '✓',
+      icon: <CheckCircle2 className="w-5 h-5" />,
     },
     {
       id: 'pre-anamnese',
@@ -112,7 +126,7 @@ export default function DashboardPage() {
       description: 'Conte-nos sobre sua saúde para melhor atendimento',
       status: 'current',
       href: '/pre-anamnese',
-      icon: '📋',
+      icon: <ClipboardList className="w-5 h-5" />,
     },
     {
       id: 'consulta',
@@ -120,7 +134,7 @@ export default function DashboardPage() {
       description: 'Atendimento humanizado com especialistas',
       status: 'pending',
       href: '/agendamento',
-      icon: '👨‍⚕️',
+      icon: <Stethoscope className="w-5 h-5" />,
     },
     {
       id: 'prescricao',
@@ -128,7 +142,7 @@ export default function DashboardPage() {
       description: 'Tratamento personalizado para você',
       status: 'pending',
       href: '/prescricoes',
-      icon: '📜',
+      icon: <FileText className="w-5 h-5" />,
     },
   ];
 
@@ -137,68 +151,69 @@ export default function DashboardPage() {
   const progress = (completedCount / journeySteps.length) * 100;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro">
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <span className="text-xl font-bold text-green-800">ABRACANM</span>
-            <span className="text-sm text-gray-400">|</span>
-            <span className="text-sm text-gray-600">Minha Área</span>
+            <span className="text-xl font-bold text-verde-oliva">ABRACANM</span>
+            <span className="text-sm text-cinza-claro">|</span>
+            <span className="text-sm text-cinza-medio">Minha Área</span>
           </div>
           <button
             onClick={handleLogout}
-            className="text-sm text-gray-500 hover:text-gray-700 transition"
+            className="flex items-center gap-2 text-sm text-cinza-medio hover:text-cinza-escuro transition"
           >
+            <LogOut className="w-4 h-4" />
             Sair
           </button>
         </div>
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <section className="bg-white rounded-2xl shadow-sm p-6 md:p-8 mb-8">
+        <section className="bg-white rounded-xl shadow-sm p-6 md:p-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-2xl">
-              🌿
+            <div className="w-16 h-16 bg-verde-claro/20 rounded-full flex items-center justify-center">
+              <Leaf className="w-8 h-8 text-verde-oliva" />
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+              <h1 className="text-2xl md:text-3xl font-bold text-cinza-escuro">
                 Olá, {user.nome || 'Associado'}!
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-cinza-medio mt-1">
                 Estamos aqui para ajudar você a encontrar mais qualidade de vida através da medicina canábica.
               </p>
             </div>
           </div>
 
-          <div className="bg-green-50 rounded-xl p-4 mb-6">
+          <div className="bg-verde-claro/10 rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-green-800">Sua jornada</span>
-              <span className="text-sm text-green-700">{completedCount} de {journeySteps.length} etapas</span>
+              <span className="text-sm font-medium text-verde-oliva">Sua jornada</span>
+              <span className="text-sm text-verde-oliva">{completedCount} de {journeySteps.length} etapas</span>
             </div>
-            <div className="h-2 bg-green-200 rounded-full overflow-hidden">
+            <div className="h-2 bg-verde-claro/30 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-green-600 rounded-full transition-all duration-500"
+                className="h-full bg-verde-oliva rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
 
           {currentStep && (
-            <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-5 text-white">
+            <div className="bg-gradient-to-r from-verde-oliva to-verde-claro rounded-xl p-5 text-white">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                   {currentStep.icon}
                 </div>
                 <div className="flex-1">
-                  <p className="text-green-100 text-sm mb-1">Próximo passo</p>
+                  <p className="text-white/80 text-sm mb-1">Próximo passo</p>
                   <h3 className="text-xl font-bold mb-1">{currentStep.title}</h3>
-                  <p className="text-green-100 text-sm mb-4">{currentStep.description}</p>
+                  <p className="text-white/80 text-sm mb-4">{currentStep.description}</p>
                   <Link
                     href={currentStep.href}
-                    className="inline-flex items-center gap-2 bg-white text-green-700 px-5 py-2.5 rounded-lg font-medium hover:bg-green-50 transition"
+                    className="inline-flex items-center gap-2 bg-white text-verde-oliva px-5 py-2.5 rounded-lg font-medium hover:bg-off-white transition"
                   >
                     Continuar
-                    <span>→</span>
+                    <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
@@ -207,7 +222,7 @@ export default function DashboardPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Etapas da sua jornada</h2>
+          <h2 className="text-lg font-semibold text-cinza-escuro mb-4">Etapas da sua jornada</h2>
           <div className="grid md:grid-cols-2 gap-4">
             {journeySteps.map((step, index) => (
               <StepCard key={step.id} step={step} stepNumber={index + 1} />
@@ -218,58 +233,61 @@ export default function DashboardPage() {
         <section className="grid md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-5">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-lg">
-                📚
+              <div className="w-10 h-10 bg-info/10 rounded-full flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-info" />
               </div>
-              <h3 className="font-semibold text-gray-800">Educação</h3>
+              <h3 className="font-semibold text-cinza-escuro">Educação</h3>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-cinza-medio text-sm mb-4">
               Conheça mais sobre a medicina canábica com artigos científicos e informativos.
             </p>
-            <Link href="/educacao" className="text-green-700 font-medium text-sm hover:underline">
-              Acessar conteúdos →
+            <Link href="/educacao" className="text-verde-oliva font-medium text-sm hover:underline inline-flex items-center gap-1">
+              Acessar conteúdos
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-5">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-lg">
-                💬
+              <div className="w-10 h-10 bg-dourado/10 rounded-full flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-dourado" />
               </div>
-              <h3 className="font-semibold text-gray-800">Suporte</h3>
+              <h3 className="font-semibold text-cinza-escuro">Suporte</h3>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-cinza-medio text-sm mb-4">
               Tem dúvidas? Nossa equipe de acolhimento está pronta para ajudar você.
             </p>
             <a 
               href="mailto:ouvidoria@abracanm.org.br" 
-              className="text-green-700 font-medium text-sm hover:underline"
+              className="text-verde-oliva font-medium text-sm hover:underline inline-flex items-center gap-1"
             >
-              Falar com a ouvidoria →
+              Falar com a ouvidoria
+              <ArrowRight className="w-3 h-3" />
             </a>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-sm p-5 border border-green-200">
+          <div className="bg-verde-claro/10 border border-verde-claro/30 rounded-xl shadow-sm p-5">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-lg">
-                💚
+              <div className="w-10 h-10 bg-verde-oliva/10 rounded-full flex items-center justify-center">
+                <Heart className="w-5 h-5 text-verde-oliva" />
               </div>
-              <h3 className="font-semibold text-green-800">Apoie a ABRACANM</h3>
+              <h3 className="font-semibold text-verde-oliva">Apoie a ABRACANM</h3>
             </div>
-            <p className="text-green-700 text-sm mb-4">
+            <p className="text-cinza-medio text-sm mb-4">
               Sua contribuição ajuda a manter nosso trabalho de acolhimento.
             </p>
-            <Link href="/doacoes" className="text-green-800 font-medium text-sm hover:underline">
-              Fazer uma doação →
+            <Link href="/doacoes" className="text-verde-oliva font-medium text-sm hover:underline inline-flex items-center gap-1">
+              Fazer uma doação
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </section>
 
-        <section className="bg-green-800 rounded-2xl p-6 text-white text-center">
+        <section className="bg-cinza-escuro rounded-xl p-6 text-white text-center">
           <h3 className="text-xl font-bold mb-2">
             Juntos pela sua qualidade de vida
           </h3>
-          <p className="text-green-200 text-sm max-w-lg mx-auto">
+          <p className="text-off-white/70 text-sm max-w-lg mx-auto">
             A ABRACANM está ao seu lado em cada etapa. A medicina canábica pode transformar vidas 
             com ciência, segurança e humanidade.
           </p>
@@ -282,22 +300,22 @@ export default function DashboardPage() {
 function StepCard({ step, stepNumber }: { step: JourneyStep; stepNumber: number }) {
   const statusStyles = {
     completed: {
-      bg: 'bg-green-50 border-green-200',
-      icon: 'bg-green-500 text-white',
-      text: 'text-green-700',
-      badge: 'bg-green-100 text-green-700',
+      bg: 'bg-verde-claro/10 border-verde-claro/30',
+      icon: 'bg-sucesso text-white',
+      text: 'text-verde-oliva',
+      badge: 'bg-sucesso/10 text-sucesso',
     },
     current: {
-      bg: 'bg-white border-green-300 shadow-md',
-      icon: 'bg-green-600 text-white',
-      text: 'text-gray-800',
-      badge: 'bg-green-600 text-white',
+      bg: 'bg-white border-verde-oliva shadow-md',
+      icon: 'bg-verde-oliva text-white',
+      text: 'text-cinza-escuro',
+      badge: 'bg-verde-oliva text-white',
     },
     pending: {
-      bg: 'bg-gray-50 border-gray-200',
-      icon: 'bg-gray-300 text-gray-600',
-      text: 'text-gray-500',
-      badge: 'bg-gray-100 text-gray-500',
+      bg: 'bg-cinza-muito-claro border-cinza-claro',
+      icon: 'bg-cinza-claro text-cinza-medio',
+      text: 'text-cinza-medio',
+      badge: 'bg-cinza-claro text-cinza-medio',
     },
   };
 
@@ -311,11 +329,11 @@ function StepCard({ step, stepNumber }: { step: JourneyStep; stepNumber: number 
   return (
     <Link 
       href={step.href}
-      className={`block rounded-xl border-2 p-5 transition hover:shadow-lg ${styles.bg}`}
+      className={`block rounded-xl border p-5 transition hover:shadow-lg ${styles.bg}`}
     >
       <div className="flex items-start gap-4">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0 ${styles.icon}`}>
-          {step.status === 'completed' ? '✓' : stepNumber}
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${styles.icon}`}>
+          {step.status === 'completed' ? <CheckCircle2 className="w-5 h-5" /> : step.icon}
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between mb-1">
@@ -324,7 +342,7 @@ function StepCard({ step, stepNumber }: { step: JourneyStep; stepNumber: number 
               {statusLabels[step.status]}
             </span>
           </div>
-          <p className="text-gray-500 text-sm">{step.description}</p>
+          <p className="text-cinza-medio text-sm">{step.description}</p>
         </div>
       </div>
     </Link>
