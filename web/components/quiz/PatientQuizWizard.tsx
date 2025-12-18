@@ -17,6 +17,8 @@ import {
   User,
   Users,
   MapPin,
+  Sun,
+  Sunset,
 } from 'lucide-react';
 import Button from '@/components/shared/Button';
 import { fetchWithAuth } from '@/lib/auth';
@@ -78,6 +80,11 @@ const quizSteps = [
     title: 'Como prefere ser acompanhado?',
     description: 'Escolha seu formato de atendimento preferido.',
   },
+  {
+    key: 'horario',
+    title: 'Qual o melhor horário para contato?',
+    description: 'Escolha o período em que você está mais disponível.',
+  },
 ];
 
 const pillBase =
@@ -125,9 +132,10 @@ export default function PatientQuizWizard({ onComplete }: Props) {
   const canContinue = useMemo(() => {
     if (step === 0) return form.consentiu;
     if (step === 1) return Boolean(form.objetivoPrincipal);
-    if (step === totalSteps - 1) return Boolean(form.preferenciaAcompanhamento);
+    if (step === 5) return Boolean(form.preferenciaAcompanhamento);
+    if (step === 6) return Boolean(form.melhorHorario);
     return true;
-  }, [form.consentiu, form.objetivoPrincipal, form.preferenciaAcompanhamento, step, totalSteps]);
+  }, [form.consentiu, form.objetivoPrincipal, form.preferenciaAcompanhamento, form.melhorHorario, step]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -382,17 +390,36 @@ export default function PatientQuizWizard({ onComplete }: Props) {
             );
           })}
         </div>
-        <div>
-          <label className="block text-sm font-medium text-cinza-escuro mb-1">
-            Melhor horário para contato (opcional)
-          </label>
-          <input
-            type="text"
-            value={form.melhorHorario}
-            onChange={(e) => updateForm('melhorHorario', e.target.value)}
-            className="w-full rounded-xl border border-cinza-claro bg-white px-4 py-3 text-sm text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva"
-            placeholder="Manhã / Tarde / Noite"
-          />
+      </div>
+    );
+  };
+
+  const renderHorario = () => {
+    const options = [
+      { value: 'Manhã', icon: Sun, desc: '8h às 12h' },
+      { value: 'Tarde', icon: Sunset, desc: '12h às 18h' },
+      { value: 'Noite', icon: Moon, desc: '18h às 21h' },
+    ];
+    return (
+      <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {options.map((option) => {
+            const Icon = option.icon;
+            const active = form.melhorHorario === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => updateForm('melhorHorario', option.value)}
+                className={`${pillBase} flex-col items-center text-center ${active ? 'border-verde-oliva bg-verde-claro/10' : 'border-cinza-claro bg-white hover:border-verde-oliva/60'}`}
+              >
+                <Icon className="w-6 h-6 text-verde-oliva mb-2" />
+                <span className="font-semibold text-cinza-escuro">{option.value}</span>
+                <span className="text-xs text-cinza-medio">{option.desc}</span>
+                {active && <CheckCircle2 className="w-5 h-5 text-verde-oliva mt-2" />}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -412,6 +439,8 @@ export default function PatientQuizWizard({ onComplete }: Props) {
         return renderComorbidades();
       case 5:
         return renderPreferencias();
+      case 6:
+        return renderHorario();
       default:
         return null;
     }
