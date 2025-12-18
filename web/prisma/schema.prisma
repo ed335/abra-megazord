@@ -124,6 +124,7 @@ model Paciente {
   // Relacionamentos
   prescricoes     Prescricao[]
   consentimentos  ConsentimentoLGPD[]
+  preAnamnese     PreAnamnese?
   
   criadoEm        DateTime  @default(now())
   atualizadoEm    DateTime  @updatedAt
@@ -281,6 +282,33 @@ model Intake {
   @@index([perfil])
   @@index([contatoEmail])
   @@index([cidade, estado])
+}
+
+model PreAnamnese {
+  id              String    @id @default(cuid())
+  
+  pacienteId      String    @unique
+  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  
+  perfil          PerfilIntake
+  objetivoPrincipal String?
+  gravidade       Int?
+  tratamentosPrevios String[] @default([])
+  comorbidades    String[]  @default([])
+  notas           String?
+  preferenciaAcompanhamento String?
+  melhorHorario   String?
+  
+  diagnostico     Json?
+  scorePrioridade Int?
+  recomendacoes   String[]  @default([])
+  proximosPasso   String?
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([pacienteId])
+  @@index([scorePrioridade])
 }
 
 model ConsentimentoLGPD {
