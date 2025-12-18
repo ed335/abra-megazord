@@ -14,9 +14,8 @@ export async function POST(request: NextRequest) {
       email,
       whatsapp,
       senha,
+      password,
       consenteLGPD,
-      aceitaTermos,
-      aceitaPolitica,
       cep,
       rua,
       numero,
@@ -30,7 +29,9 @@ export async function POST(request: NextRequest) {
       documentosMedicosUrls,
     } = body;
 
-    if (!nome || !email || !whatsapp || !senha) {
+    const senhaFinal = senha || password;
+    
+    if (!nome || !email || !whatsapp || !senhaFinal) {
       return NextResponse.json(
         { message: 'Dados obrigatórios não informados' },
         { status: 400 }
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(senha, 10);
+    const hashedPassword = await bcrypt.hash(senhaFinal, 10);
 
     const usuario = await prisma.usuario.create({
       data: {
