@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import { setToken } from '@/lib/auth';
+
+const STORAGE_KEY = 'abracanm_cadastro_form';
+const STORAGE_STEP_KEY = 'abracanm_cadastro_step';
 
 const PATOLOGIAS_COMUNS = [
   { label: 'Epilepsia', cid: 'G40' },
@@ -86,7 +89,36 @@ export default function CadastroAssociadoClient() {
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [uploadingMedicos, setUploadingMedicos] = useState(false);
   const [cepLoading, setCepLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    try {
+      const savedForm = localStorage.getItem(STORAGE_KEY);
+      const savedStep = localStorage.getItem(STORAGE_STEP_KEY);
+      if (savedForm) {
+        const parsed = JSON.parse(savedForm);
+        setFormData({ ...initialFormData, ...parsed });
+      }
+      if (savedStep) {
+        setCurrentStep(parseInt(savedStep, 10));
+      }
+    } catch (e) {
+      console.error('Erro ao carregar dados salvos:', e);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        localStorage.setItem(STORAGE_STEP_KEY, currentStep.toString());
+      } catch (e) {
+        console.error('Erro ao salvar dados:', e);
+      }
+    }
+  }, [formData, currentStep, isLoaded]);
 
   const updateField = useCallback(<K extends keyof FormData>(field: K, value: FormData[K]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -310,11 +342,22 @@ export default function CadastroAssociadoClient() {
       }
 
       const data = await response.json();
-      if (data.accessToken) {
-        setToken(data.accessToken);
+      if (data.access_token) {
+        setToken(data.access_token);
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STORAGE_STEP_KEY);
         setStatus('success');
         setMessage('Cadastro realizado com sucesso! Redirecionando...');
         setTimeout(() => router.push('/cadastro/sucesso'), 1500);
+      } else if (response.ok) {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STORAGE_STEP_KEY);
+        setStatus('success');
+        setMessage('Cadastro realizado com sucesso! Redirecionando...');
+        setTimeout(() => router.push('/cadastro/sucesso'), 1500);
+      } else {
+        setStatus('error');
+        setMessage(data.message || 'Erro ao realizar cadastro');
       }
     } catch (error) {
       setStatus('error');
