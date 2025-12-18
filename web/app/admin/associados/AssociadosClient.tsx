@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet } from 'lucide-react';
 
 type PreAnamnese = {
   id: string;
@@ -64,6 +64,8 @@ export default function AssociadosClient() {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<{ success: number; errors: { linha: number; email: string; erro: string }[]; skipped: number } | null>(null);
   const router = useRouter();
 
   const fetchAssociados = useCallback(async (page: number) => {
@@ -153,6 +155,81 @@ export default function AssociadosClient() {
     }
   };
 
+  const handleDownloadTemplate = async () => {
+    const token = getToken();
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/associados/template', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao baixar modelo');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'modelo_importacao_associados_abracanm.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao baixar modelo');
+    }
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImporting(true);
+    setImportResult(null);
+    setError('');
+
+    const token = getToken();
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/associados/import', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao importar');
+      }
+
+      setImportResult(data.results);
+      fetchAssociados(1);
+      setCurrentPage(1);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao importar');
+    } finally {
+      setImporting(false);
+      e.target.value = '';
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -209,20 +286,65 @@ export default function AssociadosClient() {
               Lista de Associados
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleDownloadTemplate}
+              className="inline-flex items-center gap-2 px-3 py-2 border border-verde-oliva text-verde-oliva rounded-lg hover:bg-verde-oliva/10 transition-colors text-sm font-medium"
+            >
+              <FileSpreadsheet size={16} />
+              Modelo
+            </button>
+            <label className="inline-flex items-center gap-2 px-3 py-2 border border-verde-oliva text-verde-oliva rounded-lg hover:bg-verde-oliva/10 transition-colors text-sm font-medium cursor-pointer">
+              <Upload size={16} />
+              {importing ? 'Importando...' : 'Importar'}
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleImport}
+                disabled={importing}
+                className="hidden"
+              />
+            </label>
             <button
               onClick={handleExport}
               disabled={exporting || loading}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
             >
               <Download size={16} />
-              {exporting ? 'Exportando...' : 'Exportar Planilha'}
+              {exporting ? 'Exportando...' : 'Exportar'}
             </button>
             <Link href="/dashboard" className="text-sm text-verde-oliva hover:underline">
-              Voltar ao Dashboard
+              Voltar
             </Link>
           </div>
         </div>
+
+        {importResult && (
+          <div className="mb-4 p-4 bg-white border border-cinza-claro rounded-xl">
+            <h3 className="font-semibold text-cinza-escuro mb-2">Resultado da Importação</h3>
+            <div className="flex gap-6 text-sm">
+              <span className="text-sucesso">{importResult.success} importado(s)</span>
+              <span className="text-cinza-medio">{importResult.skipped} já existente(s)</span>
+              <span className="text-erro">{importResult.errors.length} erro(s)</span>
+            </div>
+            {importResult.errors.length > 0 && (
+              <div className="mt-3 text-xs text-erro">
+                <p className="font-medium mb-1">Erros:</p>
+                <ul className="space-y-1 max-h-32 overflow-y-auto">
+                  {importResult.errors.map((err, i) => (
+                    <li key={i}>Linha {err.linha} ({err.email}): {err.erro}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <button 
+              onClick={() => setImportResult(null)} 
+              className="mt-2 text-xs text-cinza-medio hover:text-cinza-escuro"
+            >
+              Fechar
+            </button>
+          </div>
+        )}
 
         {pagination && (
           <div className="mb-4 flex items-center gap-4 text-sm text-cinza-medio">
