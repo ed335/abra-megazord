@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrismaClient } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import * as jsonwebtoken from 'jsonwebtoken';
 
 interface PreAnamneseRequest {
@@ -164,8 +164,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const prisma = getPrismaClient();
-
     const paciente = await prisma.paciente.findUnique({
       where: { usuarioId: decoded.sub }
     });
@@ -243,8 +241,6 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-
-    const prisma = getPrismaClient();
 
     const paciente = await prisma.paciente.findUnique({
       where: { usuarioId: decoded.sub }

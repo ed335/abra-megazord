@@ -81,6 +81,10 @@ const steps = [
   { id: 4, title: 'Informações Médicas' },
 ];
 
+type FieldErrors = {
+  [K in keyof FormData]?: string;
+};
+
 export default function CadastroAssociadoClient() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -90,6 +94,7 @@ export default function CadastroAssociadoClient() {
   const [uploadingMedicos, setUploadingMedicos] = useState(false);
   const [cepLoading, setCepLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const router = useRouter();
 
   useEffect(() => {
@@ -247,50 +252,98 @@ export default function CadastroAssociadoClient() {
   };
 
   const validateStep = (step: number): boolean => {
+    const errors: FieldErrors = {};
+    let isValid = true;
+
     switch (step) {
       case 1:
-        if (!formData.nome || !formData.email || !formData.senha || !formData.whatsapp) {
-          setMessage('Preencha todos os campos obrigatórios');
-          return false;
+        if (!formData.nome) {
+          errors.nome = 'Nome é obrigatório';
+          isValid = false;
         }
-        if (formData.senha.length < 8) {
-          setMessage('A senha deve ter pelo menos 8 caracteres');
-          return false;
+        if (!formData.whatsapp) {
+          errors.whatsapp = 'WhatsApp é obrigatório';
+          isValid = false;
         }
-        if (formData.senha !== formData.confirmarSenha) {
-          setMessage('As senhas não coincidem');
-          return false;
+        if (!formData.email) {
+          errors.email = 'E-mail é obrigatório';
+          isValid = false;
         }
-        if (!formData.termoAjuizamento || !formData.termoConsentimento || !formData.termoPoliticaPrivacidade) {
-          setMessage('Você deve aceitar todos os termos para continuar');
-          return false;
+        if (!formData.senha) {
+          errors.senha = 'Senha é obrigatória';
+          isValid = false;
+        } else if (formData.senha.length < 8) {
+          errors.senha = 'A senha deve ter pelo menos 8 caracteres';
+          isValid = false;
+        }
+        if (!formData.confirmarSenha) {
+          errors.confirmarSenha = 'Confirme a senha';
+          isValid = false;
+        } else if (formData.senha !== formData.confirmarSenha) {
+          errors.confirmarSenha = 'As senhas não coincidem';
+          isValid = false;
+        }
+        if (!formData.termoAjuizamento) {
+          errors.termoAjuizamento = 'Aceite obrigatório';
+          isValid = false;
+        }
+        if (!formData.termoConsentimento) {
+          errors.termoConsentimento = 'Aceite obrigatório';
+          isValid = false;
+        }
+        if (!formData.termoPoliticaPrivacidade) {
+          errors.termoPoliticaPrivacidade = 'Aceite obrigatório';
+          isValid = false;
         }
         break;
       case 2:
-        if (!formData.cep || !formData.rua || !formData.numero || !formData.cidade || !formData.estado) {
-          setMessage('Preencha o endereço completo');
-          return false;
+        if (!formData.cep) {
+          errors.cep = 'CEP é obrigatório';
+          isValid = false;
+        }
+        if (!formData.rua) {
+          errors.rua = 'Rua é obrigatória';
+          isValid = false;
+        }
+        if (!formData.numero) {
+          errors.numero = 'Número é obrigatório';
+          isValid = false;
+        }
+        if (!formData.cidade) {
+          errors.cidade = 'Cidade é obrigatória';
+          isValid = false;
+        }
+        if (!formData.estado) {
+          errors.estado = 'Estado é obrigatório';
+          isValid = false;
         }
         break;
       case 3:
         if (!formData.documentoIdentidadeUrl) {
-          setMessage('Anexe um documento com foto');
-          return false;
+          errors.documentoIdentidadeUrl = 'Anexe um documento com foto';
+          isValid = false;
         }
         break;
       case 4:
         if (!formData.patologiaSelecionada) {
-          setMessage('Selecione uma patologia');
-          return false;
+          errors.patologiaSelecionada = 'Selecione uma patologia';
+          isValid = false;
         }
         if (formData.patologiaSelecionada === 'Outra (especificar)' && !formData.patologiaPersonalizada) {
-          setMessage('Informe a patologia com CID');
-          return false;
+          errors.patologiaPersonalizada = 'Informe a patologia com CID';
+          isValid = false;
         }
         break;
     }
-    setMessage('');
-    return true;
+
+    setFieldErrors(errors);
+    if (!isValid) {
+      const firstError = Object.values(errors)[0];
+      setMessage(firstError || 'Preencha os campos destacados em vermelho');
+    } else {
+      setMessage('');
+    }
+    return isValid;
   };
 
   const nextStep = () => {
@@ -366,7 +419,12 @@ export default function CadastroAssociadoClient() {
   };
 
   const inputClass = "w-full rounded-lg border border-cinza-claro px-3 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva";
+  const inputErrorClass = "w-full rounded-lg border-2 border-red-500 px-3 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-red-500 bg-red-50";
   const labelClass = "text-sm font-medium text-cinza-escuro";
+  const labelErrorClass = "text-sm font-medium text-red-600";
+  
+  const getInputClass = (field: keyof FormData) => fieldErrors[field] ? inputErrorClass : inputClass;
+  const getLabelClass = (field: keyof FormData) => fieldErrors[field] ? labelErrorClass : labelClass;
   const checkboxLabelClass = "flex items-start gap-3 cursor-pointer text-sm text-cinza-escuro";
 
   return (
@@ -413,53 +471,57 @@ export default function CadastroAssociadoClient() {
               
               <div className="space-y-4">
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>Nome completo *</span>
+                  <span className={getLabelClass('nome')}>Nome completo *</span>
                   <input
                     type="text"
                     value={formData.nome}
                     onChange={(e) => updateField('nome', e.target.value)}
-                    className={inputClass}
+                    className={getInputClass('nome')}
                     placeholder="Seu nome completo"
                   />
+                  {fieldErrors.nome && <span className="text-xs text-red-500">{fieldErrors.nome}</span>}
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>WhatsApp *</span>
+                  <span className={getLabelClass('whatsapp')}>WhatsApp *</span>
                   <input
                     type="tel"
                     value={formData.whatsapp}
                     onChange={(e) => updateField('whatsapp', formatWhatsApp(e.target.value))}
-                    className={inputClass}
+                    className={getInputClass('whatsapp')}
                     placeholder="(00) 00000-0000"
                     maxLength={16}
                   />
+                  {fieldErrors.whatsapp && <span className="text-xs text-red-500">{fieldErrors.whatsapp}</span>}
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>E-mail *</span>
+                  <span className={getLabelClass('email')}>E-mail *</span>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => updateField('email', e.target.value)}
-                    className={inputClass}
+                    className={getInputClass('email')}
                     placeholder="seu@email.com"
                   />
+                  {fieldErrors.email && <span className="text-xs text-red-500">{fieldErrors.email}</span>}
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>Senha *</span>
+                  <span className={getLabelClass('senha')}>Senha *</span>
                   <input
                     type="password"
                     value={formData.senha}
                     onChange={(e) => updateField('senha', e.target.value)}
-                    className={inputClass}
+                    className={getInputClass('senha')}
                     placeholder="Mínimo 8 caracteres"
                     minLength={8}
                   />
+                  {fieldErrors.senha && <span className="text-xs text-red-500">{fieldErrors.senha}</span>}
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>Confirmar Senha *</span>
+                  <span className={getLabelClass('confirmarSenha')}>Confirmar Senha *</span>
                   <input
                     type="password"
                     value={formData.confirmarSenha}
@@ -467,53 +529,60 @@ export default function CadastroAssociadoClient() {
                     onPaste={preventPaste}
                     onCopy={(e) => e.preventDefault()}
                     onCut={(e) => e.preventDefault()}
-                    className={inputClass}
+                    className={getInputClass('confirmarSenha')}
                     placeholder="Digite a senha novamente"
                     minLength={8}
                   />
+                  {fieldErrors.confirmarSenha && <span className="text-xs text-red-500">{fieldErrors.confirmarSenha}</span>}
                 </label>
 
                 <div className="border-t border-cinza-claro pt-4 mt-6">
                   <h3 className="text-lg font-medium text-cinza-escuro mb-4">Termos e Consentimentos</h3>
                   
                   <div className="space-y-4">
-                    <label className={checkboxLabelClass}>
-                      <input
-                        type="checkbox"
-                        checked={formData.termoAjuizamento}
-                        onChange={(e) => updateField('termoAjuizamento', e.target.checked)}
-                        className="w-5 h-5 mt-0.5 text-verde-oliva rounded border-cinza-claro focus:ring-verde-oliva"
-                      />
-                      <span>
-                        Li e aceito o <a href="/termos-uso" target="_blank" className="text-verde-oliva underline">Termo de Uso</a> da ABRACANM, 
-                        incluindo as condições para ajuizamento de ações coletivas em meu benefício.
-                      </span>
-                    </label>
+                    <div className={`p-3 rounded-lg ${fieldErrors.termoAjuizamento ? 'bg-red-50 border border-red-300' : ''}`}>
+                      <label className={checkboxLabelClass}>
+                        <input
+                          type="checkbox"
+                          checked={formData.termoAjuizamento}
+                          onChange={(e) => updateField('termoAjuizamento', e.target.checked)}
+                          className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva ${fieldErrors.termoAjuizamento ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
+                        />
+                        <span className={fieldErrors.termoAjuizamento ? 'text-red-600' : ''}>
+                          Li e aceito o <a href="/termos-uso" target="_blank" className="text-verde-oliva underline">Termo de Uso</a> da ABRACANM, 
+                          incluindo as condições para ajuizamento de ações coletivas em meu benefício.
+                        </span>
+                      </label>
+                    </div>
 
-                    <label className={checkboxLabelClass}>
-                      <input
-                        type="checkbox"
-                        checked={formData.termoConsentimento}
-                        onChange={(e) => updateField('termoConsentimento', e.target.checked)}
-                        className="w-5 h-5 mt-0.5 text-verde-oliva rounded border-cinza-claro focus:ring-verde-oliva"
-                      />
-                      <span>
-                        Consinto com o tratamento dos meus dados pessoais e de saúde conforme a 
-                        <a href="/lgpd" target="_blank" className="text-verde-oliva underline ml-1">Lei Geral de Proteção de Dados (LGPD)</a>.
-                      </span>
-                    </label>
+                    <div className={`p-3 rounded-lg ${fieldErrors.termoConsentimento ? 'bg-red-50 border border-red-300' : ''}`}>
+                      <label className={checkboxLabelClass}>
+                        <input
+                          type="checkbox"
+                          checked={formData.termoConsentimento}
+                          onChange={(e) => updateField('termoConsentimento', e.target.checked)}
+                          className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva ${fieldErrors.termoConsentimento ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
+                        />
+                        <span className={fieldErrors.termoConsentimento ? 'text-red-600' : ''}>
+                          Consinto com o tratamento dos meus dados pessoais e de saúde conforme a 
+                          <a href="/lgpd" target="_blank" className="text-verde-oliva underline ml-1">Lei Geral de Proteção de Dados (LGPD)</a>.
+                        </span>
+                      </label>
+                    </div>
 
-                    <label className={checkboxLabelClass}>
-                      <input
-                        type="checkbox"
-                        checked={formData.termoPoliticaPrivacidade}
-                        onChange={(e) => updateField('termoPoliticaPrivacidade', e.target.checked)}
-                        className="w-5 h-5 mt-0.5 text-verde-oliva rounded border-cinza-claro focus:ring-verde-oliva"
-                      />
-                      <span>
-                        Li e aceito a <a href="/politica-privacidade" target="_blank" className="text-verde-oliva underline">Política de Privacidade</a> da ABRACANM.
-                      </span>
-                    </label>
+                    <div className={`p-3 rounded-lg ${fieldErrors.termoPoliticaPrivacidade ? 'bg-red-50 border border-red-300' : ''}`}>
+                      <label className={checkboxLabelClass}>
+                        <input
+                          type="checkbox"
+                          checked={formData.termoPoliticaPrivacidade}
+                          onChange={(e) => updateField('termoPoliticaPrivacidade', e.target.checked)}
+                          className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva ${fieldErrors.termoPoliticaPrivacidade ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
+                        />
+                        <span className={fieldErrors.termoPoliticaPrivacidade ? 'text-red-600' : ''}>
+                          Li e aceito a <a href="/politica-privacidade" target="_blank" className="text-verde-oliva underline">Política de Privacidade</a> da ABRACANM.
+                        </span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -526,7 +595,7 @@ export default function CadastroAssociadoClient() {
               
               <div className="space-y-4">
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>CEP *</span>
+                  <span className={getLabelClass('cep')}>CEP *</span>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -538,35 +607,38 @@ export default function CadastroAssociadoClient() {
                           buscarCEP(formatted);
                         }
                       }}
-                      className={inputClass}
+                      className={getInputClass('cep')}
                       placeholder="00000-000"
                       maxLength={9}
                     />
                     {cepLoading && <span className="text-sm text-cinza-medio self-center">Buscando...</span>}
                   </div>
+                  {fieldErrors.cep && <span className="text-xs text-red-500">{fieldErrors.cep}</span>}
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>Rua *</span>
+                  <span className={getLabelClass('rua')}>Rua *</span>
                   <input
                     type="text"
                     value={formData.rua}
                     onChange={(e) => updateField('rua', e.target.value)}
-                    className={inputClass}
+                    className={getInputClass('rua')}
                     placeholder="Nome da rua"
                   />
+                  {fieldErrors.rua && <span className="text-xs text-red-500">{fieldErrors.rua}</span>}
                 </label>
 
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex flex-col gap-1.5">
-                    <span className={labelClass}>Número *</span>
+                    <span className={getLabelClass('numero')}>Número *</span>
                     <input
                       type="text"
                       value={formData.numero}
                       onChange={(e) => updateField('numero', e.target.value)}
-                      className={inputClass}
+                      className={getInputClass('numero')}
                       placeholder="123"
                     />
+                    {fieldErrors.numero && <span className="text-xs text-red-500">{fieldErrors.numero}</span>}
                   </label>
 
                   <label className="flex flex-col gap-1.5">
@@ -582,7 +654,7 @@ export default function CadastroAssociadoClient() {
                 </div>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>Bairro *</span>
+                  <span className={labelClass}>Bairro</span>
                   <input
                     type="text"
                     value={formData.bairro}
@@ -594,26 +666,28 @@ export default function CadastroAssociadoClient() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex flex-col gap-1.5">
-                    <span className={labelClass}>Cidade *</span>
+                    <span className={getLabelClass('cidade')}>Cidade *</span>
                     <input
                       type="text"
                       value={formData.cidade}
                       onChange={(e) => updateField('cidade', e.target.value)}
-                      className={inputClass}
+                      className={getInputClass('cidade')}
                       placeholder="Cidade"
                     />
+                    {fieldErrors.cidade && <span className="text-xs text-red-500">{fieldErrors.cidade}</span>}
                   </label>
 
                   <label className="flex flex-col gap-1.5">
-                    <span className={labelClass}>Estado *</span>
+                    <span className={getLabelClass('estado')}>Estado *</span>
                     <input
                       type="text"
                       value={formData.estado}
-                      onChange={(e) => updateField('estado', e.target.value)}
-                      className={inputClass}
+                      onChange={(e) => updateField('estado', e.target.value.toUpperCase())}
+                      className={getInputClass('estado')}
                       placeholder="UF"
                       maxLength={2}
                     />
+                    {fieldErrors.estado && <span className="text-xs text-red-500">{fieldErrors.estado}</span>}
                   </label>
                 </div>
               </div>
