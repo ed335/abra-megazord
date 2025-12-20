@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { getPrismaClient } from '@/lib/prisma';
 import * as jsonwebtoken from 'jsonwebtoken';
-
-const prisma = new PrismaClient();
 
 interface PreAnamneseRequest {
   perfil: 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';
@@ -25,7 +23,11 @@ interface DiagnosticoResult {
 }
 
 function getJWTSecret(): string {
-  return process.env.JWT_SECRET || 'abracanm-secret-key-2024';
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET não configurado');
+  }
+  return secret;
 }
 
 function generateDiagnostico(data: PreAnamneseRequest, patologiaCID: string | null, jaUsaCannabis: boolean): DiagnosticoResult {
@@ -162,6 +164,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const prisma = getPrismaClient();
+
     const paciente = await prisma.paciente.findUnique({
       where: { usuarioId: decoded.sub }
     });
@@ -173,7 +177,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingPreAnamnese = await (prisma as unknown as { preAnamnese: { findUnique: (args: { where: { pacienteId: string } }) => Promise<unknown> } }).preAnamnese.findUnique({
+    const existingPreAnamnese = await prisma.preAnamnese.findUnique({
       where: { pacienteId: paciente.id }
     });
 
@@ -191,7 +195,7 @@ export async function POST(request: NextRequest) {
     const proximoPasso = generateProximoPasso(body.preferenciaAcompanhamento);
     const scorePrioridade = calculateScorePrioridade(body, diagnostico);
 
-    await (prisma as unknown as { preAnamnese: { create: (args: { data: Record<string, unknown> }) => Promise<unknown> } }).preAnamnese.create({
+    await prisma.preAnamnese.create({
       data: {
         pacienteId: paciente.id,
         perfil: body.perfil,
@@ -240,6 +244,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const prisma = getPrismaClient();
+
     const paciente = await prisma.paciente.findUnique({
       where: { usuarioId: decoded.sub }
     });
@@ -251,7 +257,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const preAnamnese = await (prisma as unknown as { preAnamnese: { findUnique: (args: { where: { pacienteId: string } }) => Promise<unknown> } }).preAnamnese.findUnique({
+    const preAnamnese = await prisma.preAnamnese.findUnique({
       where: { pacienteId: paciente.id }
     });
 

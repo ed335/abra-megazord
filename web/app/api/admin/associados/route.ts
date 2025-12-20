@@ -72,6 +72,13 @@ export async function GET(request: NextRequest) {
               ativo: true,
               emailVerificado: true,
             }
+          },
+          preAnamnese: {
+            select: {
+              id: true,
+              scorePrioridade: true,
+              criadoEm: true,
+            }
           }
         }
       }),

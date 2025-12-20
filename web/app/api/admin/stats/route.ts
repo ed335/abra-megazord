@@ -27,6 +27,8 @@ export async function GET(request: NextRequest) {
       novosMesPassado,
       comDocumentosMedicos,
       semDocumentosMedicos,
+      comPreAnamnese,
+      semPreAnamnese,
       porEstado,
       porPatologia,
       cadastrosPorMes,
@@ -60,6 +62,14 @@ export async function GET(request: NextRequest) {
       
       prisma.paciente.count({
         where: { documentosMedicosUrls: { isEmpty: true } }
+      }),
+      
+      prisma.paciente.count({
+        where: { preAnamnese: { isNot: null } }
+      }),
+      
+      prisma.paciente.count({
+        where: { preAnamnese: null }
       }),
       
       prisma.paciente.groupBy({
@@ -102,6 +112,8 @@ export async function GET(request: NextRequest) {
         crescimento,
         comDocumentosMedicos,
         semDocumentosMedicos,
+        comPreAnamnese,
+        semPreAnamnese,
       },
       porEstado: porEstado.map(e => ({
         estado: e.estado || 'Não informado',
