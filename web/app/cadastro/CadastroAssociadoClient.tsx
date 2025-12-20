@@ -144,15 +144,15 @@ export default function CadastroAssociadoClient() {
     
     setCepLoading(true);
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+      const response = await fetch(`/api/cep/${cleanCep}`);
       const data = await response.json();
-      if (!data.erro) {
+      if (response.ok && !data.error) {
         setFormData(prev => ({
           ...prev,
           rua: data.logradouro || '',
           bairro: data.bairro || '',
-          cidade: data.localidade || '',
-          estado: data.uf || '',
+          cidade: data.cidade || '',
+          estado: data.estado || '',
         }));
       }
     } catch (error) {
