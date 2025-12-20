@@ -1,357 +1,640 @@
-# 🚀 Guia de Setup - AbraCann Development
+# ABRACANM - Guia de Instalação e Deploy
 
-Instruções completas para configurar a workspace de desenvolvimento do AbraCann.
+Este guia explica como instalar e configurar a aplicação ABRACANM em um servidor VPS ou ambiente de produção.
+
+## Índice
+
+1. [Requisitos do Sistema](#requisitos-do-sistema)
+2. [Instalação Rápida](#instalação-rápida)
+3. [Configuração Detalhada](#configuração-detalhada)
+4. [Variáveis de Ambiente](#variáveis-de-ambiente)
+5. [Banco de Dados](#banco-de-dados)
+6. [Build e Produção](#build-e-produção)
+7. [PM2 - Gerenciador de Processos](#pm2---gerenciador-de-processos)
+8. [Nginx - Proxy Reverso](#nginx---proxy-reverso)
+9. [SSL/HTTPS](#sslhttps)
+10. [Segurança](#segurança)
+11. [Manutenção](#manutenção)
+12. [Solução de Problemas](#solução-de-problemas)
 
 ---
 
-## 📋 Pré-requisitos
+## Requisitos do Sistema
 
-Certifique-se de ter instalado:
+### Software Necessário
 
-- **Node.js 18+** - [nodejs.org](https://nodejs.org)
-- **Git** - [git-scm.com](https://git-scm.com)
-- **Docker** - [docker.com](https://www.docker.com) (recomendado)
-- **PostgreSQL 14+** - [postgresql.org](https://www.postgresql.org) (OU use Docker)
+| Software | Versão Mínima | Comando para verificar |
+|----------|---------------|------------------------|
+| Node.js | 18.x ou superior | `node --version` |
+| npm | 9.x ou superior | `npm --version` |
+| PostgreSQL | 14.x ou superior | `psql --version` |
+| Git | 2.x | `git --version` |
 
-Verifique as versões:
+### Hardware Recomendado
+
+- **CPU**: 2 vCPUs
+- **RAM**: 2 GB (mínimo 1 GB)
+- **Disco**: 20 GB SSD
+- **Sistema Operacional**: Ubuntu 22.04 LTS, Debian 12, ou similar
+
+---
+
+## Instalação Rápida
+
 ```bash
-node --version    # v18.18.0 ou superior
-npm --version     # 9.0.0 ou superior
-git --version     # 2.30.0 ou superior
-docker --version  # 20.10.0 ou superior (se usando Docker)
+# 1. Clone o repositório
+git clone https://github.com/seu-usuario/abracanm.git
+cd abracanm
+
+# 2. Instale as dependências
+cd web && npm install
+
+# 3. Configure as variáveis de ambiente
+cp .env.example .env
+nano .env  # Edite com suas configurações
+
+# 4. Configure o banco de dados
+npx prisma migrate deploy
+npx prisma generate
+
+# 5. Build para produção
+npm run build
+
+# 6. Inicie a aplicação
+npm start
 ```
 
 ---
 
-## 1️⃣ Clone & Setup Inicial
+## Configuração Detalhada
+
+### 1. Instalar Node.js (via NVM)
+
+```bash
+# Instalar NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+
+# Instalar Node.js 20 LTS
+nvm install 20
+nvm use 20
+nvm alias default 20
+```
+
+### 2. Instalar PostgreSQL
+
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+# Iniciar o serviço
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+### 3. Criar Banco de Dados
+
+```bash
+# Acessar como usuário postgres
+sudo -u postgres psql
+
+# Criar usuário e banco
+CREATE USER abracanm WITH PASSWORD 'sua_senha_segura';
+CREATE DATABASE abracanm_db OWNER abracanm;
+GRANT ALL PRIVILEGES ON DATABASE abracanm_db TO abracanm;
+
+# Sair
+\q
+```
+
+### 4. Clonar e Configurar o Projeto
 
 ```bash
 # Clone o repositório
-git clone https://github.com/abracann/abracann.git
-cd abracann
+git clone https://github.com/seu-usuario/abracanm.git
+cd abracanm/web
 
-# Configure Git
-git config user.name "Seu Nome"
-git config user.email "seu-email@example.com"
-
-# Crie uma branch de desenvolvimento
-git checkout -b develop
-```
-
----
-
-## 2️⃣ Database Setup
-
-### Opção A: Com Docker (Recomendado)
-
-```bash
-# Inicie PostgreSQL + pgAdmin
-docker-compose up -d postgres pgadmin
-
-# Aguarde ~10 segundos para o PostgreSQL iniciar
-sleep 10
-
-# Verifique se está rodando
-docker ps
-
-# Acesse pgAdmin em http://localhost:5050
-# - Email: admin@abracann.local
-# - Senha: admin
-```
-
-### Opção B: PostgreSQL Local
-
-```bash
-# macOS (com Homebrew)
-brew install postgresql
-brew services start postgresql
-createdb abracann_dev
-
-# Linux (Ubuntu/Debian)
-sudo apt install postgresql postgresql-contrib
-sudo systemctl start postgresql
-sudo -u postgres createdb abracann_dev
-
-# Windows
-# Baixe do postgresql.org e siga o instalador
-```
-
----
-
-## 3️⃣ Backend Setup
-
-```bash
-cd backend
-
-# Instale dependências
+# Instale as dependências
 npm install
 
-# Configure variáveis de ambiente
+# Copie o arquivo de exemplo de variáveis
 cp .env.example .env
-
-# Edite .env com suas credenciais (se necessário)
-# DATABASE_URL="postgresql://abracann_user:abracann_password@localhost:5432/abracann_dev"
-
-# Gere o Prisma client
-npm run prisma:generate
-
-# Execute migrations do banco
-npm run prisma:migrate
-
-# (Opcional) Visualize o banco com Prisma Studio
-npm run prisma:studio
-# Acesse http://localhost:5555
-
-# Inicie o servidor
-npm run start:dev
-
-# API estará em http://localhost:3001
-```
-
-**Verifique se está rodando:**
-```bash
-curl http://localhost:3001/health
-# Resposta esperada: { "status": "ok" }
 ```
 
 ---
 
-## 4️⃣ Frontend Setup
+## Variáveis de Ambiente
 
-```bash
-# Em outra janela de terminal
-cd web
+Edite o arquivo `.env` com as seguintes configurações:
 
-# Instale dependências
-npm install
-
-# Configure variáveis de ambiente
-cp .env.example .env.local
-
-# Inicie o servidor de desenvolvimento
-npm run dev
-
-# Aplicação estará em http://localhost:3000
-```
-
-**Verifique:**
-- Abra http://localhost:3000 no navegador
-- Veja a home page carregando
-
----
-
-## 5️⃣ Email Setup (Opcional - para testes)
-
-```bash
-# Inicie MailHog (já está no docker-compose)
-docker-compose up -d mailhog
-
-# Acesse a interface: http://localhost:8025
-# Todos os emails enviados localmente serão captados lá
-```
-
-Configure no `.env` do backend:
 ```env
-SMTP_HOST=localhost
-SMTP_PORT=1025
+# ============================================
+# BANCO DE DADOS (OBRIGATÓRIO)
+# ============================================
+DATABASE_URL="postgresql://abracanm:sua_senha@localhost:5432/abracanm_db"
+
+# ============================================
+# AUTENTICAÇÃO (OBRIGATÓRIO)
+# ============================================
+# Gere uma chave segura com: openssl rand -base64 32
+JWT_SECRET="sua-chave-jwt-muito-segura-com-pelo-menos-32-caracteres"
+
+# ============================================
+# SERVIDOR (OPCIONAL)
+# ============================================
+# Porta do servidor (padrão: 3000 em produção)
+PORT=3000
+
+# URL base da aplicação
+NEXT_PUBLIC_APP_URL="https://seudominio.com.br"
+
+# ============================================
+# UPLOADS (OPCIONAL)
+# ============================================
+# Diretório para uploads (padrão: ./uploads)
+UPLOAD_DIR="./uploads"
+
+# Tamanho máximo de upload em bytes (padrão: 10MB)
+MAX_FILE_SIZE=10485760
 ```
 
----
-
-## ✅ Verificação de Setup
-
-Rode este script para verificar tudo:
+### Gerar JWT_SECRET Seguro
 
 ```bash
-#!/bin/bash
+# Linux/Mac
+openssl rand -base64 32
 
-echo "🔍 Verificando setup do AbraCann..."
-
-# Check Node
-node --version && echo "✅ Node.js OK" || echo "❌ Node.js não encontrado"
-
-# Check Git
-git --version && echo "✅ Git OK" || echo "❌ Git não encontrado"
-
-# Check Docker (se instalado)
-if command -v docker &> /dev/null; then
-  docker ps && echo "✅ Docker OK" || echo "⚠️ Docker não está rodando"
-else
-  echo "⚠️ Docker não instalado (opcional)"
-fi
-
-# Check Backend
-if [ -d "backend" ]; then
-  cd backend
-  npm ls > /dev/null 2>&1 && echo "✅ Backend dependencies OK" || echo "❌ Backend não foi instalado"
-  cd ..
-fi
-
-# Check Frontend
-if [ -d "web" ]; then
-  cd web
-  npm ls > /dev/null 2>&1 && echo "✅ Frontend dependencies OK" || echo "❌ Frontend não foi instalado"
-  cd ..
-fi
-
-# Check Database
-if command -v psql &> /dev/null; then
-  psql -l | grep abracann_dev && echo "✅ Database OK" || echo "⚠️ Database não existe"
-else
-  echo "⚠️ PostgreSQL CLI não instalado"
-fi
-
-echo ""
-echo "🎉 Verificação concluída!"
+# Ou use este comando Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 ---
 
-## 🌐 URLs de Desenvolvimento
+## Banco de Dados
 
-Após completar o setup, acesse:
-
-| Serviço | URL | Credenciais |
-|---------|-----|------------|
-| **Frontend** | http://localhost:3000 | - |
-| **Backend API** | http://localhost:3001 | - |
-| **pgAdmin** | http://localhost:5050 | admin@abracann.local / admin |
-| **Prisma Studio** | http://localhost:5555 | - |
-| **MailHog** | http://localhost:8025 | - |
-
----
-
-## 📝 Scripts Úteis
-
-### Frontend
+### Aplicar Migrations (Produção)
 
 ```bash
 cd web
 
-npm run dev              # Inicia dev server
-npm run build           # Build para produção
-npm run lint            # ESLint
-npm run format          # Prettier
-npm run type-check      # TypeScript check
+# Aplicar migrations existentes (RECOMENDADO para produção)
+npx prisma migrate deploy
+
+# Gerar cliente Prisma
+npx prisma generate
 ```
 
-### Backend
+> **Nota**: Use `prisma migrate deploy` em produção para aplicar as migrations já commitadas. 
+> Use `prisma db push` apenas em desenvolvimento para sincronização rápida.
+
+### Habilitar Extensões do PostgreSQL
+
+Antes de criar o administrador, habilite as extensões necessárias:
 
 ```bash
-cd backend
+# Acesse o banco de dados como superusuário
+sudo -u postgres psql -d abracanm_db
 
-npm run start:dev       # Inicia dev server com hot reload
-npm run build           # Build
-npm run lint            # ESLint
-npm run prisma:studio   # Abre Prisma Studio (GUI do banco)
-npm test                # Testes
-npm run test:cov        # Coverage
+# Habilitar extensão para UUIDs
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+# Sair
+\q
 ```
 
-### Geral
+### Criar Administrador Inicial
+
+**Opção 1: Via Script Node.js (Recomendado)**
+
+Crie um arquivo `create-admin.js` na pasta `web`:
+
+```javascript
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
+
+const prisma = new PrismaClient();
+
+async function main() {
+  const senha = await bcrypt.hash('sua_senha_segura', 10);
+  
+  const admin = await prisma.paciente.create({
+    data: {
+      nomeCompleto: 'Administrador',
+      email: 'admin@abracanm.org.br',
+      whatsapp: '11999999999',
+      senha: senha,
+      role: 'ADMIN',
+      ativo: true
+    }
+  });
+  
+  console.log('Admin criado:', admin.email);
+}
+
+main()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());
+```
+
+Execute:
+```bash
+cd web
+node create-admin.js
+rm create-admin.js  # Remova após criar
+```
+
+**Opção 2: Via SQL**
 
 ```bash
-# Docker
-docker-compose up       # Inicia todos os serviços
-docker-compose down     # Para todos os serviços
-docker-compose logs -f  # Ver logs em tempo real
+# Primeiro, gere o hash da senha
+node -e "const bcrypt = require('bcrypt'); bcrypt.hash('sua_senha', 10).then(h => console.log(h));"
 
-# Database
-npx prisma migrate dev      # Cria nova migration
-npx prisma migrate deploy   # Aplica migrations (produção)
-npx prisma db seed          # Seed do banco (dados iniciais)
+# Acesse o banco de dados
+psql -U abracanm -d abracanm_db
+
+# Insira o administrador (substitua o hash gerado acima)
+INSERT INTO "Paciente" (
+  "id",
+  "nomeCompleto",
+  "email",
+  "whatsapp",
+  "senha",
+  "role",
+  "ativo",
+  "criadoEm"
+) VALUES (
+  gen_random_uuid(),
+  'Administrador',
+  'admin@abracanm.org.br',
+  '11999999999',
+  '$2b$10$COLE_O_HASH_AQUI',
+  'ADMIN',
+  true,
+  NOW()
+);
+```
+
+### Backup do Banco
+
+```bash
+# Criar backup
+pg_dump -U abracanm -d abracanm_db > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Restaurar backup
+psql -U abracanm -d abracanm_db < backup.sql
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## Build e Produção
 
-### Erro: "Cannot find module 'next'"
+### Build da Aplicação
 
 ```bash
 cd web
-npm install
+
+# Build para produção
 npm run build
 ```
 
-### Erro: "Connection refused" (Database)
+### Iniciar em Produção
 
 ```bash
-# Verifique se o PostgreSQL está rodando
-docker ps | grep postgres
+# Iniciar servidor de produção
+npm start
 
-# Se não estiver:
-docker-compose up -d postgres
-sleep 10
-```
-
-### Erro: "EADDRINUSE: address already in use :::3000"
-
-```bash
-# Porta já está em uso. Matamos o processo:
-# macOS/Linux:
-lsof -ti:3000 | xargs kill -9
-
-# Windows:
-netstat -ano | findstr :3000
-taskkill /PID <PID> /F
-```
-
-### Erro: "Prisma client not generated"
-
-```bash
-cd backend
-npm run prisma:generate
-```
-
-### Erro: "No changes in schema detected"
-
-```bash
-cd backend
-npx prisma migrate dev --name init
+# Ou especificar porta
+PORT=3000 npm start
 ```
 
 ---
 
-## 🔐 Segurança de Desenvolvimento
+## PM2 - Gerenciador de Processos
 
-**Nunca faça commit de:**
-- `.env` com dados sensíveis
-- Senhas, API keys, tokens
-- Arquivos pessoais
+O PM2 mantém a aplicação rodando continuamente e reinicia automaticamente em caso de falhas.
 
-**Boas práticas:**
+### Instalar PM2
+
 ```bash
-# Copie .env.example para .env.local
-cp backend/.env.example backend/.env
-cp web/.env.example web/.env.local
+npm install -g pm2
+```
 
-# Mude valores sensíveis
-vim backend/.env
+### Usar com ecosystem.config.js
 
-# Adicione .env ao .gitignore (já feito)
+O arquivo `ecosystem.config.js` já está configurado na raiz do projeto:
+
+```bash
+# Iniciar aplicação
+pm2 start ecosystem.config.js
+
+# Salvar configuração para reinício automático
+pm2 save
+pm2 startup
+
+# Verificar status
+pm2 status
+
+# Ver logs
+pm2 logs abracanm
+
+# Reiniciar
+pm2 restart abracanm
+
+# Parar
+pm2 stop abracanm
+```
+
+### Comandos Úteis do PM2
+
+```bash
+# Monitorar recursos
+pm2 monit
+
+# Listar processos
+pm2 list
+
+# Recarregar sem downtime
+pm2 reload abracanm
+
+# Deletar processo
+pm2 delete abracanm
 ```
 
 ---
 
-## 🤝 Próximos Passos
+## Nginx - Proxy Reverso
 
-1. ✅ **Setup Concluído!**
-2. Leia a documentação em `/docs`
-3. Consulte o Design System em `/design-system`
-4. Comece a desenvolver!
+### Instalar Nginx
+
+```bash
+sudo apt install nginx
+```
+
+### Configuração do Virtual Host
+
+Crie o arquivo `/etc/nginx/sites-available/abracanm`:
+
+```nginx
+server {
+    listen 80;
+    server_name seudominio.com.br www.seudominio.com.br;
+
+    # Logs
+    access_log /var/log/nginx/abracanm_access.log;
+    error_log /var/log/nginx/abracanm_error.log;
+
+    # Tamanho máximo de upload
+    client_max_body_size 50M;
+
+    # Headers de segurança
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+
+    # Proxy para Next.js
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+    }
+
+    # Arquivos estáticos (opcional, Next.js já serve)
+    location /_next/static {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_cache_valid 60m;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Uploads
+    location /uploads {
+        alias /caminho/para/abracanm/web/uploads;
+        expires 30d;
+        add_header Cache-Control "public";
+    }
+}
+```
+
+### Ativar Configuração
+
+```bash
+# Criar link simbólico
+sudo ln -s /etc/nginx/sites-available/abracanm /etc/nginx/sites-enabled/
+
+# Testar configuração
+sudo nginx -t
+
+# Recarregar Nginx
+sudo systemctl reload nginx
+```
 
 ---
 
-## 📞 Suporte
+## SSL/HTTPS
 
-Problemas no setup?
+### Instalar Certbot (Let's Encrypt)
 
-- 📧 dev@abracann.com
-- 💬 Slack: #setup-support
-- 🐛 Issues: GitHub Issues
+```bash
+sudo apt install certbot python3-certbot-nginx
+```
+
+### Obter Certificado
+
+```bash
+sudo certbot --nginx -d seudominio.com.br -d www.seudominio.com.br
+```
+
+### Renovação Automática
+
+```bash
+# Testar renovação
+sudo certbot renew --dry-run
+
+# O certbot já configura renovação automática via cron
+```
 
 ---
 
-**Última Atualização:** Dezembro 2025  
-**Versão:** 1.0
+## Segurança
+
+### Firewall (UFW)
+
+```bash
+# Instalar UFW
+sudo apt install ufw
+
+# Configurar regras
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow ssh
+sudo ufw allow 'Nginx Full'
+
+# Ativar
+sudo ufw enable
+```
+
+### Boas Práticas
+
+1. **JWT_SECRET**: Use uma chave de pelo menos 32 caracteres, gerada aleatoriamente
+2. **Senhas do banco**: Use senhas fortes e únicas
+3. **Backups**: Configure backups automáticos do banco de dados
+4. **Atualizações**: Mantenha o sistema e dependências atualizados
+5. **Logs**: Monitore logs regularmente para detectar problemas
+6. **HTTPS**: Sempre use SSL em produção
+
+### Verificar Segurança
+
+```bash
+# Verificar portas abertas
+sudo netstat -tlnp
+
+# Verificar processos rodando
+ps aux | grep node
+
+# Verificar logs de acesso
+sudo tail -f /var/log/nginx/abracanm_access.log
+```
+
+---
+
+## Manutenção
+
+### Atualizar Aplicação
+
+```bash
+cd abracanm
+
+# Parar aplicação
+pm2 stop abracanm
+
+# Atualizar código
+git pull origin main
+
+# Instalar dependências
+cd web && npm install
+
+# Atualizar banco de dados
+npx prisma db push
+
+# Rebuild
+npm run build
+
+# Reiniciar
+pm2 start abracanm
+```
+
+### Monitoramento
+
+```bash
+# Status do PM2
+pm2 status
+
+# Uso de memória e CPU
+pm2 monit
+
+# Logs em tempo real
+pm2 logs abracanm
+
+# Verificar saúde do banco
+psql -U abracanm -d abracanm_db -c "SELECT 1;"
+```
+
+---
+
+## Solução de Problemas
+
+### Erro: "JWT_SECRET não configurado"
+
+```bash
+# Verifique se a variável está definida
+echo $JWT_SECRET
+
+# Ou verifique no arquivo .env
+cat .env | grep JWT_SECRET
+```
+
+### Erro: "Não foi possível conectar ao banco de dados"
+
+```bash
+# Verificar se PostgreSQL está rodando
+sudo systemctl status postgresql
+
+# Testar conexão
+psql -U abracanm -d abracanm_db -c "SELECT 1;"
+
+# Verificar URL no .env
+cat .env | grep DATABASE_URL
+```
+
+### Erro: "EACCES permission denied"
+
+```bash
+# Corrigir permissões
+sudo chown -R $USER:$USER /caminho/para/abracanm
+chmod -R 755 /caminho/para/abracanm
+```
+
+### Aplicação não inicia
+
+```bash
+# Verificar logs do PM2
+pm2 logs abracanm --lines 100
+
+# Verificar se a porta está em uso
+sudo lsof -i :3000
+
+# Matar processo na porta
+sudo kill -9 $(sudo lsof -t -i:3000)
+```
+
+### Erro 502 Bad Gateway (Nginx)
+
+```bash
+# Verificar se a aplicação está rodando
+pm2 status
+
+# Verificar logs do Nginx
+sudo tail -f /var/log/nginx/abracanm_error.log
+
+# Reiniciar Nginx
+sudo systemctl restart nginx
+```
+
+---
+
+## Estrutura do Projeto
+
+```
+abracanm/
+├── web/                    # Aplicação Next.js
+│   ├── app/               # Páginas e rotas
+│   ├── components/        # Componentes React
+│   ├── lib/               # Utilitários
+│   ├── prisma/            # Schema do banco
+│   ├── public/            # Arquivos estáticos
+│   └── uploads/           # Uploads de usuários
+├── backend/               # API NestJS (legado)
+├── docs/                  # Documentação
+├── ecosystem.config.js    # Configuração PM2
+├── .env.example          # Exemplo de variáveis
+└── SETUP.md              # Este arquivo
+```
+
+---
+
+## Suporte
+
+- **Email**: ouvidoria@abracanm.org.br
+- **Documentação**: Consulte a pasta `/docs`
+
+---
+
+*Última atualização: Dezembro 2024*
