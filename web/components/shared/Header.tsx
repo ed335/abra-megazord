@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Button from './Button';
 import { clearToken, getToken } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
-import { Shield } from 'lucide-react';
+import { Shield, User } from 'lucide-react';
 
 function parseJwt(token: string): { role?: string } | null {
   try {
@@ -88,7 +88,14 @@ export default function Header() {
                 </Link>
               )}
               <Link href="/dashboard" className="hidden sm:inline text-sm text-cinza-escuro underline">
-                Minha Área
+                Minha Area
+              </Link>
+              <Link 
+                href="/perfil" 
+                className="inline-flex items-center gap-1 px-2 py-1.5 text-cinza-medio hover:text-cinza-escuro transition-colors"
+                title="Meu Perfil"
+              >
+                <User size={18} />
               </Link>
               <Button variant="secondary" size="sm" onClick={handleLogout}>
                 Sair
