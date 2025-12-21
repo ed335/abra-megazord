@@ -171,6 +171,17 @@ cd backend && npx prisma db push
 - **Termos de Uso**: `/termos-uso` - condições de uso, responsabilidades, propriedade intelectual
 - **Política de Cookies**: `/politica-cookies` - tipos de cookies, finalidades, gerenciamento
 
+### Diagnóstico Melhorado (Dec 2024)
+- **Explicação do Score**: seção expansível "Como calculamos" mostrando critérios, descrição e pontos de cada fator
+- **Score de Prioridade**: cálculo baseado em gravidade, urgência clínica, contraindicações e histórico de tratamento
+- **CTA Agendar Consulta**: botão proeminente após o diagnóstico para agendar consulta
+- **Página de Agendamento**: `/agendar` - opções de teleconsulta e presencial com links para WhatsApp
+
+### Navegação Pré-Anamnese (Dec 2024)
+- **URL Step Persistence**: cada passo da pré-anamnese atualiza a URL (?etapa=objetivo)
+- **Histórico do Navegador**: botão voltar do browser funciona para navegar entre passos
+- **Validação Visual LGPD**: checkbox de consentimento fica vermelho se não marcado
+
 ## Security Notes
 - JWT_SECRET must be configured as environment variable (no fallback)
 - Admin tokens are validated against database to ensure account exists and is active

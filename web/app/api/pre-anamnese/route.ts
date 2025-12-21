@@ -132,15 +132,53 @@ function generateProximoPasso(preferencia: string): string {
   return 'Escolha entre teleconsulta ou atendimento presencial e agende sua avaliação médica';
 }
 
-function calculateScorePrioridade(data: PreAnamneseRequest, diagnostico: DiagnosticoResult): number {
-  let score = data.gravidade * 20;
+function calculateScorePrioridade(data: PreAnamneseRequest, diagnostico: DiagnosticoResult): { score: number; explicacao: ScoreExplanation[] } {
+  const explicacao: ScoreExplanation[] = [];
+  let score = 0;
   
-  if (diagnostico.nivelUrgencia === 'alta') score += 30;
-  else if (diagnostico.nivelUrgencia === 'moderada') score += 15;
+  const gravidadePontos = data.gravidade * 20;
+  explicacao.push({
+    criterio: 'Intensidade dos Sintomas',
+    descricao: `Você indicou nível ${data.gravidade} de 5 na escala de gravidade`,
+    pontos: gravidadePontos
+  });
+  score += gravidadePontos;
   
-  if (diagnostico.contraindicacoes.length > 0) score += 10;
+  if (diagnostico.nivelUrgencia === 'alta') {
+    explicacao.push({
+      criterio: 'Urgência Clínica',
+      descricao: 'Condição identificada como alta prioridade médica',
+      pontos: 30
+    });
+    score += 30;
+  } else if (diagnostico.nivelUrgencia === 'moderada') {
+    explicacao.push({
+      criterio: 'Urgência Clínica',
+      descricao: 'Condição identificada como prioridade moderada',
+      pontos: 15
+    });
+    score += 15;
+  }
   
-  return Math.min(score, 100);
+  if (diagnostico.contraindicacoes.length > 0) {
+    explicacao.push({
+      criterio: 'Atenção Especial',
+      descricao: 'Existem fatores que requerem avaliação médica cuidadosa',
+      pontos: 10
+    });
+    score += 10;
+  }
+  
+  if (data.tratamentosPrevios.length > 0 && !data.tratamentosPrevios.includes('Nenhum')) {
+    explicacao.push({
+      criterio: 'Histórico de Tratamento',
+      descricao: 'Você já tentou outros tratamentos anteriormente',
+      pontos: 5
+    });
+    score += 5;
+  }
+  
+  return { score: Math.min(score, 100), explicacao };
 }
 
 async function verifyToken(request: NextRequest) {
@@ -198,7 +236,9 @@ export async function POST(request: NextRequest) {
     const diagnostico = generateDiagnostico(body, paciente.patologiaCID, paciente.jaUsaCannabis);
     const recomendacoes = generateRecomendacoes(body, diagnostico);
     const proximoPasso = generateProximoPasso(body.preferenciaAcompanhamento);
-    const scorePrioridade = calculateScorePrioridade(body, diagnostico);
+    const { score: scorePrioridade, explicacao: scoreExplicacao } = calculateScorePrioridade(body, diagnostico);
+    
+    diagnostico.scoreExplicacao = scoreExplicacao;
 
     await prisma.preAnamnese.create({
       data: {
@@ -225,7 +265,8 @@ export async function POST(request: NextRequest) {
         ...diagnostico,
         recomendacoes,
         proximoPasso,
-        scorePrioridade
+        scorePrioridade,
+        scoreExplicacao
       }
     });
 

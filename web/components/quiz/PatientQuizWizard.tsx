@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useMemo, useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   AlertCircle,
   ArrowLeft,
@@ -108,6 +108,7 @@ interface Props {
 
 export default function PatientQuizWizard({ onComplete }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<PreAnamneseForm>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,6 +118,27 @@ export default function PatientQuizWizard({ onComplete }: Props) {
 
   const totalSteps = quizSteps.length;
   const progress = Math.round(((step + 1) / totalSteps) * 100);
+
+  useEffect(() => {
+    const etapa = searchParams.get('etapa');
+    if (etapa) {
+      const stepIndex = quizSteps.findIndex(s => s.key === etapa);
+      if (stepIndex >= 0) {
+        setStep(stepIndex);
+      }
+    }
+  }, [searchParams]);
+
+  const updateUrlStep = (newStep: number, isBack: boolean = false) => {
+    const stepKey = quizSteps[newStep]?.key;
+    if (stepKey) {
+      if (isBack) {
+        router.back();
+      } else {
+        router.push(`/pre-anamnese?etapa=${stepKey}`, { scroll: false });
+      }
+    }
+  };
 
   const updateForm = <K extends keyof PreAnamneseForm>(key: K, value: PreAnamneseForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -179,7 +201,9 @@ export default function PatientQuizWizard({ onComplete }: Props) {
     }
     setShowConsentError(false);
     if (step < totalSteps - 1) {
-      setStep((prev) => prev + 1);
+      const newStep = step + 1;
+      setStep(newStep);
+      updateUrlStep(newStep);
     } else {
       handleSubmit();
     }
@@ -187,7 +211,9 @@ export default function PatientQuizWizard({ onComplete }: Props) {
 
   const goBack = () => {
     if (step > 0) {
-      setStep((prev) => prev - 1);
+      const newStep = step - 1;
+      setStep(newStep);
+      updateUrlStep(newStep, true);
     }
   };
 

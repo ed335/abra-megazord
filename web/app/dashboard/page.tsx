@@ -18,7 +18,11 @@ import {
   AlertCircle,
   Activity,
   AlertTriangle,
-  Target
+  Target,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Info
 } from 'lucide-react';
 
 type User = {
@@ -37,6 +41,12 @@ type JourneyStep = {
   icon: React.ReactNode;
 };
 
+interface ScoreExplanation {
+  criterio: string;
+  descricao: string;
+  pontos: number;
+}
+
 interface Diagnostico {
   titulo: string;
   resumo: string;
@@ -44,6 +54,7 @@ interface Diagnostico {
   indicacoes: string[];
   contraindicacoes: string[];
   observacoes: string;
+  scoreExplicacao?: ScoreExplanation[];
 }
 
 interface PreAnamneseData {
@@ -65,6 +76,7 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [preAnamnese, setPreAnamnese] = useState<PreAnamneseData | null>(null);
   const [preAnamneseCompleted, setPreAnamneseCompleted] = useState(false);
+  const [showScoreDetails, setShowScoreDetails] = useState(false);
 
   useEffect(() => {
     const token = getToken();
@@ -310,15 +322,49 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-cinza-claro flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-cinza-medio">Próximo passo</p>
-                  <p className="text-sm text-cinza-escuro">{preAnamnese.proximosPasso}</p>
+              <div className="pt-4 border-t border-cinza-claro">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-xs text-cinza-medio">Próximo passo</p>
+                    <p className="text-sm text-cinza-escuro">{preAnamnese.proximosPasso}</p>
+                  </div>
+                  <div className="text-right">
+                    <button 
+                      onClick={() => setShowScoreDetails(!showScoreDetails)}
+                      className="flex items-center gap-1 text-xs text-cinza-medio hover:text-verde-oliva transition"
+                    >
+                      <Info className="w-3 h-3" />
+                      Como calculamos
+                      {showScoreDetails ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                    <p className="text-2xl font-bold text-verde-oliva">{preAnamnese.scorePrioridade}<span className="text-sm font-normal text-cinza-medio">/100</span></p>
+                    <p className="text-xs text-cinza-medio">Score de Prioridade</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-cinza-medio">Score</p>
-                  <p className="text-lg font-semibold text-verde-oliva">{preAnamnese.scorePrioridade}</p>
-                </div>
+
+                {showScoreDetails && preAnamnese.diagnostico.scoreExplicacao && (
+                  <div className="mb-4 p-3 bg-cinza-muito-claro/50 rounded-lg space-y-2">
+                    <p className="text-xs font-medium text-cinza-escuro mb-2">Composição do Score:</p>
+                    {preAnamnese.diagnostico.scoreExplicacao.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-xs">
+                        <div>
+                          <span className="font-medium text-cinza-escuro">{item.criterio}</span>
+                          <p className="text-cinza-medio">{item.descricao}</p>
+                        </div>
+                        <span className="font-semibold text-verde-oliva">+{item.pontos}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <Link
+                  href="/agendar"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition"
+                >
+                  <Calendar className="w-5 h-5" />
+                  Agendar Minha Consulta
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           </div>
