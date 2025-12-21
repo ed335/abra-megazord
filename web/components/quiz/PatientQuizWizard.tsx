@@ -113,6 +113,7 @@ export default function PatientQuizWizard({ onComplete }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [diagnostico, setDiagnostico] = useState<DiagnosticoResult | null>(null);
+  const [showConsentError, setShowConsentError] = useState(false);
 
   const totalSteps = quizSteps.length;
   const progress = Math.round(((step + 1) / totalSteps) * 100);
@@ -170,6 +171,11 @@ export default function PatientQuizWizard({ onComplete }: Props) {
   };
 
   const goNext = () => {
+    if (step === 0 && !form.consentiu) {
+      setShowConsentError(true);
+      return;
+    }
+    setShowConsentError(false);
     if (step < totalSteps - 1) {
       setStep((prev) => prev + 1);
     } else {
@@ -228,17 +234,33 @@ export default function PatientQuizWizard({ onComplete }: Props) {
             </button>
           );
         })}
-        <label className="flex items-center gap-3 px-4 py-3 rounded-xl bg-off-white border border-cinza-claro md:col-span-3">
+        <label className={`flex items-center gap-3 px-4 py-3 rounded-xl md:col-span-3 transition-all ${
+          showConsentError && !form.consentiu 
+            ? 'bg-red-50 border-2 border-red-400' 
+            : 'bg-off-white border border-cinza-claro'
+        }`}>
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-cinza-medio text-verde-oliva focus:ring-verde-oliva"
+            className={`h-5 w-5 rounded focus:ring-verde-oliva ${
+              showConsentError && !form.consentiu 
+                ? 'border-red-500 text-red-500' 
+                : 'border-cinza-medio text-verde-oliva'
+            }`}
             checked={form.consentiu}
-            onChange={(e) => updateForm('consentiu', e.target.checked)}
+            onChange={(e) => {
+              updateForm('consentiu', e.target.checked);
+              if (e.target.checked) setShowConsentError(false);
+            }}
           />
-          <span className="text-sm text-cinza-escuro">
-            Concordo em compartilhar dados para triagem inicial conforme LGPD.
+          <span className={`text-sm ${showConsentError && !form.consentiu ? 'text-red-600 font-medium' : 'text-cinza-escuro'}`}>
+            Concordo em compartilhar dados para triagem inicial conforme LGPD. *
           </span>
         </label>
+        {showConsentError && !form.consentiu && (
+          <p className="text-xs text-red-500 md:col-span-3 -mt-2">
+            Por favor, aceite os termos para continuar.
+          </p>
+        )}
       </div>
     );
   };
