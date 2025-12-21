@@ -342,18 +342,48 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {showScoreDetails && preAnamnese.diagnostico.scoreExplicacao && (
+                {showScoreDetails && (
                   <div className="mb-4 p-3 bg-cinza-muito-claro/50 rounded-lg space-y-2">
                     <p className="text-xs font-medium text-cinza-escuro mb-2">Composição do Score:</p>
-                    {preAnamnese.diagnostico.scoreExplicacao.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs">
-                        <div>
-                          <span className="font-medium text-cinza-escuro">{item.criterio}</span>
-                          <p className="text-cinza-medio">{item.descricao}</p>
+                    {preAnamnese.diagnostico.scoreExplicacao && preAnamnese.diagnostico.scoreExplicacao.length > 0 ? (
+                      preAnamnese.diagnostico.scoreExplicacao.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-xs">
+                          <div>
+                            <span className="font-medium text-cinza-escuro">{item.criterio}</span>
+                            <p className="text-cinza-medio">{item.descricao}</p>
+                          </div>
+                          <span className="font-semibold text-verde-oliva">+{item.pontos}</span>
                         </div>
-                        <span className="font-semibold text-verde-oliva">+{item.pontos}</span>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between text-xs">
+                          <div>
+                            <span className="font-medium text-cinza-escuro">Intensidade dos Sintomas</span>
+                            <p className="text-cinza-medio">Baseado na gravidade informada ({preAnamnese.gravidade}/5)</p>
+                          </div>
+                          <span className="font-semibold text-verde-oliva">+{preAnamnese.gravidade * 20}</span>
+                        </div>
+                        {preAnamnese.diagnostico.nivelUrgencia !== 'baixa' && (
+                          <div className="flex items-center justify-between text-xs">
+                            <div>
+                              <span className="font-medium text-cinza-escuro">Urgência Clínica</span>
+                              <p className="text-cinza-medio">Nível {preAnamnese.diagnostico.nivelUrgencia}</p>
+                            </div>
+                            <span className="font-semibold text-verde-oliva">+{preAnamnese.diagnostico.nivelUrgencia === 'alta' ? 30 : 15}</span>
+                          </div>
+                        )}
+                        {(preAnamnese.diagnostico.contraindicacoes || []).length > 0 && (
+                          <div className="flex items-center justify-between text-xs">
+                            <div>
+                              <span className="font-medium text-cinza-escuro">Atenção Especial</span>
+                              <p className="text-cinza-medio">Fatores que requerem avaliação cuidadosa</p>
+                            </div>
+                            <span className="font-semibold text-verde-oliva">+10</span>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
 
