@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getAdminToken, fetchWithAdminAuth } from '@/lib/admin-auth';
+import { getAdminToken, fetchWithAdminAuth } from '@/lib/admin-auth-client';
 import { 
   ArrowLeft, 
   Loader2, 
