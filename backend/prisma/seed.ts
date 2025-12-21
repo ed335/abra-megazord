@@ -24,7 +24,7 @@ async function main() {
     },
   });
 
-  console.log(`Admin criado: ${email} / senha: ${password}`);
+  console.log('Admin user created successfully');
 }
 
 main()
