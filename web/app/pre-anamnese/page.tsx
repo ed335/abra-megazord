@@ -1,7 +1,16 @@
 'use client';
 
+import { Suspense } from 'react';
 import Header from '@/components/shared/Header';
 import PatientQuizWizard from '@/components/quiz/PatientQuizWizard';
+
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-verde-claro"></div>
+    </div>
+  );
+}
 
 export default function PreAnamnesePage() {
   return (
@@ -19,7 +28,9 @@ export default function PreAnamnesePage() {
             </p>
           </div>
 
-          <PatientQuizWizard />
+          <Suspense fallback={<LoadingFallback />}>
+            <PatientQuizWizard />
+          </Suspense>
         </div>
       </div>
     </main>
