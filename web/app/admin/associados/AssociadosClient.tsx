@@ -903,19 +903,23 @@ export default function AssociadosClient() {
                                     <Activity size={16} className="text-verde-oliva" />
                                     Diagnóstico ABRACANM
                                   </h4>
-                                  <div className="space-y-3">
-                                    <div>
-                                      <p className="text-sm font-medium text-cinza-escuro">{associado.preAnamnese.diagnostico.titulo}</p>
-                                      <p className="text-xs text-cinza-medio mt-1">{associado.preAnamnese.diagnostico.resumo}</p>
+                                  {associado.preAnamnese.diagnostico ? (
+                                    <div className="space-y-3">
+                                      <div>
+                                        <p className="text-sm font-medium text-cinza-escuro">{associado.preAnamnese.diagnostico.titulo}</p>
+                                        <p className="text-xs text-cinza-medio mt-1">{associado.preAnamnese.diagnostico.resumo}</p>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-cinza-medio">Urgência:</span>
+                                        {getUrgencyBadge(associado.preAnamnese.diagnostico.nivelUrgencia)}
+                                      </div>
+                                      {associado.preAnamnese.diagnostico.observacoes && (
+                                        <p className="text-xs text-cinza-medio italic">{associado.preAnamnese.diagnostico.observacoes}</p>
+                                      )}
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-xs text-cinza-medio">Urgência:</span>
-                                      {getUrgencyBadge(associado.preAnamnese.diagnostico.nivelUrgencia)}
-                                    </div>
-                                    {associado.preAnamnese.diagnostico.observacoes && (
-                                      <p className="text-xs text-cinza-medio italic">{associado.preAnamnese.diagnostico.observacoes}</p>
-                                    )}
-                                  </div>
+                                  ) : (
+                                    <p className="text-sm text-cinza-medio italic">Diagnóstico ainda não gerado</p>
+                                  )}
                                 </div>
 
                                 <div className="bg-white rounded-xl p-4 border border-cinza-claro">
@@ -965,7 +969,7 @@ export default function AssociadosClient() {
                                     Indicações e Próximos Passos
                                   </h4>
                                   <div className="space-y-3">
-                                    {associado.preAnamnese.diagnostico.indicacoes.length > 0 && (
+                                    {associado.preAnamnese.diagnostico?.indicacoes && associado.preAnamnese.diagnostico.indicacoes.length > 0 && (
                                       <div>
                                         <p className="text-xs font-medium text-verde-oliva mb-1">Indicações:</p>
                                         <ul className="text-xs text-cinza-medio space-y-1">
@@ -978,7 +982,7 @@ export default function AssociadosClient() {
                                         </ul>
                                       </div>
                                     )}
-                                    {associado.preAnamnese.diagnostico.contraindicacoes.length > 0 && (
+                                    {associado.preAnamnese.diagnostico?.contraindicacoes && associado.preAnamnese.diagnostico.contraindicacoes.length > 0 && (
                                       <div>
                                         <p className="text-xs font-medium text-erro mb-1">Contraindicações:</p>
                                         <ul className="text-xs text-cinza-medio space-y-1">
@@ -993,7 +997,7 @@ export default function AssociadosClient() {
                                     )}
                                     <div className="pt-2 border-t border-cinza-claro">
                                       <p className="text-xs font-medium text-cinza-escuro mb-1">Próximo passo:</p>
-                                      <p className="text-xs text-cinza-medio">{associado.preAnamnese.proximosPasso}</p>
+                                      <p className="text-xs text-cinza-medio">{associado.preAnamnese.proximosPasso || 'Não definido'}</p>
                                     </div>
                                     <div className="text-xs text-cinza-claro">
                                       Respondido em: {formatDate(associado.preAnamnese.criadoEm)}
