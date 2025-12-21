@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { SyncpayWebhookPayload, isPaymentCompleted, isPaymentFailed } from '@/lib/syncpay';
+export const dynamic = 'force-dynamic';
 
 function verifyWebhookAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get('Authorization');

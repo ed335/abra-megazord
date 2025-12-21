@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+export const dynamic = 'force-dynamic';
 
 const UPLOADS_DIR = join(process.cwd(), '..', 'backend', 'uploads');
 const MAX_FILE_SIZE = 10 * 1024 * 1024;

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { getJWTSecret } from '@/lib/jwt';
 
+export const dynamic = 'force-dynamic';
+
 async function verifyAdminToken(request: NextRequest) {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

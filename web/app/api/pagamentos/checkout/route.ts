@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { createPixPayment } from '@/lib/syncpay';
 import * as jsonwebtoken from 'jsonwebtoken';
 
+export const dynamic = 'force-dynamic';
+
 function getJWTSecret(): string {
   const secret = process.env.JWT_SECRET;
   if (!secret) {

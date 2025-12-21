@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
 import { registrarLog } from '@/lib/audit-log';
 import bcrypt from 'bcrypt';
+export const dynamic = 'force-dynamic';
 
 const prisma = getPrismaClient();
 

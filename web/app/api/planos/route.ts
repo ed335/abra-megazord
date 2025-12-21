@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
-    const planos = await prisma.plano.findMany({
+    const planos = await (prisma as any).plano.findMany({
       where: { ativo: true },
       orderBy: { ordem: 'asc' },
     });
@@ -31,7 +33,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      planos: planos.map(p => ({
+      planos: planos.map((p: any) => ({
         ...p,
         valorMensalidade: Number(p.valorMensalidade),
         valorConsulta: Number(p.valorConsulta),

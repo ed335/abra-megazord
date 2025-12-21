@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as jsonwebtoken from 'jsonwebtoken';
+export const dynamic = 'force-dynamic';
 
 interface PreAnamneseRequest {
   perfil: 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';

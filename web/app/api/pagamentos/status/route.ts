@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as jsonwebtoken from 'jsonwebtoken';
 
+export const dynamic = 'force-dynamic';
+
 function getJWTSecret(): string {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest) {
 
     if (pagamentoId) {
       // Get specific payment status
-      const pagamento = await prisma.pagamento.findFirst({
+      const pagamento = await (prisma as any).pagamento.findFirst({
         where: { 
           id: pagamentoId,
           pacienteId: paciente.id 
@@ -82,7 +84,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get active subscription and recent payments
-    const assinaturaAtiva = await prisma.assinatura.findFirst({
+    const assinaturaAtiva = await (prisma as any).assinatura.findFirst({
       where: { 
         pacienteId: paciente.id,
         status: 'ATIVA'
@@ -90,7 +92,7 @@ export async function GET(request: NextRequest) {
       include: { plano: true }
     });
 
-    const pagamentosRecentes = await prisma.pagamento.findMany({
+    const pagamentosRecentes = await (prisma as any).pagamento.findMany({
       where: { pacienteId: paciente.id },
       orderBy: { criadoEm: 'desc' },
       take: 10,
@@ -105,7 +107,7 @@ export async function GET(request: NextRequest) {
         dataFim: assinaturaAtiva.dataFim,
         proximaCobranca: assinaturaAtiva.proximaCobranca,
       } : null,
-      pagamentos: pagamentosRecentes.map(p => ({
+      pagamentos: pagamentosRecentes.map((p: any) => ({
         id: p.id,
         tipo: p.tipo,
         valor: Number(p.valor),

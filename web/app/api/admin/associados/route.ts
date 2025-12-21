@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
 
+export const dynamic = 'force-dynamic';
+
 const prisma = getPrismaClient();
 
 export async function GET(request: NextRequest) {

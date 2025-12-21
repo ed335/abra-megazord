@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import * as jsonwebtoken from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { getJWTSecret } from '@/lib/jwt';
+export const dynamic = 'force-dynamic';
 
 const prisma = new PrismaClient();
 
