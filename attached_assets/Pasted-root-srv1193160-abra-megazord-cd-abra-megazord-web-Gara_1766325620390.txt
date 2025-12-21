@@ -1,0 +1,95 @@
+root@srv1193160:~/abra-megazord# cd ~/abra-megazord/web
+
+# Garantir o import do Prisma
+sed -i "s@import { prisma } from '@/lib/prisma';@import { prisma } from '@/lib/prisma';\nimport { Prisma } from '@prisma/client';@" app/api/pre-anamnese/route.ts 
+
+# Garantir o cast correto
+sed -i "s/diagnostico: diagnostico,/diagnostico: diagnostico as unknown as Prisma.JsonValue,/" app/api/pre-anamnese/route.ts
+
+# Build e subir front
+rm -rf .next
+npm run build
+PORT=3000 NODE_ENV=production pm2 restart abracann-web --update-env || \
+PORT=3000 NODE_ENV=production pm2 start \"npm run start\" --name abracann-web --update-env --cwd ~/abra-megazord/web
+
+# Backend (resolver conflito de dependência e garantir online)
+cd ~/abra-megazord/backend
+npm install @nestjs/serve-static@4.0.2
+npm run build
+pm2 restart abracann-api --update-env
+
+pm2 save
+pm2 status
+curl -I http://localhost:3000
+curl http://localhost:3001/health
+sed: -e expression #1, char 45: unknown option to `s'
+
+> abracann-web@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.33
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types  ...Failed to compile.
+
+./app/api/pre-anamnese/route.ts:208:9
+Type error: Type 'JsonValue' is not assignable to type 'JsonNull | InputJsonValue'.
+  Type 'null' is not assignable to type 'JsonNull | InputJsonValue'.
+
+  206 |         preferenciaAcompanhamento: body.preferenciaAcompanhamento,
+  207 |         melhorHorario: body.melhorHorario,
+> 208 |         diagnostico: diagnostico as unknown as Prisma.JsonValue,
+      |         ^
+  209 |         scorePrioridade: scorePrioridade,
+  210 |         recomendacoes: recomendacoes,
+  211 |         proximosPasso: proximoPasso
+Next.js build worker exited with code: 1 and signal: null
+[PM2] Applying action restartProcessId on app [abracann-web](ids: [ 7 ])
+[PM2] [abracann-web](7) ✓
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ abracann-api    │ default     │ N/A     │ fork    │ 1683226  │ 2m     │ 5    │ online    │ 0%       │ 85.0mb   │ root     │ disabled │
+│ 7  │ abracann-web    │ default     │ N/A     │ fork    │ 1683710  │ 0s     │ 165  │ online    │ 0%       │ 18.8mb   │ root     │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+up to date, audited 878 packages in 2s
+
+135 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (4 low, 1 moderate, 4 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> abracann-backend@0.1.0 prebuild
+> rimraf dist
+
+
+> abracann-backend@0.1.0 build
+> nest build
+
+[PM2] Applying action restartProcessId on app [abracann-api](ids: [ 0 ])
+[PM2] [abracann-api](0) ✓
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ abracann-api    │ default     │ N/A     │ fork    │ 1684122  │ 0s     │ 6    │ online    │ 0%       │ 4.0kb    │ root     │ disabled │
+│ 7  │ abracann-web    │ default     │ N/A     │ fork    │ 1684098  │ 0s     │ 179  │ online    │ 0%       │ 55.9mb   │ root     │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ abracann-api    │ default     │ N/A     │ fork    │ 1684122  │ 0s     │ 6    │ online    │ 0%       │ 73.0mb   │ root     │ disabled │
+│ 7  │ abracann-web    │ default     │ N/A     │ fork    │ 1684143  │ 0s     │ 180  │ online    │ 0%       │ 48.7mb   │ root     │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+curl: (7) Failed to connect to localhost port 3000 after 0 ms: Connection refused
+curl: (7) Failed to connect to localhost port 3001 after 0 ms: Connection refused
+root@srv1193160:~/abra-megazord/backend# 
