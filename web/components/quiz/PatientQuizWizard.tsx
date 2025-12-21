@@ -171,8 +171,10 @@ export default function PatientQuizWizard({ onComplete }: Props) {
   };
 
   const goNext = () => {
-    if (step === 0 && !form.consentiu) {
-      setShowConsentError(true);
+    if (!canContinue) {
+      if (step === 0 && !form.consentiu) {
+        setShowConsentError(true);
+      }
       return;
     }
     setShowConsentError(false);
@@ -558,7 +560,7 @@ export default function PatientQuizWizard({ onComplete }: Props) {
           size="md"
           className="w-full sm:w-auto"
           onClick={goNext}
-          disabled={!canContinue || isSubmitting}
+          disabled={isSubmitting}
         >
           {isSubmitting ? 'Enviando...' : step === totalSteps - 1 ? 'Enviar e Ver Diagnóstico' : 'Próximo'}
           <ArrowRight className="w-4 h-4 ml-2" />
