@@ -13,6 +13,12 @@ interface PreAnamneseRequest {
   melhorHorario: string;
 }
 
+interface ScoreExplanation {
+  criterio: string;
+  descricao: string;
+  pontos: number;
+}
+
 interface DiagnosticoResult {
   titulo: string;
   resumo: string;
@@ -20,6 +26,7 @@ interface DiagnosticoResult {
   indicacoes: string[];
   contraindicacoes: string[];
   observacoes: string;
+  scoreExplicacao?: ScoreExplanation[];
 }
 
 function getJWTSecret(): string {
