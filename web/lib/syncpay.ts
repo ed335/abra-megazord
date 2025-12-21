@@ -50,7 +50,7 @@ interface SyncpayTransactionStatus {
 // Token cache
 let cachedToken: { token: string; expiresAt: Date } | null = null;
 
-const SYNCPAY_API_URL = process.env.SYNCPAY_API_URL || 'https://api.syncpay.com.br';
+const SYNCPAY_API_URL = process.env.SYNCPAY_API_URL || 'https://api.syncpay.pro';
 
 export async function getSyncpayToken(): Promise<string> {
   // Check if we have a valid cached token
