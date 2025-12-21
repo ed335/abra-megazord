@@ -154,7 +154,7 @@ function CheckoutContent() {
             </p>
           </div>
 
-          {isMensalidade && (
+          {isMensalidade ? (
             <div className="bg-verde-claro/10 border border-verde-oliva/20 rounded-xl p-6 mb-6">
               <h3 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
                 <Check className="w-5 h-5 text-verde-oliva" />
@@ -178,6 +178,17 @@ function CheckoutContent() {
                   Orientação jurídica sobre importação
                 </li>
               </ul>
+            </div>
+          ) : (
+            <div className="bg-cinza-muito-claro/50 border border-cinza-claro rounded-xl p-6 mb-6">
+              <h3 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
+                <Check className="w-5 h-5 text-verde-oliva" />
+                Consulta paga com sucesso
+              </h3>
+              <p className="text-sm text-cinza-medio">
+                Seu pagamento foi confirmado. Nossa equipe entrará em contato 
+                para confirmar o agendamento da sua consulta.
+              </p>
             </div>
           )}
 

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { SyncpayWebhookPayload, isPaymentCompleted, isPaymentFailed } from '@/lib/syncpay';
 
-// Verify webhook authenticity using Authorization header (Bearer token)
 function verifyWebhookAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get('Authorization');
   const expectedSecret = process.env.SYNCPAY_WEBHOOK_SECRET || process.env.SYNCPAY_CLIENT_SECRET;
@@ -16,14 +15,26 @@ function verifyWebhookAuth(request: NextRequest): boolean {
     return false;
   }
 
-  // Syncpay sends: Authorization: Bearer {TOKEN}
   const token = authHeader.replace('Bearer ', '');
   return token === expectedSecret;
 }
 
+function calcularDuracaoPlano(tipoPlano: string): number {
+  switch (tipoPlano) {
+    case 'TRIMESTRAL':
+      return 3;
+    case 'SEMESTRAL':
+      return 6;
+    case 'ANUAL':
+      return 12;
+    case 'MENSAL':
+    default:
+      return 1;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Verify webhook authenticity
     if (!verifyWebhookAuth(request)) {
       console.warn('Webhook rejeitado: autenticação inválida');
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
@@ -41,10 +52,16 @@ export async function POST(request: NextRequest) {
     const identifier = payload.data.id;
     const status = payload.data.status;
 
-    // Find payment by Syncpay identifier
     const pagamento = await (prisma as any).pagamento.findUnique({
       where: { syncpayIdentifier: identifier },
-      include: { assinatura: true, paciente: true }
+      include: { 
+        assinatura: {
+          include: {
+            plano: true
+          }
+        }, 
+        paciente: true 
+      }
     });
 
     if (!pagamento) {
@@ -52,7 +69,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true, message: 'Pagamento não encontrado' });
     }
 
-    // Update payment status
+    if (pagamento.status === 'PAGO' && isPaymentCompleted(status)) {
+      console.log('Webhook duplicado ignorado - pagamento já processado:', pagamento.id);
+      return NextResponse.json({ received: true, status: 'already_processed' });
+    }
+
     if (isPaymentCompleted(status)) {
       await (prisma as any).pagamento.update({
         where: { id: pagamento.id },
@@ -64,11 +85,13 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      // If it's a subscription payment, activate it
-      if (pagamento.assinaturaId) {
+      if (pagamento.assinaturaId && pagamento.assinatura) {
+        const tipoPlano = pagamento.assinatura.plano?.tipo || 'MENSAL';
+        const meses = calcularDuracaoPlano(tipoPlano);
+        
         const dataInicio = new Date();
         const dataFim = new Date();
-        dataFim.setMonth(dataFim.getMonth() + 1); // 1 month subscription
+        dataFim.setMonth(dataFim.getMonth() + meses);
 
         await (prisma as any).assinatura.update({
           where: { id: pagamento.assinaturaId },
@@ -79,23 +102,25 @@ export async function POST(request: NextRequest) {
             proximaCobranca: dataFim,
           }
         });
+
+        console.log(`Assinatura ${pagamento.assinaturaId} ativada por ${meses} mês(es)`);
       }
 
       console.log('Pagamento confirmado:', pagamento.id);
 
     } else if (isPaymentFailed(status)) {
-      await (prisma as any).pagamento.update({
-        where: { id: pagamento.id },
-        data: {
-          status: 'FALHOU',
-          webhookRecebido: true,
-          webhookData: payload as object,
-        }
-      });
-
-      console.log('Pagamento falhou:', pagamento.id);
+      if (pagamento.status !== 'FALHOU') {
+        await (prisma as any).pagamento.update({
+          where: { id: pagamento.id },
+          data: {
+            status: 'FALHOU',
+            webhookRecebido: true,
+            webhookData: payload as object,
+          }
+        });
+        console.log('Pagamento falhou:', pagamento.id);
+      }
     } else {
-      // Just update webhook data for other statuses
       await (prisma as any).pagamento.update({
         where: { id: pagamento.id },
         data: {
@@ -116,7 +141,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Also handle GET for webhook verification (some gateways check this)
 export async function GET() {
   return NextResponse.json({ status: 'ok', service: 'ABRACANM Webhooks' });
 }
