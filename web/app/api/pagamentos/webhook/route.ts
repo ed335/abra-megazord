@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const status = payload.data.status;
 
     // Find payment by Syncpay identifier
-    const pagamento = await prisma.pagamento.findUnique({
+    const pagamento = await (prisma as any).pagamento.findUnique({
       where: { syncpayIdentifier: identifier },
       include: { assinatura: true, paciente: true }
     });
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     // Update payment status
     if (isPaymentCompleted(status)) {
-      await prisma.pagamento.update({
+      await (prisma as any).pagamento.update({
         where: { id: pagamento.id },
         data: {
           status: 'PAGO',
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         const dataFim = new Date();
         dataFim.setMonth(dataFim.getMonth() + 1); // 1 month subscription
 
-        await prisma.assinatura.update({
+        await (prisma as any).assinatura.update({
           where: { id: pagamento.assinaturaId },
           data: {
             status: 'ATIVA',
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       console.log('Pagamento confirmado:', pagamento.id);
 
     } else if (isPaymentFailed(status)) {
-      await prisma.pagamento.update({
+      await (prisma as any).pagamento.update({
         where: { id: pagamento.id },
         data: {
           status: 'FALHOU',
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       console.log('Pagamento falhou:', pagamento.id);
     } else {
       // Just update webhook data for other statuses
-      await prisma.pagamento.update({
+      await (prisma as any).pagamento.update({
         where: { id: pagamento.id },
         data: {
           webhookRecebido: true,
