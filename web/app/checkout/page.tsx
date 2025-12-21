@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/shared/Header';
 import { getToken, fetchWithAuth } from '@/lib/auth';
-import { ArrowLeft, Copy, Check, Loader2, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Copy, Check, Loader2, Clock, AlertCircle, CheckCircle2, Calendar, ArrowRight, Sparkles } from 'lucide-react';
 
 interface CheckoutData {
   id: string;
@@ -131,25 +131,83 @@ function CheckoutContent() {
   }
 
   if (paymentStatus === 'paid') {
+    const isMensalidade = tipo === 'MENSALIDADE';
+    
     return (
       <main className="min-h-screen bg-white">
         <Header />
-        <div className="max-w-md mx-auto px-4 py-16 text-center">
-          <div className="w-16 h-16 bg-verde-oliva/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-8 h-8 text-verde-oliva" />
+        <div className="max-w-lg mx-auto px-4 py-12">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-verde-oliva/10 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+              <CheckCircle2 className="w-10 h-10 text-verde-oliva" />
+              <div className="absolute -top-1 -right-1">
+                <Sparkles className="w-6 h-6 text-verde-oliva" />
+              </div>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro mb-2">
+              Pagamento Confirmado!
+            </h1>
+            <p className="text-cinza-medio">
+              {isMensalidade 
+                ? 'Parabéns! Você agora é associado ABRACANM.' 
+                : 'Seu pagamento foi processado com sucesso.'}
+            </p>
           </div>
-          <h1 className="text-2xl font-bold text-cinza-escuro mb-2">
-            Pagamento Confirmado!
-          </h1>
-          <p className="text-cinza-medio mb-6">
-            Seu pagamento foi processado com sucesso. Obrigado por fazer parte da ABRACANM!
-          </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition"
-          >
-            Ir para o Dashboard
-          </Link>
+
+          {isMensalidade && (
+            <div className="bg-verde-claro/10 border border-verde-oliva/20 rounded-xl p-6 mb-6">
+              <h3 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
+                <Check className="w-5 h-5 text-verde-oliva" />
+                Benefícios ativados:
+              </h3>
+              <ul className="space-y-2 text-sm text-cinza-escuro">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
+                  Primeira consulta por R$ 99 (economia de R$ 50)
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
+                  Suporte contínuo via WhatsApp
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
+                  Acompanhamento do tratamento
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
+                  Orientação jurídica sobre importação
+                </li>
+              </ul>
+            </div>
+          )}
+
+          <div className="bg-cinza-muito-claro/50 rounded-xl p-6 mb-8">
+            <h3 className="font-semibold text-cinza-escuro mb-4 text-center">
+              Próximo passo
+            </h3>
+            <p className="text-sm text-cinza-medio text-center mb-4">
+              {isMensalidade 
+                ? 'Agende sua primeira consulta com desconto exclusivo de associado!' 
+                : 'Entre em contato para agendar sua consulta.'}
+            </p>
+            <Link
+              href="/agendar"
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition text-lg"
+            >
+              <Calendar className="w-5 h-5" />
+              Agendar Minha Consulta
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/dashboard"
+              className="text-sm text-cinza-medio hover:text-verde-oliva transition underline"
+            >
+              Ou ir para o Dashboard
+            </Link>
+          </div>
         </div>
       </main>
     );
