@@ -5,9 +5,7 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-function getJWTSecret(): string {
-  return process.env.JWT_SECRET || 'abracanm-secret-key-2024';
-}
+import { getJWTSecret } from '@/lib/jwt';
 
 async function verifyAdminToken(request: NextRequest) {
   const authHeader = request.headers.get('Authorization');
