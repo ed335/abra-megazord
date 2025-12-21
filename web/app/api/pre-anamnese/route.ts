@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
         notas: body.notas,
         preferenciaAcompanhamento: body.preferenciaAcompanhamento,
         melhorHorario: body.melhorHorario,
-        diagnostico: diagnostico,
+        diagnostico: JSON.parse(JSON.stringify(diagnostico)),
         scorePrioridade: scorePrioridade,
         recomendacoes: recomendacoes,
         proximosPasso: proximoPasso
