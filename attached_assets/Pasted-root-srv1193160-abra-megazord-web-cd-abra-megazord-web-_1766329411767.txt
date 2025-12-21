@@ -1,0 +1,63 @@
+root@srv1193160:~/abra-megazord/web# cd ~/abra-megazord/web
+npx prisma studio
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Prisma Studio is up on http://localhost:5555
+^C
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "SELECT * FROM \"Admin\";"
+could not change directory to "/root/abra-megazord/web": Permission denied
+ERROR:  relation "Admin" does not exist
+LINE 1: SELECT * FROM "Admin";
+                      ^
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "SELECT id, email, role FROM \"Usuario\" WHERE role = 'ADMIN';"
+could not change directory to "/root/abra-megazord/web": Permission denied
+ERROR:  relation "Usuario" does not exist
+LINE 1: SELECT id, email, role FROM "Usuario" WHERE role = 'ADMIN';
+                                    ^
+root@srv1193160:~/abra-megazord/web# cd ~/abra-megazord/web
+npx prisma db push --force-reset
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "abracann_dev", schema "public" at "localhost:5432"
+
+The PostgreSQL database "abracann_dev" schema "public" at "localhost:5432" was successfully reset.
+
+🚀  Your database is now in sync with your Prisma schema. Done in 322ms
+
+✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 287ms
+
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "\dt"
+could not change directory to "/root/abra-megazord/web": Permission denied
+Did not find any relations.
+root@srv1193160:~/abra-megazord/web# grep DATABASE_URL ~/abra-megazord/web/.env
+DATABASE_URL="postgresql://abracann_user:abracann_password@localhost:5432/abracann_dev"
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"
+could not change directory to "/root/abra-megazord/web": Permission denied
+ table_name 
+------------
+(0 rows)
+
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "GRANT ALL ON SCHEMA public TO abracann_user;"
+could not change directory to "/root/abra-megazord/web": Permission denied
+GRANT
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO abracann_user;"
+could not change directory to "/root/abra-megazord/web": Permission denied
+GRANT
+root@srv1193160:~/abra-megazord/web# npx prisma db push --force-reset
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "abracann_dev", schema "public" at "localhost:5432"
+
+The PostgreSQL database "abracann_dev" schema "public" at "localhost:5432" was successfully reset.
+
+🚀  Your database is now in sync with your Prisma schema. Done in 320ms
+
+✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 294ms
+
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"
+could not change directory to "/root/abra-megazord/web": Permission denied
+ table_name 
+------------
+(0 rows)
+
+root@srv1193160:~/abra-megazord/web#

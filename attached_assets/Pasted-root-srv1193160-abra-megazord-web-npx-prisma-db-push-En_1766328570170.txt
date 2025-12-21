@@ -1,0 +1,48 @@
+root@srv1193160:~/abra-megazord/web# npx prisma db push
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "abracann_dev", schema "public" at "localhost:5432"
+
+The database is already in sync with the Prisma schema.
+
+✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 303ms
+
+root@srv1193160:~/abra-megazord/web# pm2 restart abracann-web
+pm2 logs abracann-web --lines 20
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [abracann-web](ids: [ 8 ])
+[PM2] [abracann-web](8) ✓
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ abracann-api    │ default     │ N/A     │ fork    │ 0        │ 0      │ 6    │ stopped   │ 0%       │ 0b       │ root     │ disabled │
+│ 8  │ abracann-web    │ default     │ N/A     │ fork    │ 1696111  │ 0s     │ 2    │ online    │ 0%       │ 16.9mb   │ root     │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[TAILING] Tailing last 20 lines for [abracann-web] process (change the value with --lines option)
+/root/.pm2/logs/abracann-web-error.log last 20 lines:
+/root/.pm2/logs/abracann-web-out.log last 20 lines:
+8|abracann | 
+8|abracann | > abracann-web@0.1.0 start
+8|abracann | > next start
+8|abracann | 
+8|abracann |   ▲ Next.js 14.2.33
+8|abracann |   - Local:        http://localhost:3000
+8|abracann | 
+8|abracann |  ✓ Starting...
+8|abracann |  ✓ Ready in 299ms
+8|abracann | 
+8|abracann | > abracann-web@0.1.0 start
+8|abracann | > next start
+8|abracann | 
+8|abracann |   ▲ Next.js 14.2.33
+8|abracann |   - Local:        http://localhost:3000
+8|abracann | 
+8|abracann |  ✓ Starting...
+8|abracann |  ✓ Ready in 344ms
+
+8|abracann-web  | > abracann-web@0.1.0 start
+8|abracann-web  | > next start
+8|abracann-web  |   ▲ Next.js 14.2.33
+8|abracann-web  |   - Local:        http://localhost:3000
+8|abracann-web  |  ✓ Starting...
+8|abracann-web  |  ✓ Ready in 313ms

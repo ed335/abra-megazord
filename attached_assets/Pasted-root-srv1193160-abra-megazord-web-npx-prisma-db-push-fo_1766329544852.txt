@@ -1,0 +1,124 @@
+root@srv1193160:~/abra-megazord/web# npx prisma db push --force-reset
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "abracann_dev", schema "public" at "localhost:5432"
+
+The PostgreSQL database "abracann_dev" schema "public" at "localhost:5432" was successfully reset.
+
+🚀  Your database is now in sync with your Prisma schema. Done in 320ms
+
+✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 294ms
+
+root@srv1193160:~/abra-megazord/web# sudo -u postgres psql -d abracann_dev -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"
+could not change directory to "/root/abra-megazord/web": Permission denied
+ table_name 
+------------
+(0 rows)
+
+root@srv1193160:~/abra-megazord/web# PGPASSWORD=abracann_password psql -h localhost -U abracann_user -d abracann_dev -c "CREATE TABLE test_table (id SERIAL PRIMARY KEY);"
+CREATE TABLE
+root@srv1193160:~/abra-megazord/web# PGPASSWORD=abracann_password psql -h localhost -U abracann_user -d abracann_dev -c "DROP TABLE test_table;"
+DROP TABLE
+root@srv1193160:~/abra-megazord/web# PGPASSWORD=abracann_password psql -h localhost -U abracann_user -d abracann_dev -c "DROP TABLE test_table;"
+ERROR:  table "test_table" does not exist
+root@srv1193160:~/abra-megazord/web# cd ~/abra-megazord/web
+DEBUG="*" npx prisma db push --accept-data-loss 2>&1 | head -100
+prisma:engines binaries to download libquery-engine, schema-engine +230ms
+prisma:get-platform Found distro info:
+{
+  "targetDistro": "debian",
+  "familyDistro": "debian",
+  "originalDistro": "ubuntu"
+} +7ms
+prisma:get-platform Trying platform-specific paths for "debian" (and "ubuntu") +1ms
+prisma:get-platform Found libssl.so file using platform-specific paths: libssl.so.3 +1ms
+prisma:get-platform The parsed libssl version is: 3.0.x +0ms
+prisma:getSchema prismaConfig {
+  "packagePath": "/root/abra-megazord/web/package.json"
+} +389ms
+prisma:getSchema Checking existence of /root/abra-megazord/web/schema.prisma +0ms
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/schema.prisma +0ms
+prisma:getSchema Checking existence of /root/abra-megazord/web/prisma/schema.prisma +1ms
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/prisma/schema.prisma +0ms
+prisma:getSchema Reading schema from multiple files /root/abra-megazord/web/prisma/schema +2ms
+prisma:loadEnv project root found at /root/abra-megazord/web/package.json +1ms
+prisma:getSchema prismaConfig {
+  "packagePath": "/root/abra-megazord/web/package.json"
+} +1ms
+prisma:tryLoadEnv Environment variables loaded from /root/abra-megazord/web/.env +1ms
+prisma:getConfig Using getConfig Wasm +2ms
+prisma:getConfig config data retrieved without errors in getConfig Wasm +27ms
+prisma:get-platform Found distro info:
+{
+  "targetDistro": "debian",
+  "familyDistro": "debian",
+  "originalDistro": "ubuntu"
+} +2ms
+prisma:get-platform Trying platform-specific paths for "debian" (and "ubuntu") +0ms
+prisma:get-platform Found libssl.so file using platform-specific paths: libssl.so.3 +2ms
+prisma:get-platform The parsed libssl version is: 3.0.x +0ms
+prisma:loadEnv project root found at /root/abra-megazord/web/package.json +1ms
+prisma:getSchema prismaConfig {
+  "packagePath": "/root/abra-megazord/web/package.json"
+} +0ms
+prisma:tryLoadEnv Environment variables loaded from /root/abra-megazord/web/.env +0ms
+Environment variables loaded from .env
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/prisma/schema.prisma +1ms
+Prisma schema loaded from prisma/schema.prisma
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/prisma/schema.prisma +0ms
+prisma:getConfig Using getConfig Wasm +1ms
+prisma:getConfig config data retrieved without errors in getConfig Wasm +9ms
+Datasource "db": PostgreSQL database "abracann_dev", schema "public" at "localhost:5432"
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/prisma/schema.prisma +4ms
+prisma:getConfig Using getConfig Wasm +0ms
+prisma:getConfig config data retrieved without errors in getConfig Wasm +4ms
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/prisma/schema.prisma +78ms
+prisma:schemaEngine:rpc starting Schema engine with binary: /root/abra-megazord/web/node_modules/@prisma/engines/schema-engine-debian-openssl-3.0.x +1ms
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/prisma/schema.prisma +1ms
+prisma:getConfig Using getConfig Wasm +0ms
+prisma:getConfig config data retrieved without errors in getConfig Wasm +3ms
+prisma:schemaEngine:rpc SENDING RPC CALL {"id":1,"jsonrpc":"2.0","method":"schemaPush","params":{"force":true,"schema":{"files":[{"path":"/root/abra-megazord/web/prisma/schema.prisma","content":"// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n}\n\n// ============= Enums =============\n\nenum Role {\n  PACIENTE\n  PRESCRITOR\n  ADMIN\n}\n\nenum StatusPrescricao {\n  ATIVA\n  VENCIDA\n  CANCELADA\n  UTILIZADA\n}\n\nenum CategoriaArtigo {\n  EDUCACAO\n  PESQUISA\n  ORIENTACAO\n  LEGISLACAO\n}\n\nenum PerfilIntake {\n  PACIENTE_NOVO\n  EM_TRATAMENTO\n  CUIDADOR\n}\n\n// ============= Models =============\n\nmodel Usuario {\n  id          String    @id @default(cuid())\n  email       String    @unique\n  password    String    // bcrypt hash\n  role        Role      @default(PACIENTE)\n  ativo       Boolean   @default(true)\n  emailVerificado Boolean @default(false)\n  \n  criadoEm    DateTime  @default(now())\n  atualizadoEm DateTime @updatedAt\n  deletadoEm  DateTime? // Para soft delete\n\n  // Relações\n  paciente    Paciente?\n  prescritor  Prescritor?\n  admin       Admin?\n  sessions    Session[]\n  logsAuditoria LogAuditoria[]\n\n  @@index([email])\n  @@index([role])\n}\n\nmodel Session {\n  id          String    @id @default(cuid())\n  usuarioId   String\n  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)\n  \n  refreshToken String?\n  ipAddress   String?\n  userAgent   String?\n  \n  criadoEm    DateTime  @default(now())\n  expiresEm   DateTime\n  \n  @@index([usuarioId])\n  @@index([expiresEm])\n}\n\nmodel Paciente {\n  id              String    @id @default(cuid())\n  usuarioId       String    @unique\n  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)\n  \n  // Dados pessoais\n  cpf             String?   @unique // Criptografado (opcional, mas único se preenchido)\n  nome            String\n  email           String    @unique\n  telefone        String?   // Criptografado (opcional)\n  whatsapp        String    // WhatsApp obrigatório\n  dataNascimento  DateTime?\n  \n  // Documento de identidade (validação obrigatória na API)\n  documentoIdentidadeUrl String? // URL do documento com foto\n\n  // LGPD & Privacidade (usa consenteLGPD para termo de consentimento LGPD)\n  consenteLGPD    Boolean   @default(false)\n  consentimentoEm DateTime?\n  dataDelecaoAgendada DateTime? // Para direito ao esquecimento\n\n  // Endereço\n  rua             String?\n  numero          String?\n  complemento     String?\n  bairro          String?\n  cidade          String?\n  estado          String?\n  cep             String?\n  \n  // Dados médicos (sensíveis)\n  jaUsaCannabis       Boolean   @default(false) // Já é paciente de cannabis medicinal?\n  patologiaCID        String?   // Patologia com código CID\n  condicoes           String[]  @default([])  // JSON array\n  alergias            String[]  @default([])\n  medicamentos        String[]  @default([])\n  documentosMedicosUrls String[] @default([]) // URLs dos documentos médicos (receita, laudo, anvisa)\n  \n  // Termos legais\n  termoAjuizamento    Boolean   @default(false) // Aceite do termo de ajuizamento\n  termoAjuizamentoEm  DateTime? // Data/hora do aceite\n  \n  // Relacionamentos\n  prescricoes     Prescricao[]\n  consentimentos  ConsentimentoLGPD[]\n  agendamentos    Agendamento[]\n  preAnamnese     PreAnamnese?\n  \n  criadoEm        DateTime  @default(now())\n  atualizadoEm    DateTime  @updatedAt\n  \n  @@index([usuarioId])\n  @@index([cpf])\n  @@index([whatsapp])\n}\n\nmodel PreAnamnese {\n  id              String    @id @default(cuid())\n  \n  pacienteId      String    @unique\n  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)\n  \n  perfil          PerfilIntake\n  objetivoPrincipal String\n  gravidade       Int       // 1-5\n  tratamentosPrevios String[] @default([])\n  comorbidades    String[]  @default([])\n  notas           String?\n  preferenciaAcompanhamento String\n  melhorHorario   String\n  \n  diagnostico     Json      // Objeto com titulo, resumo, nivelUrgencia, indicacoes, contraindicacoes, observacoes\n  recomendacoes   String[]  @default([])\n  proximosPasso   String?\n  scorePrioridade Int       @default(0) // 0-100\n  \n  criadoEm        DateTime  @default(now())\n  atualizadoEm    DateTime  @updatedAt\n  \n  @@index([pacienteId])\n  @@index([scorePrioridade])\n}\n\nmodel Prescritor {\n  id              String    @id @default(cuid())\n  usuarioId       String    @unique\n  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)\n  \n  crm             String    @unique\n  nome            String\n  especialidade   String\n  instituicao     String?\n  email           String    @unique\n  telefone        String?\n  \n  // Validação\n  crmVerificado   Boolean   @default(false)\n  dataVerificacao DateTime?\n  \n  // Relacionamentos\n  prescricoes     Prescricao[]\n  \n  criadoEm        DateTime  @default(now())\n  atualizadoEm    DateTime  @updatedAt\n  \n  @@index([usuarioId])\n  @@index([crm])\n}\n\nmodel Admin {\n  id              String    @id @default(cuid())\n  usuarioId       String    @unique\n  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)\n  \n  permissoes      String[] @default([]) // JSON array\n  notas           String?\n  \n  criadoEm        DateTime  @default(now())\n  atualizadoEm    DateTime  @updatedAt\n}\n\nmodel Prescricao {\n  id              String    @id @default(cuid())\n  \n  // Relações\n  pacienteId      String\n  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)\n  \n  prescritorId    String\n  prescritor      Prescritor @relation(fields: [prescritorId], references: [id])\n  \n  // Dados médicos\n  descricao       String    // Indicação medicinal\n  dosagem         String    // Ex: \"5-10mg\"\n  frequencia      String    // Ex: \"2x ao dia\"\n  duracao         String    // Ex: \"30 dias\"\n  \n  // Certificado digital\n  certificadoUrl  String?   // URL do PDF no storage\n  qrCode          String?   // QR code data (URL/JSON)\n  \n  // Status & Validade\n  status          StatusPrescricao @default(ATIVA)\n  validadeDe      DateTime\n  validadeAte     DateTime\n  \n  // Assinatura digital (futuro)\n  assinatura      String?   // Hash da assinatura\n  \n  // Auditoria\n  criadoEm        DateTime  @default(now())\n  atualizadoEm    DateTime  @updatedAt\n  \n  @@index([pacienteId])\n  @@index([prescritorId])\n  @@index([status])\n  @@index([validadeAte])\n}\n\nmodel Artigo {\n  id              String    @id @default(cuid())\n  \n  titulo          String\n  slug            String    @unique\n  conteudo        String    // Markdown\n  resumo          String?   // Preview\n  autor           String\n  \n  categoria       CategoriaArtigo\n  tags            String[] @default([])\n  \n  publicado       Boolean   @default(false)\n  visualizacoes   Int       @default(0)\n  \n  imagemUrl       String?   // URL da imagem de capa\n  \n  criadoEm        DateTime  @default(now())\n  atualizadoEm    DateTime  @updatedAt\n  publicadoEm     DateTime?\n  \n  @@index([slug])\n  @@index([categoria])\n  @@index([publicado])\n}\n\nmodel LogAuditoria {\n  id              String    @id @default(cuid())\n  \n  usuarioId       String?\n  usuario         Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: SetNull)\n  \n  acao            String    // LOGIN, CADASTRO, PRESCRICAO_CRIADA, etc\n  recurso         String    // PACIENTE, PRESCRICAO, ARTIGO, etc\n  recursoId       String?   // ID do recurso afetado\n  \n  detalhes        Json?     // Dados contextuais (status anterior/novo)\n  ipAddress       String?\n  userAgent       String?\n  \n  criadoEm        DateTime  @default(now())\n  \n  @@index([usuarioId])\n  @@index([acao])\n  @@index([recurso])\n  @@index([criadoEm])\n}\n\nmodel Intake {\n  id               String       @id @default(cuid())\n  perfil           PerfilIntake\n  condicaoPrincipal String?\n  objetivoPrincipal String?\n  gravidade        Int?\n  tratamentosPrevios String[]   @default([])\n  comorbidades     String[]     @default([])\n  notas            String?\n  preferenciaAcompanhamento String?\n  melhorHorario    String?\n  contatoEmail     String\n  contatoWhatsapp  String?\n  cidade           String?\n  estado           String?\n  consentiu        Boolean      @default(false)\n  origem           String?      // ex: web-hero, cta-final\n\n  criadoEm         DateTime     @default(now())\n  atualizadoEm     DateTime     @updatedAt\n\n  @@index([perfil])\n  @@index([contatoEmail])\n  @@index([cidade, estado])\n}\n\nmodel ConsentimentoLGPD {\n  id              String    @id @default(cuid())\n  \n  pacienteId      String\n  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)\n  \n  versaoTermo     String    // Ex: \"1.0\"\n  hashTermo       String    // SHA-256 do termo\n  \n  aceito          Boolean   @default(false)\n  ipAddress       String?\n  userAgent       String?\n  \n  criadoEm        DateTime  @default(now())\n  \n  @@index([pacienteId])\n}\n\nenum StatusAgendamento {\n  AGENDADO\n  CONFIRMADO\n  EM_ANDAMENTO\n  CONCLUIDO\n  CANCELADO\n  FALTOU\n}\n\nenum TipoConsulta {\n  PRIMEIRA_CONSULTA\n  RETORNO\n  ACOMPANHAMENTO\n  URGENTE\n}\n\nmodel Agendamento {\n  id              String    @id @default(cuid())\n  \n  pacienteId      String\n  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)\n  \n  dataHora        DateTime\n  duracao         Int       @default(30) // Duração em minutos\n  \n  tipo            TipoConsulta @default(PRIMEIRA_CONSULTA)\n  status          StatusAgendamento @default(AGENDADO)\n  \n  // Informações da consulta\n  motivo          String?\n  observacoes     String?\n  \n  // Confirmação\n  confirmadoEm    DateTime?\n  lembreteEnviado Boolean   @default(false)\n  lembreteEm      DateTime?\n  \n  // Para consulta por vídeo\n  linkVideo       String?\n  \n  criadoEm        DateTime  @default(now())\n  atualizadoEm    DateTime  @updatedAt\n  \n  @@index([pacienteId])\n  @@index([dataHora])\n  @@index([status])\n}\n\n// ============= Índices & Constraints =============\n\n// Constraints de negócio via migrations:\n// - Paciente só acessa seus dados\n// - Prescritor só cria prescrição para pacientes validados\n// - Prescrição só válida com CRM ativo\n// - Dados sensíveis são criptografados no BD\n"}]}}} +5ms
+prisma:schemaEngine:stderr {"timestamp":"2025-12-21T15:05:07.646555903Z","level":"INFO","fields":{"message":"Starting schema engine RPC server","git_hash":"605197351a3c8bdd595af2d2a9bc3025bca48ea2"},"target":"schema_engine"} +5ms
+
+The database is already in sync with the Prisma schema.
+
+Running generate... (Use --skip-generate to skip the generators)
+prisma:getSchema Reading schema from single file /root/abra-megazord/web/prisma/schema.prisma +130ms
+prisma:getConfig Using getConfig Wasm +83ms
+prisma:getConfig config data retrieved without errors in getConfig Wasm +2ms
+prisma:getDMMF Using getDmmf Wasm +0ms
+prisma:getDMMF Using given datamodel +1ms
+prisma:getDMMF dmmf data retrieved without errors in getDmmf Wasm +226ms
+prisma:generator prismaCLIDir /root/abra-megazord/web/node_modules/prisma +5ms
+prisma:generator prismaClientDir /root/abra-megazord/web/node_modules/@prisma/client +0ms
+prisma:generator baseDir /root/abra-megazord/web/prisma +0ms
+prisma:generator typescriptPath /root/abra-megazord/web/node_modules/typescript +1ms
+prisma:GeneratorProcess prisma:client:generator requiredEngine: libqueryEngine +27ms +90ms
+prisma:mergeSchemas Using mergeSchemas Wasm +2ms
+prisma:loadEnv project root found at /root/abra-megazord/web/node_modules/@prisma/client/package.json +11ms
+prisma:getSchema prismaConfig {
+  "packagePath": "/root/abra-megazord/web/package.json"
+} +15ms
+prisma:getGenerators neededVersions {
+  "605197351a3c8bdd595af2d2a9bc3025bca48ea2": {
+    "engines": [
+      "libqueryEngine"
+    ],
+    "binaryTargets": [
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x",
+        "native": true
+      }
+    ]
+  }
+} +1ms
+prisma:getGenerators {
+  "generatorBinaryPaths": {
+    "libqueryEngine": {
+      "debian-openssl-3.0.x": "/root/abra-megazord/web/node_modules/prisma/libquery_engine-debian-openssl-3.0.x.so.node"
+    }
+  }
+✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 286ms
+prisma:cli:bin Execution time for executing "await cli.parse(commandArray)": 1233.613621 ms +289ms
+root@srv1193160:~/abra-megazord/web# x

@@ -38,6 +38,15 @@ task = "shell.exec"
 args = "cd web && npm run dev"
 waitForPort = 5000
 
+[[workflows.workflow]]
+name = "SSH"
+mode = "sequential"
+author = 51347583
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "ssh root@31.97.93.100"
+
 [[ports]]
 localPort = 3001
 externalPort = 3001
