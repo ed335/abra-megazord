@@ -7,8 +7,8 @@ function verifyWebhookAuth(request: NextRequest): boolean {
   const expectedSecret = process.env.SYNCPAY_WEBHOOK_SECRET || process.env.SYNCPAY_CLIENT_SECRET;
   
   if (!expectedSecret) {
-    console.warn('SYNCPAY_WEBHOOK_SECRET não configurado - aceitando webhooks sem verificação');
-    return true;
+    console.error('SYNCPAY_WEBHOOK_SECRET não configurado - rejeitando webhooks por segurança');
+    return false;
   }
 
   if (!authHeader) {

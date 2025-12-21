@@ -39,9 +39,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const paciente = await prisma.paciente.findUnique({
+    const paciente = await (prisma as any).paciente.findUnique({
       where: { usuarioId: decoded.sub },
-      include: { assinaturas: { where: { status: 'ATIVA' } } }
     });
 
     if (!paciente) {
@@ -71,7 +70,7 @@ export async function POST(request: NextRequest) {
     let plano = null;
 
     if (planoId) {
-      plano = await prisma.plano.findUnique({ where: { id: planoId } });
+      plano = await (prisma as any).plano.findUnique({ where: { id: planoId } });
       if (!plano) {
         return NextResponse.json({ error: 'Plano não encontrado' }, { status: 404 });
       }
@@ -105,6 +104,7 @@ export async function POST(request: NextRequest) {
     const webhookUrl = `${baseUrl}/api/pagamentos/webhook`;
 
     // Create Pix payment via Syncpay
+    const phone = paciente.whatsapp ? paciente.whatsapp.replace(/\D/g, '') : '';
     const pixResponse = await createPixPayment(
       valor,
       descricao,
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         name: paciente.nome,
         cpf: cpf,
         email: paciente.email,
-        phone: paciente.whatsapp.replace(/\D/g, ''),
+        phone: phone,
       },
       webhookUrl
     );
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     // Create or get subscription
     let assinatura = null;
     if (tipo === 'MENSALIDADE' && planoId) {
-      assinatura = await prisma.assinatura.create({
+      assinatura = await (prisma as any).assinatura.create({
         data: {
           pacienteId: paciente.id,
           planoId: planoId,
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save payment record
-    const pagamento = await prisma.pagamento.create({
+    const pagamento = await (prisma as any).pagamento.create({
       data: {
         pacienteId: paciente.id,
         assinaturaId: assinatura?.id,

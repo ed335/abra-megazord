@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'abracanm-secret-key-2024';
+import { getJWTSecret } from '@/lib/jwt';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,7 +17,8 @@ export async function GET(request: NextRequest) {
     
     let decoded: any;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      const jwtSecret = getJWTSecret();
+      decoded = jwt.verify(token, jwtSecret);
     } catch {
       return NextResponse.json(
         { message: 'Token inválido' },
