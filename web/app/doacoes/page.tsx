@@ -142,7 +142,7 @@ export default function DoacoesPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro">
+    <main className="min-h-screen bg-white">
       <header className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-verde-oliva">

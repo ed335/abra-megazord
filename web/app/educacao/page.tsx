@@ -32,7 +32,7 @@ export default function EducacaoPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro">
+    <main className="min-h-screen bg-white">
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-verde-oliva">

@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/shared/Button';
 import { setToken } from '@/lib/auth';
 
@@ -85,8 +86,24 @@ type FieldErrors = {
   [K in keyof FormData]?: string;
 };
 
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0
+  }),
+  center: {
+    x: 0,
+    opacity: 1
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 300 : -300,
+    opacity: 0
+  })
+};
+
 export default function CadastroAssociadoClient() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -348,11 +365,13 @@ export default function CadastroAssociadoClient() {
 
   const nextStep = () => {
     if (validateStep(currentStep)) {
+      setDirection(1);
       setCurrentStep(prev => Math.min(prev + 1, 4));
     }
   };
 
   const prevStep = () => {
+    setDirection(-1);
     setCurrentStep(prev => Math.max(prev - 1, 1));
     setMessage('');
   };
@@ -428,7 +447,7 @@ export default function CadastroAssociadoClient() {
   const checkboxLabelClass = "flex items-start gap-3 cursor-pointer text-sm text-cinza-escuro";
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
+    <main className="min-h-screen bg-white px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -464,9 +483,19 @@ export default function CadastroAssociadoClient() {
           ))}
         </div>
 
-        <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-6 sm:p-8 overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
           {currentStep === 1 && (
-            <div className="space-y-6">
+            <motion.div
+              key="step-1"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="space-y-6"
+            >
               <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Dados Pessoais e Termos</h2>
               
               <div className="space-y-4">
@@ -586,11 +615,20 @@ export default function CadastroAssociadoClient() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {currentStep === 2 && (
-            <div className="space-y-6">
+            <motion.div
+              key="step-2"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="space-y-6"
+            >
               <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Endereço</h2>
               
               <div className="space-y-4">
@@ -691,11 +729,20 @@ export default function CadastroAssociadoClient() {
                   </label>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {currentStep === 3 && (
-            <div className="space-y-6">
+            <motion.div
+              key="step-3"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="space-y-6"
+            >
               <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Documento com Foto</h2>
               
               <p className="text-sm text-cinza-medio mb-4">
@@ -740,11 +787,20 @@ export default function CadastroAssociadoClient() {
                   </label>
                 )}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {currentStep === 4 && (
-            <div className="space-y-6">
+            <motion.div
+              key="step-4"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="space-y-6"
+            >
               <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Informações Médicas</h2>
               
               <div className="space-y-4">
@@ -848,8 +904,9 @@ export default function CadastroAssociadoClient() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
 
           {message && (
             <div className={`mt-4 p-3 rounded-lg text-sm ${

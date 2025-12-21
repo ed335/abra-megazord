@@ -16,7 +16,7 @@ import DonationSection from '@/components/home/DonationSection';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro">
+    <main className="min-h-screen bg-white">
       <Header />
       <HeroSection />
       <AboutSection />

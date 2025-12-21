@@ -41,6 +41,7 @@ export default function Footer() {
               <Link href="/doacoes" className="hover:text-off-white font-medium text-green-400">💚 Doe</Link>
               <Link href="/politica-privacidade" className="hover:text-off-white">Política de Privacidade</Link>
               <Link href="/termos-uso" className="hover:text-off-white">Termos de Uso</Link>
+              <Link href="/politica-cookies" className="hover:text-off-white">Política de Cookies</Link>
             </nav>
           </div>
 

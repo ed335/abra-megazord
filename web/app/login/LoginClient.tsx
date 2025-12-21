@@ -53,7 +53,7 @@ export default function LoginClient() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-16">
+    <main className="min-h-screen bg-white px-4 sm:px-6 lg:px-8 py-16">
       <div className="max-w-2xl mx-auto bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12">
         <div className="flex items-center justify-between mb-8">
           <div>
