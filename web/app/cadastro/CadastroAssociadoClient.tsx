@@ -32,6 +32,7 @@ const PATOLOGIAS_COMUNS = [
 
 type FormData = {
   nome: string;
+  cpf: string;
   email: string;
   senha: string;
   confirmarSenha: string;
@@ -55,6 +56,7 @@ type FormData = {
 
 const initialFormData: FormData = {
   nome: '',
+  cpf: '',
   email: '',
   senha: '',
   confirmarSenha: '',
@@ -75,6 +77,40 @@ const initialFormData: FormData = {
   patologiaPersonalizada: '',
   documentosMedicosUrls: [],
 };
+
+function formatCPF(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+  if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+}
+
+function validateCPF(cpf: string): boolean {
+  const digits = cpf.replace(/\D/g, '');
+  
+  if (digits.length !== 11) return false;
+  
+  if (/^(\d)\1+$/.test(digits)) return false;
+  
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(digits[i]) * (10 - i);
+  }
+  let remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(digits[9])) return false;
+  
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(digits[i]) * (11 - i);
+  }
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(digits[10])) return false;
+  
+  return true;
+}
 
 const steps = [
   { id: 1, title: 'Dados e Termos', icon: User },
@@ -284,6 +320,13 @@ export default function CadastroAssociadoClient() {
           errors.nome = 'Nome é obrigatório';
           isValid = false;
         }
+        if (!formData.cpf) {
+          errors.cpf = 'CPF é obrigatório';
+          isValid = false;
+        } else if (!validateCPF(formData.cpf)) {
+          errors.cpf = 'CPF inválido';
+          isValid = false;
+        }
         if (!formData.whatsapp) {
           errors.whatsapp = 'WhatsApp é obrigatório';
           isValid = false;
@@ -397,6 +440,7 @@ export default function CadastroAssociadoClient() {
           password: formData.senha,
           role: 'PACIENTE',
           nome: formData.nome,
+          cpf: formData.cpf.replace(/\D/g, ''),
           whatsapp: formData.whatsapp.replace(/\D/g, ''),
           cep: formData.cep.replace(/\D/g, ''),
           rua: formData.rua,
@@ -533,6 +577,19 @@ export default function CadastroAssociadoClient() {
                     placeholder="Seu nome completo"
                   />
                   {fieldErrors.nome && <span className="text-xs text-red-500">{fieldErrors.nome}</span>}
+                </label>
+
+                <label className="flex flex-col gap-1.5">
+                  <span className={getLabelClass('cpf')}>CPF *</span>
+                  <input
+                    type="text"
+                    value={formData.cpf}
+                    onChange={(e) => updateField('cpf', formatCPF(e.target.value))}
+                    className={getInputClass('cpf')}
+                    placeholder="000.000.000-00"
+                    maxLength={14}
+                  />
+                  {fieldErrors.cpf && <span className="text-xs text-red-500">{fieldErrors.cpf}</span>}
                 </label>
 
                 <label className="flex flex-col gap-1.5">

@@ -39,14 +39,20 @@ export async function GET(request: NextRequest) {
     }
 
     let nome = '';
-    if (usuario.paciente) nome = usuario.paciente.nome;
-    else if (usuario.prescritor) nome = usuario.prescritor.nome;
+    let cpf = '';
+    if (usuario.paciente) {
+      nome = usuario.paciente.nome;
+      cpf = usuario.paciente.cpf || '';
+    } else if (usuario.prescritor) {
+      nome = usuario.prescritor.nome;
+    }
 
     return NextResponse.json({
       id: usuario.id,
       email: usuario.email,
       role: usuario.role,
       nome,
+      cpf,
     });
   } catch (error) {
     console.error('Me error:', error);

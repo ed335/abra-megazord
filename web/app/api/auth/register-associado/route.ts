@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
     
     const {
       nome,
+      cpf,
       email,
       whatsapp,
       senha,
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const senhaFinal = senha || password;
     
-    if (!nome || !email || !whatsapp || !senhaFinal) {
+    if (!nome || !cpf || !email || !whatsapp || !senhaFinal) {
       return NextResponse.json(
         { message: 'Dados obrigatórios não informados' },
         { status: 400 }
@@ -59,6 +60,7 @@ export async function POST(request: NextRequest) {
         paciente: {
           create: {
             nome,
+            cpf,
             email,
             whatsapp,
             consenteLGPD: consenteLGPD || false,

@@ -65,10 +65,12 @@ cd backend && npx prisma db push
 ## Working Features
 
 ### Member Registration (4 steps)
-1. **Dados e Termos** - Nome, WhatsApp, email, senha + confirmação (sem copiar/colar), aceite de LGPD/Termos/Política de Privacidade
+1. **Dados e Termos** - Nome, CPF (validado), WhatsApp, email, senha + confirmação (sem copiar/colar), aceite de LGPD/Termos/Política de Privacidade
 2. **Endereço** - CEP com auto-preenchimento via ViaCEP
 3. **Documento** - Upload de documento de identidade com foto
 4. **Informações Médicas** - Dropdown de patologias comuns com CID + opção "Outras", uso de cannabis, documentos médicos
+
+**Validação de CPF**: O CPF é validado usando o algoritmo oficial brasileiro (dígitos verificadores). CPFs inválidos ou com todos os dígitos iguais são rejeitados.
 
 ### Other Features
 - User registration and login with JWT authentication
@@ -193,6 +195,12 @@ cd backend && npx prisma db push
 - Mensalidade: R$ 39,90/mês
 - Consulta: R$ 149,00
 - Primeira consulta: R$ 99,00
+
+**Fluxo de Pagamento**:
+1. Usuário acessa `/planos` e escolhe um plano
+2. Sistema usa o CPF do cadastro automaticamente (não pede novamente)
+3. Gera QR Code Pix e código copia/cola
+4. Webhook recebe confirmação e ativa assinatura
 
 **Modelos Prisma**:
 - `Plano` - nome, valores, benefícios

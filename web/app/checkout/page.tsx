@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/shared/Header';
 import { getToken, fetchWithAuth } from '@/lib/auth';
-import { ArrowLeft, Copy, Check, Loader2, Clock, QrCode, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Copy, Check, Loader2, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface CheckoutData {
   id: string;
@@ -19,13 +19,10 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [checkout, setCheckout] = useState<CheckoutData | null>(null);
   const [copied, setCopied] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'pending' | 'paid' | 'expired'>('pending');
-  const [cpf, setCpf] = useState('');
-  const [showCpfForm, setShowCpfForm] = useState(true);
 
   const tipo = searchParams.get('tipo') || 'MENSALIDADE';
   const planoId = searchParams.get('plano');
@@ -36,8 +33,43 @@ function CheckoutContent() {
       router.replace('/login?redirect=/checkout');
       return;
     }
-    setLoading(false);
-  }, [router]);
+    
+    const loadUserAndGeneratePayment = async () => {
+      try {
+        const userData = await fetchWithAuth<{ cpf?: string }>('/api/auth/me');
+        
+        if (!userData.cpf) {
+          setError('CPF não cadastrado. Por favor, atualize seu cadastro.');
+          setLoading(false);
+          return;
+        }
+        
+        const data = await fetchWithAuth<{ success: boolean; pagamento: CheckoutData; error?: string }>(
+          '/api/pagamentos/checkout',
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              tipo,
+              planoId: planoId || undefined,
+              cpf: userData.cpf,
+            }),
+          }
+        );
+
+        if (data.success && data.pagamento) {
+          setCheckout(data.pagamento);
+        } else {
+          setError(data.error || 'Erro ao gerar pagamento');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadUserAndGeneratePayment();
+  }, [router, tipo, planoId]);
 
   useEffect(() => {
     if (!checkout) return;
@@ -63,44 +95,6 @@ function CheckoutContent() {
     return () => clearInterval(interval);
   }, [checkout]);
 
-  const handleCpfSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const cleanCpf = cpf.replace(/\D/g, '');
-    if (cleanCpf.length !== 11) {
-      setError('CPF deve ter 11 dígitos');
-      return;
-    }
-
-    setProcessing(true);
-    setError(null);
-
-    try {
-      const data = await fetchWithAuth<{ success: boolean; pagamento: CheckoutData; error?: string }>(
-        '/api/pagamentos/checkout',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            tipo,
-            planoId: planoId || undefined,
-            cpf: cleanCpf,
-          }),
-        }
-      );
-
-      if (data.success && data.pagamento) {
-        setCheckout(data.pagamento);
-        setShowCpfForm(false);
-      } else {
-        setError(data.error || 'Erro ao gerar pagamento');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao processar pagamento');
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   const copyPixCode = () => {
     if (checkout?.pixCode) {
       navigator.clipboard.writeText(checkout.pixCode);
@@ -114,14 +108,6 @@ function CheckoutContent() {
       style: 'currency',
       currency: 'BRL',
     }).format(value);
-  };
-
-  const formatCpf = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 11);
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
-    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
-    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
   };
 
   const getTipoLabel = () => {
@@ -184,7 +170,7 @@ function CheckoutContent() {
 
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-cinza-escuro mb-1">
-            {showCpfForm ? 'Finalizar Pagamento' : 'Pague com Pix'}
+            Pague com Pix
           </h1>
           <p className="text-cinza-medio text-sm">{getTipoLabel()}</p>
         </div>
@@ -196,44 +182,7 @@ function CheckoutContent() {
           </div>
         )}
 
-        {showCpfForm ? (
-          <form onSubmit={handleCpfSubmit} className="space-y-6">
-            <div className="p-6 border border-cinza-claro rounded-xl">
-              <label className="block text-sm font-medium text-cinza-escuro mb-2">
-                CPF do pagador
-              </label>
-              <input
-                type="text"
-                value={formatCpf(cpf)}
-                onChange={(e) => setCpf(e.target.value)}
-                placeholder="000.000.000-00"
-                className="w-full px-4 py-3 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none transition"
-                required
-              />
-              <p className="mt-2 text-xs text-cinza-medio">
-                O CPF é necessário para gerar o código Pix.
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={processing}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition disabled:opacity-50"
-            >
-              {processing ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Gerando Pix...
-                </>
-              ) : (
-                <>
-                  <QrCode className="w-5 h-5" />
-                  Gerar Código Pix
-                </>
-              )}
-            </button>
-          </form>
-        ) : checkout && (
+        {checkout && (
           <div className="space-y-6">
             <div className="p-6 border border-cinza-claro rounded-xl text-center">
               <div className="flex items-center justify-center gap-2 text-sm text-cinza-medio mb-4">
