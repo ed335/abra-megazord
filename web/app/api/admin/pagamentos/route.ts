@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all payments with pagination
-    const pagamentos = await prisma.pagamento.findMany({
+    const pagamentos = await (prisma as any).pagamento.findMany({
       orderBy: { criadoEm: 'desc' },
       take: 100,
       include: {
@@ -25,18 +25,18 @@ export async function GET(request: NextRequest) {
     hoje.setHours(0, 0, 0, 0);
 
     const [totalRecebido, totalPendente, assinaturasAtivas, pagamentosHoje] = await Promise.all([
-      prisma.pagamento.aggregate({
+      (prisma as any).pagamento.aggregate({
         _sum: { valor: true },
         where: { status: 'PAGO' }
       }),
-      prisma.pagamento.aggregate({
+      (prisma as any).pagamento.aggregate({
         _sum: { valor: true },
         where: { status: 'PENDENTE' }
       }),
-      prisma.assinatura.count({
+      (prisma as any).assinatura.count({
         where: { status: 'ATIVA' }
       }),
-      prisma.pagamento.count({
+      (prisma as any).pagamento.count({
         where: {
           status: 'PAGO',
           pagoEm: { gte: hoje }
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     return NextResponse.json({
-      pagamentos: pagamentos.map(p => ({
+      pagamentos: pagamentos.map((p: any) => ({
         id: p.id,
         tipo: p.tipo,
         valor: Number(p.valor),
