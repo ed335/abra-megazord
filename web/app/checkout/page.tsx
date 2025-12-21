@@ -1,0 +1,308 @@
+'use client';
+
+import { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import Header from '@/components/shared/Header';
+import { getToken, fetchWithAuth } from '@/lib/auth';
+import { ArrowLeft, Copy, Check, Loader2, Clock, QrCode, AlertCircle, CheckCircle2 } from 'lucide-react';
+
+interface CheckoutData {
+  id: string;
+  valor: number;
+  pixCode: string;
+  identifier: string;
+  expiracao: string;
+}
+
+function CheckoutContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [checkout, setCheckout] = useState<CheckoutData | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<'pending' | 'paid' | 'expired'>('pending');
+  const [cpf, setCpf] = useState('');
+  const [showCpfForm, setShowCpfForm] = useState(true);
+
+  const tipo = searchParams.get('tipo') || 'MENSALIDADE';
+  const planoId = searchParams.get('plano');
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      router.replace('/login?redirect=/checkout');
+      return;
+    }
+    setLoading(false);
+  }, [router]);
+
+  useEffect(() => {
+    if (!checkout) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await fetchWithAuth<{ pagamento: { status: string } }>(
+          `/api/pagamentos/status?pagamentoId=${checkout.id}`
+        );
+        
+        if (data.pagamento?.status === 'PAGO') {
+          setPaymentStatus('paid');
+          clearInterval(interval);
+        } else if (data.pagamento?.status === 'EXPIRADO' || data.pagamento?.status === 'FALHOU') {
+          setPaymentStatus('expired');
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error('Erro ao verificar status:', err);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [checkout]);
+
+  const handleCpfSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const cleanCpf = cpf.replace(/\D/g, '');
+    if (cleanCpf.length !== 11) {
+      setError('CPF deve ter 11 dígitos');
+      return;
+    }
+
+    setProcessing(true);
+    setError(null);
+
+    try {
+      const data = await fetchWithAuth<{ success: boolean; pagamento: CheckoutData; error?: string }>(
+        '/api/pagamentos/checkout',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            tipo,
+            planoId: planoId || undefined,
+            cpf: cleanCpf,
+          }),
+        }
+      );
+
+      if (data.success && data.pagamento) {
+        setCheckout(data.pagamento);
+        setShowCpfForm(false);
+      } else {
+        setError(data.error || 'Erro ao gerar pagamento');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao processar pagamento');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const copyPixCode = () => {
+    if (checkout?.pixCode) {
+      navigator.clipboard.writeText(checkout.pixCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+  };
+
+  const formatCpf = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  };
+
+  const getTipoLabel = () => {
+    switch (tipo) {
+      case 'MENSALIDADE': return 'Mensalidade';
+      case 'CONSULTA': return 'Consulta Médica';
+      case 'PRIMEIRA_CONSULTA': return 'Primeira Consulta';
+      default: return 'Pagamento';
+    }
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white">
+        <Header />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
+        </div>
+      </main>
+    );
+  }
+
+  if (paymentStatus === 'paid') {
+    return (
+      <main className="min-h-screen bg-white">
+        <Header />
+        <div className="max-w-md mx-auto px-4 py-16 text-center">
+          <div className="w-16 h-16 bg-verde-oliva/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle2 className="w-8 h-8 text-verde-oliva" />
+          </div>
+          <h1 className="text-2xl font-bold text-cinza-escuro mb-2">
+            Pagamento Confirmado!
+          </h1>
+          <p className="text-cinza-medio mb-6">
+            Seu pagamento foi processado com sucesso. Obrigado por fazer parte da ABRACANM!
+          </p>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition"
+          >
+            Ir para o Dashboard
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-white">
+      <Header />
+      
+      <div className="max-w-md mx-auto px-4 py-8">
+        <Link 
+          href="/planos" 
+          className="inline-flex items-center gap-2 text-sm text-cinza-medio hover:text-verde-oliva transition mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Voltar aos planos
+        </Link>
+
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-cinza-escuro mb-1">
+            {showCpfForm ? 'Finalizar Pagamento' : 'Pague com Pix'}
+          </h1>
+          <p className="text-cinza-medio text-sm">{getTipoLabel()}</p>
+        </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-erro/10 border border-erro/20 rounded-xl flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-erro flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-erro">{error}</p>
+          </div>
+        )}
+
+        {showCpfForm ? (
+          <form onSubmit={handleCpfSubmit} className="space-y-6">
+            <div className="p-6 border border-cinza-claro rounded-xl">
+              <label className="block text-sm font-medium text-cinza-escuro mb-2">
+                CPF do pagador
+              </label>
+              <input
+                type="text"
+                value={formatCpf(cpf)}
+                onChange={(e) => setCpf(e.target.value)}
+                placeholder="000.000.000-00"
+                className="w-full px-4 py-3 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none transition"
+                required
+              />
+              <p className="mt-2 text-xs text-cinza-medio">
+                O CPF é necessário para gerar o código Pix.
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={processing}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition disabled:opacity-50"
+            >
+              {processing ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Gerando Pix...
+                </>
+              ) : (
+                <>
+                  <QrCode className="w-5 h-5" />
+                  Gerar Código Pix
+                </>
+              )}
+            </button>
+          </form>
+        ) : checkout && (
+          <div className="space-y-6">
+            <div className="p-6 border border-cinza-claro rounded-xl text-center">
+              <div className="flex items-center justify-center gap-2 text-sm text-cinza-medio mb-4">
+                <Clock className="w-4 h-4" />
+                Válido por 30 minutos
+              </div>
+
+              <div className="text-3xl font-bold text-verde-oliva mb-6">
+                {formatCurrency(checkout.valor)}
+              </div>
+
+              <div className="bg-cinza-muito-claro p-4 rounded-lg mb-4">
+                <p className="text-xs text-cinza-medio mb-2">Código Pix Copia e Cola:</p>
+                <div className="bg-white p-3 rounded border border-cinza-claro break-all text-xs text-cinza-escuro font-mono">
+                  {checkout.pixCode.slice(0, 80)}...
+                </div>
+              </div>
+
+              <button
+                onClick={copyPixCode}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-verde-oliva text-verde-oliva rounded-xl font-medium hover:bg-verde-oliva/5 transition"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-5 h-5" />
+                    Copiado!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-5 h-5" />
+                    Copiar Código Pix
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="p-4 bg-verde-claro/10 rounded-xl">
+              <div className="flex items-center gap-2 text-sm text-verde-oliva font-medium mb-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Aguardando pagamento...
+              </div>
+              <p className="text-xs text-cinza-medio">
+                Após o pagamento, esta página será atualizada automaticamente.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <p className="text-xs text-cinza-medio">
+                Problemas com o pagamento?{' '}
+                <a href="mailto:ouvidoria@abracanm.org.br" className="text-verde-oliva underline">
+                  Entre em contato
+                </a>
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
+      </main>
+    }>
+      <CheckoutContent />
+    </Suspense>
+  );
+}

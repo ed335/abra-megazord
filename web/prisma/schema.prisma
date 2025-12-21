@@ -126,6 +126,8 @@ model Paciente {
   consentimentos  ConsentimentoLGPD[]
   agendamentos    Agendamento[]
   preAnamnese     PreAnamnese?
+  assinaturas     Assinatura[]
+  pagamentos      Pagamento[]
   
   criadoEm        DateTime  @default(now())
   atualizadoEm    DateTime  @updatedAt
@@ -376,6 +378,128 @@ model Agendamento {
   @@index([pacienteId])
   @@index([dataHora])
   @@index([status])
+}
+
+// ============= Pagamentos (Syncpay) =============
+
+enum TipoPlano {
+  MENSAL
+  TRIMESTRAL
+  ANUAL
+}
+
+enum StatusAssinatura {
+  ATIVA
+  PENDENTE
+  CANCELADA
+  EXPIRADA
+  INADIMPLENTE
+}
+
+enum StatusPagamento {
+  PENDENTE
+  PROCESSANDO
+  PAGO
+  FALHOU
+  REEMBOLSADO
+  EXPIRADO
+}
+
+enum TipoPagamento {
+  MENSALIDADE
+  CONSULTA
+  PRIMEIRA_CONSULTA
+}
+
+model Plano {
+  id              String    @id @default(cuid())
+  
+  nome            String    // Ex: "Essencial", "Completo"
+  descricao       String?
+  tipo            TipoPlano @default(MENSAL)
+  
+  valorMensalidade Decimal  @db.Decimal(10, 2) // R$ 39,90
+  valorConsulta   Decimal   @db.Decimal(10, 2) // R$ 149,00
+  valorPrimeiraConsulta Decimal @db.Decimal(10, 2) // R$ 99,00
+  
+  beneficios      String[]  @default([])
+  ativo           Boolean   @default(true)
+  ordem           Int       @default(0) // Para ordenar na exibição
+  
+  assinaturas     Assinatura[]
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([ativo])
+  @@index([tipo])
+}
+
+model Assinatura {
+  id              String    @id @default(cuid())
+  
+  pacienteId      String
+  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  
+  planoId         String
+  plano           Plano     @relation(fields: [planoId], references: [id])
+  
+  status          StatusAssinatura @default(PENDENTE)
+  
+  dataInicio      DateTime?
+  dataFim         DateTime?
+  proximaCobranca DateTime?
+  
+  pagamentos      Pagamento[]
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([pacienteId])
+  @@index([planoId])
+  @@index([status])
+  @@index([proximaCobranca])
+}
+
+model Pagamento {
+  id              String    @id @default(cuid())
+  
+  pacienteId      String
+  paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  
+  assinaturaId    String?
+  assinatura      Assinatura? @relation(fields: [assinaturaId], references: [id])
+  
+  tipo            TipoPagamento
+  valor           Decimal   @db.Decimal(10, 2)
+  status          StatusPagamento @default(PENDENTE)
+  
+  // Dados Syncpay
+  syncpayIdentifier String?  @unique // UUID da transação no Syncpay
+  pixCode         String?   // Código Pix copia/cola
+  pixExpiracao    DateTime? // Quando o Pix expira
+  
+  // Cliente (para Syncpay)
+  clienteNome     String?
+  clienteCpf      String?
+  clienteEmail    String?
+  clienteTelefone String?
+  
+  // Webhook data
+  webhookRecebido Boolean   @default(false)
+  webhookData     Json?
+  
+  pagoEm          DateTime?
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([pacienteId])
+  @@index([assinaturaId])
+  @@index([syncpayIdentifier])
+  @@index([status])
+  @@index([tipo])
+  @@index([criadoEm])
 }
 
 // ============= Índices & Constraints =============

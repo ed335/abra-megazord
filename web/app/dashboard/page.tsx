@@ -400,7 +400,13 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-4 gap-4">
+          <Link href="/planos" className="p-4 border border-verde-oliva bg-verde-claro/5 rounded-xl hover:bg-verde-claro/10 transition group">
+            <Activity className="w-5 h-5 text-verde-oliva mb-2" />
+            <h3 className="font-medium text-cinza-escuro text-sm">Planos</h3>
+            <p className="text-xs text-cinza-medio mt-0.5">Ver planos e assinar</p>
+          </Link>
+
           <Link href="/educacao" className="p-4 border border-cinza-claro rounded-xl hover:border-verde-oliva/50 transition group">
             <BookOpen className="w-5 h-5 text-verde-oliva mb-2" />
             <h3 className="font-medium text-cinza-escuro text-sm">Educação</h3>

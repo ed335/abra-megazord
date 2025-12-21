@@ -182,6 +182,28 @@ cd backend && npx prisma db push
 - **Histórico do Navegador**: botão voltar do browser funciona para navegar entre passos
 - **Validação Visual LGPD**: checkbox de consentimento fica vermelho se não marcado
 
+### Sistema de Pagamentos (Dec 2024)
+- **Gateway**: Syncpay (Pix)
+- **Planos**: `/planos` - exibe planos e preços
+- **Checkout**: `/checkout` - gera QR Code Pix e código copia/cola
+- **Webhooks**: `/api/pagamentos/webhook` - recebe confirmação de pagamento
+- **Admin**: `/admin/pagamentos` - dashboard de pagamentos e assinaturas
+
+**Preços Configurados**:
+- Mensalidade: R$ 39,90/mês
+- Consulta: R$ 149,00
+- Primeira consulta: R$ 99,00
+
+**Modelos Prisma**:
+- `Plano` - nome, valores, benefícios
+- `Assinatura` - vínculo paciente-plano, status, datas
+- `Pagamento` - registro de transações, status, dados Syncpay
+
+**Environment Variables**:
+- `SYNCPAY_CLIENT_ID` - UUID do cliente Syncpay
+- `SYNCPAY_CLIENT_SECRET` - Secret do cliente Syncpay
+- `SYNCPAY_API_URL` - URL da API Syncpay
+
 ## Security Notes
 - JWT_SECRET must be configured as environment variable (no fallback)
 - Admin tokens are validated against database to ensure account exists and is active

@@ -13,6 +13,7 @@ API_HOST = "localhost"
 JWT_SECRET = "replit-dev-jwt-secret-change-in-production"
 PORT = "5000"
 NEXT_PUBLIC_API_URL = ""
+SYNCPAY_API_URL = "https://api.syncpay.com.br"
 
 [workflows]
 runButton = "Project"
