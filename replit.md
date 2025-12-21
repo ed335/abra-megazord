@@ -57,6 +57,15 @@ cd backend && npx prisma db push
 - `GET /api/admin/admins` - List administrators
 - `POST /api/admin/admins` - Create administrator
 - `DELETE /api/admin/admins/:id` - Delete administrator
+- `GET /api/admin/planos` - List all plans
+- `POST /api/admin/planos` - Create plan
+- `PUT /api/admin/planos/:id` - Update plan
+- `DELETE /api/admin/planos/:id` - Delete plan
+- `GET /api/admin/assinaturas` - List subscriptions (paginated, with stats)
+
+### User Profile
+- `GET /api/perfil` - Get user profile data
+- `PUT /api/perfil` - Update user profile (nome, CPF, endereço, etc)
 
 ### Other
 - `GET /health` - Health check
@@ -226,6 +235,18 @@ cd backend && npx prisma db push
 - Client-side admin helpers in `web/lib/admin-auth-client.ts`
 - Webhook rejects all requests if SYNCPAY_CLIENT_SECRET not configured (fail closed)
 - All API routes use centralized `getJWTSecret()` from `@/lib/jwt`
+
+### User Profile Page (Dec 2024)
+- **Página de Perfil**: `/perfil` - usuário pode editar seus dados pessoais
+- **Campos editáveis**: nome, CPF, whatsapp, telefone, data de nascimento, endereço completo
+- **CPF obrigatório para Pix**: mensagem explicativa sobre necessidade do CPF para gerar pagamentos
+- **Auto-preenchimento CEP**: busca endereço via ViaCEP
+- **Ícone no Header**: botão de usuário no header para acesso rápido ao perfil
+
+### Admin Login Page (Dec 2024)
+- **Página dedicada**: `/admin/login` - login específico para administradores
+- **Validação de role**: só permite acesso se usuário for ADMIN
+- **Token separado**: usa `admin_token` no localStorage
 
 ### Recent Bug Fixes (Dec 2024)
 - Removed all hardcoded JWT fallback secrets from 8 files
