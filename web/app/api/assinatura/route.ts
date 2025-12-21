@@ -12,8 +12,8 @@ async function verifyToken(request: NextRequest) {
   const token = authHeader.split(' ')[1];
   try {
     const JWT_SECRET = getJWTSecret();
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string; email: string };
-    return decoded;
+    const decoded = jwt.verify(token, JWT_SECRET) as { sub?: string; id?: string; email: string };
+    return { id: decoded.sub || decoded.id, email: decoded.email };
   } catch {
     return null;
   }
@@ -27,9 +27,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Token inválido' }, { status: 401 });
     }
 
+    const paciente = await (prisma as any).paciente.findUnique({
+      where: { usuarioId: decoded.id },
+    });
+
+    if (!paciente) {
+      return NextResponse.json({ assinatura: null });
+    }
+
     const assinatura = await (prisma as any).assinatura.findFirst({
       where: {
-        pacienteId: decoded.id,
+        pacienteId: paciente.id,
         status: 'ATIVA',
       },
       include: {
