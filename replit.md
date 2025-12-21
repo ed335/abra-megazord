@@ -222,4 +222,13 @@ cd backend && npx prisma db push
 ## Security Notes
 - JWT_SECRET must be configured as environment variable (no fallback)
 - Admin tokens are validated against database to ensure account exists and is active
-- Centralized authentication utility in `web/lib/admin-auth.ts`
+- Centralized authentication utility in `web/lib/admin-auth.ts` (server-side)
+- Client-side admin helpers in `web/lib/admin-auth-client.ts`
+- Webhook rejects all requests if SYNCPAY_CLIENT_SECRET not configured (fail closed)
+- All API routes use centralized `getJWTSecret()` from `@/lib/jwt`
+
+### Recent Bug Fixes (Dec 2024)
+- Removed all hardcoded JWT fallback secrets from 8 files
+- Fixed null-safe handling for patient whatsapp in checkout
+- Fixed import order issues in admin CSV import/export routes
+- Separated server-only and client-side admin auth modules to fix Next.js bundle errors
