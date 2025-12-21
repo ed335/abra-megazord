@@ -17,7 +17,9 @@ import {
   MessageCircle,
   Calendar,
   Search,
-  DollarSign
+  DollarSign,
+  Package,
+  CreditCard
 } from 'lucide-react';
 
 type Stats = {
@@ -371,15 +373,26 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <a href="/admin/pagamentos" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
                 <DollarSign size={20} className="text-emerald-600 mb-2" />
                 <p className="text-sm font-medium text-cinza-escuro">Pagamentos</p>
+              </a>
+              <a href="/admin/assinaturas" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
+                <CreditCard size={20} className="text-indigo-600 mb-2" />
+                <p className="text-sm font-medium text-cinza-escuro">Assinaturas</p>
+              </a>
+              <a href="/admin/planos" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
+                <Package size={20} className="text-teal-600 mb-2" />
+                <p className="text-sm font-medium text-cinza-escuro">Planos</p>
               </a>
               <a href="/admin/agendamentos" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
                 <Calendar size={20} className="text-blue-600 mb-2" />
                 <p className="text-sm font-medium text-cinza-escuro">Agendamentos</p>
               </a>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <a href="/admin/admins" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
                 <UserPlus size={20} className="text-amber-600 mb-2" />
                 <p className="text-sm font-medium text-cinza-escuro">Administradores</p>
