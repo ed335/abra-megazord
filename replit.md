@@ -160,6 +160,16 @@ cd backend && npx prisma db push
 - **Design Minimalista**: fundos brancos, sem gradientes, layout limpo
 - **Admin Dashboard com Abas**: aba "Estatísticas" e aba "Associados" na mesma tela
 - **Navegação Consistente**: Header padrão nas páginas de dashboard e pré-anamnese
+- **Barra de Progresso Animada**: formulário de cadastro com barra de progresso igual à pré-anamnese
+- **Mostrar/Ocultar Senha**: botão de olho nos campos de senha para visualização
+- **Validação Visual de Termos**: checkboxes de termos ficam vermelho quando não marcados
+- **Animações de Transição**: slides suaves entre passos do formulário (Framer Motion)
+- **Ícones nos Passos**: cada etapa do cadastro tem ícone representativo (User, MapPin, FileText, Stethoscope)
+
+### LGPD Compliance (Dec 2024)
+- **Política de Privacidade**: `/politica-privacidade` - documento completo com todas as seções exigidas pela LGPD
+- **Termos de Uso**: `/termos-uso` - condições de uso, responsabilidades, propriedade intelectual
+- **Política de Cookies**: `/politica-cookies` - tipos de cookies, finalidades, gerenciamento
 
 ## Security Notes
 - JWT_SECRET must be configured as environment variable (no fallback)

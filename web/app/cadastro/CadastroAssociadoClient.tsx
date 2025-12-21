@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, EyeOff, Clock3, CheckCircle2, User, MapPin, FileText, Stethoscope } from 'lucide-react';
 import Button from '@/components/shared/Button';
 import { setToken } from '@/lib/auth';
 
@@ -76,10 +77,10 @@ const initialFormData: FormData = {
 };
 
 const steps = [
-  { id: 1, title: 'Dados e Termos' },
-  { id: 2, title: 'Endereço' },
-  { id: 3, title: 'Documento' },
-  { id: 4, title: 'Informações Médicas' },
+  { id: 1, title: 'Dados e Termos', icon: User },
+  { id: 2, title: 'Endereço', icon: MapPin },
+  { id: 3, title: 'Documento', icon: FileText },
+  { id: 4, title: 'Informações Médicas', icon: Stethoscope },
 ];
 
 type FieldErrors = {
@@ -112,7 +113,12 @@ export default function CadastroAssociadoClient() {
   const [cepLoading, setCepLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  
+  const totalSteps = steps.length;
+  const progress = Math.round((currentStep / totalSteps) * 100);
 
   useEffect(() => {
     try {
@@ -464,23 +470,41 @@ export default function CadastroAssociadoClient() {
           </Link>
         </div>
 
-        <div className="flex justify-between mb-8">
-          {steps.map((step) => (
-            <div key={step.id} className="flex-1 flex flex-col items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep >= step.id 
-                  ? 'bg-verde-oliva text-white' 
-                  : 'bg-cinza-claro text-cinza-medio'
-              }`}>
-                {step.id}
+        <div className="flex items-center gap-2 mb-4">
+          {steps.map((step, idx) => {
+            const Icon = step.icon;
+            const isCompleted = currentStep > step.id;
+            const isCurrent = currentStep === step.id;
+            return (
+              <div key={step.id} className="flex items-center">
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  isCompleted ? 'bg-green-100 text-green-700' :
+                  isCurrent ? 'bg-verde-oliva text-white' :
+                  'bg-cinza-muito-claro text-cinza-medio'
+                }`}>
+                  {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                  <span className="hidden sm:inline">{step.title}</span>
+                </div>
+                {idx < steps.length - 1 && (
+                  <div className={`w-8 h-0.5 mx-1 transition-all ${
+                    isCompleted ? 'bg-green-300' : 'bg-cinza-claro'
+                  }`} />
+                )}
               </div>
-              <span className={`text-xs mt-1 hidden sm:block ${
-                currentStep >= step.id ? 'text-verde-oliva' : 'text-cinza-medio'
-              }`}>
-                {step.title}
-              </span>
-            </div>
-          ))}
+            );
+          })}
+          <div className="flex-1" />
+          <div className="flex items-center gap-2 text-sm font-medium text-verde-oliva">
+            <Clock3 className="w-4 h-4" />
+            <span>{currentStep} / {totalSteps}</span>
+          </div>
+        </div>
+
+        <div className="h-2 w-full rounded-full bg-cinza-claro/60 overflow-hidden mb-8">
+          <div
+            className="h-full bg-verde-oliva transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
         </div>
 
         <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-6 sm:p-8 overflow-hidden">
@@ -536,34 +560,52 @@ export default function CadastroAssociadoClient() {
                   {fieldErrors.email && <span className="text-xs text-red-500">{fieldErrors.email}</span>}
                 </label>
 
-                <label className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5">
                   <span className={getLabelClass('senha')}>Senha *</span>
-                  <input
-                    type="password"
-                    value={formData.senha}
-                    onChange={(e) => updateField('senha', e.target.value)}
-                    className={getInputClass('senha')}
-                    placeholder="Mínimo 8 caracteres"
-                    minLength={8}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={formData.senha}
+                      onChange={(e) => updateField('senha', e.target.value)}
+                      className={`${getInputClass('senha')} pr-10`}
+                      placeholder="Mínimo 8 caracteres"
+                      minLength={8}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-cinza-medio hover:text-cinza-escuro transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
                   {fieldErrors.senha && <span className="text-xs text-red-500">{fieldErrors.senha}</span>}
-                </label>
+                </div>
 
-                <label className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5">
                   <span className={getLabelClass('confirmarSenha')}>Confirmar Senha *</span>
-                  <input
-                    type="password"
-                    value={formData.confirmarSenha}
-                    onChange={(e) => updateField('confirmarSenha', e.target.value)}
-                    onPaste={preventPaste}
-                    onCopy={(e) => e.preventDefault()}
-                    onCut={(e) => e.preventDefault()}
-                    className={getInputClass('confirmarSenha')}
-                    placeholder="Digite a senha novamente"
-                    minLength={8}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={formData.confirmarSenha}
+                      onChange={(e) => updateField('confirmarSenha', e.target.value)}
+                      onPaste={preventPaste}
+                      onCopy={(e) => e.preventDefault()}
+                      onCut={(e) => e.preventDefault()}
+                      className={`${getInputClass('confirmarSenha')} pr-10`}
+                      placeholder="Digite a senha novamente"
+                      minLength={8}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-cinza-medio hover:text-cinza-escuro transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
                   {fieldErrors.confirmarSenha && <span className="text-xs text-red-500">{fieldErrors.confirmarSenha}</span>}
-                </label>
+                </div>
 
                 <div className="border-t border-cinza-claro pt-4 mt-6">
                   <h3 className="text-lg font-medium text-cinza-escuro mb-4">Termos e Consentimentos</h3>
