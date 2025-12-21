@@ -197,10 +197,17 @@ cd backend && npx prisma db push
 - Primeira consulta: R$ 99,00
 
 **Fluxo de Pagamento**:
-1. Usuário acessa `/planos` e escolhe um plano
-2. Sistema usa o CPF do cadastro automaticamente (não pede novamente)
-3. Gera QR Code Pix e código copia/cola
-4. Webhook recebe confirmação e ativa assinatura
+1. Usuário recebe diagnóstico e clica em "Agendar Consulta"
+2. Se não é associado, é direcionado para `/planos`
+3. Escolhe plano e vai para checkout (CPF puxado automaticamente do cadastro)
+4. Gera QR Code Pix e código copia/cola
+5. Webhook recebe confirmação e ativa assinatura (idempotente, calcula duração por tipo de plano)
+6. Página de confirmação mostra benefícios ativados e botão para agendar
+7. Ao agendar, associados veem preço de R$ 99 (desconto de R$ 50)
+
+**Verificação de Assinatura**:
+- `/api/assinatura` - Retorna assinatura ativa do paciente
+- `/agendar` - Verifica se usuário tem assinatura antes de permitir agendamento
 
 **Modelos Prisma**:
 - `Plano` - nome, valores, benefícios
