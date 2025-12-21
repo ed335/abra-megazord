@@ -155,6 +155,12 @@ cd backend && npx prisma db push
 - Integração com pacientes cadastrados
 - Acesso via `/admin/agendamentos`
 
+### UI/UX Updates (Dec 2024)
+- **Shared Header Component**: `web/components/shared/Header.tsx` - logo clicável para home, navegação consistente
+- **Design Minimalista**: fundos brancos, sem gradientes, layout limpo
+- **Admin Dashboard com Abas**: aba "Estatísticas" e aba "Associados" na mesma tela
+- **Navegação Consistente**: Header padrão nas páginas de dashboard e pré-anamnese
+
 ## Security Notes
 - JWT_SECRET must be configured as environment variable (no fallback)
 - Admin tokens are validated against database to ensure account exists and is active
