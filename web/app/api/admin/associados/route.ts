@@ -76,7 +76,18 @@ export async function GET(request: NextRequest) {
           preAnamnese: {
             select: {
               id: true,
+              perfil: true,
+              objetivoPrincipal: true,
+              gravidade: true,
+              tratamentosPrevios: true,
+              comorbidades: true,
+              notas: true,
+              preferenciaAcompanhamento: true,
+              melhorHorario: true,
+              diagnostico: true,
               scorePrioridade: true,
+              recomendacoes: true,
+              proximosPasso: true,
               criadoEm: true,
             }
           }
@@ -88,7 +99,7 @@ export async function GET(request: NextRequest) {
     const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json({
-      data: associados,
+      associados,
       pagination: {
         page,
         limit,

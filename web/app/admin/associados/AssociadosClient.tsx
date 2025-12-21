@@ -137,7 +137,7 @@ export default function AssociadosClient() {
       }
 
       const data = await response.json();
-      setAssociados(data.data);
+      setAssociados(data.associados || []);
       setPagination(data.pagination);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar dados');

@@ -37,7 +37,7 @@ export default function LoginClient() {
         setMessage('Login realizado com sucesso. Redirecionando...');
         
         const redirectPath = data.user?.role === 'ADMIN' 
-          ? '/admin/associados' 
+          ? '/admin' 
           : '/dashboard';
         
         setTimeout(() => router.push(redirectPath), 800);
