@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import * as jsonwebtoken from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { getJWTSecret } from '@/lib/jwt';
 
 const prisma = new PrismaClient();
-
-import { getJWTSecret } from '@/lib/jwt';
 
 async function verifyAdminToken(request: NextRequest) {
   const authHeader = request.headers.get('Authorization');
