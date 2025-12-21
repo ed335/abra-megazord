@@ -210,7 +210,7 @@ cd backend && npx prisma db push
 **Environment Variables**:
 - `SYNCPAY_CLIENT_ID` - UUID do cliente Syncpay
 - `SYNCPAY_CLIENT_SECRET` - Secret do cliente Syncpay
-- `SYNCPAY_API_URL` - URL da API Syncpay
+- `SYNCPAY_API_URL` - URL da API Syncpay (padrão: https://api.syncpayments.com.br)
 
 ## Security Notes
 - JWT_SECRET must be configured as environment variable (no fallback)
