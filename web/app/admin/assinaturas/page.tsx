@@ -54,31 +54,32 @@ export default function AdminAssinaturasPage() {
       router.replace('/admin/login');
       return;
     }
-    loadAssinaturas();
+    
+    const loadData = async () => {
+      try {
+        const params = new URLSearchParams();
+        if (filtroStatus) params.set('status', filtroStatus);
+        params.set('page', page.toString());
+        params.set('limit', '20');
+
+        const data = await fetchWithAdminAuth<{ 
+          assinaturas: Assinatura[]; 
+          stats: Stats;
+          pagination: { totalPages: number };
+        }>(`/api/admin/assinaturas?${params}`);
+        
+        setAssinaturas(data.assinaturas || []);
+        setStats(data.stats || null);
+        setTotalPages(data.pagination?.totalPages || 1);
+      } catch (err) {
+        console.error('Erro ao carregar assinaturas:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
   }, [router, filtroStatus, page]);
-
-  const loadAssinaturas = async () => {
-    try {
-      const params = new URLSearchParams();
-      if (filtroStatus) params.set('status', filtroStatus);
-      params.set('page', page.toString());
-      params.set('limit', '20');
-
-      const data = await fetchWithAdminAuth<{ 
-        assinaturas: Assinatura[]; 
-        stats: Stats;
-        pagination: { totalPages: number };
-      }>(`/api/admin/assinaturas?${params}`);
-      
-      setAssinaturas(data.assinaturas || []);
-      setStats(data.stats || null);
-      setTotalPages(data.pagination?.totalPages || 1);
-    } catch (err) {
-      console.error('Erro ao carregar assinaturas:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '-';

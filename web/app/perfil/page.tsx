@@ -44,32 +44,32 @@ export default function PerfilPage() {
       router.push('/login');
       return;
     }
-    loadPerfil();
-  }, [router]);
+    
+    const loadData = async () => {
+      try {
+        const response = await fetch('/api/perfil', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-  const loadPerfil = async () => {
-    try {
-      const token = getToken();
-      const response = await fetch('/api/perfil', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          router.push('/login');
-          return;
+        if (!response.ok) {
+          if (response.status === 401) {
+            router.push('/login');
+            return;
+          }
+          throw new Error('Erro ao carregar perfil');
         }
-        throw new Error('Erro ao carregar perfil');
-      }
 
-      const data = await response.json();
-      setPerfil(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar perfil');
-    } finally {
-      setLoading(false);
-    }
-  };
+        const data = await response.json();
+        setPerfil(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao carregar perfil');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
