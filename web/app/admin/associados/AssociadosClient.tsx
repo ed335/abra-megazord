@@ -25,7 +25,7 @@ type PreAnamnese = {
     indicacoes: string[];
     contraindicacoes: string[];
     observacoes: string;
-  };
+  } | null;
   scorePrioridade: number;
   recomendacoes: string[];
   proximosPasso: string;
