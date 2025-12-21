@@ -948,16 +948,16 @@ export default function AssociadosClient() {
                                       <span className="text-cinza-medio">Horário:</span>
                                       <span className="font-medium text-cinza-escuro">{associado.preAnamnese.melhorHorario}</span>
                                     </div>
-                                    {associado.preAnamnese.tratamentosPrevios.length > 0 && (
+                                    {(associado.preAnamnese.tratamentosPrevios || []).length > 0 && (
                                       <div>
                                         <span className="text-cinza-medio">Tratamentos prévios:</span>
-                                        <p className="text-xs text-cinza-escuro mt-1">{associado.preAnamnese.tratamentosPrevios.join(', ')}</p>
+                                        <p className="text-xs text-cinza-escuro mt-1">{(associado.preAnamnese.tratamentosPrevios || []).join(', ')}</p>
                                       </div>
                                     )}
-                                    {associado.preAnamnese.comorbidades.length > 0 && (
+                                    {(associado.preAnamnese.comorbidades || []).length > 0 && (
                                       <div>
                                         <span className="text-cinza-medio">Comorbidades:</span>
-                                        <p className="text-xs text-cinza-escuro mt-1">{associado.preAnamnese.comorbidades.join(', ')}</p>
+                                        <p className="text-xs text-cinza-escuro mt-1">{(associado.preAnamnese.comorbidades || []).join(', ')}</p>
                                       </div>
                                     )}
                                   </div>

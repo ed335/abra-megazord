@@ -345,7 +345,7 @@ export default function DashboardPage() {
                 <div className="bg-off-white rounded-xl p-4">
                   <h4 className="font-semibold text-cinza-escuro mb-3">Recomendações</h4>
                   <ul className="space-y-2">
-                    {preAnamnese.recomendacoes.map((rec, idx) => (
+                    {(preAnamnese.recomendacoes || []).map((rec, idx) => (
                       <li key={idx} className="text-sm text-cinza-escuro flex items-start gap-2">
                         <span className="w-5 h-5 bg-verde-oliva/10 rounded-full flex items-center justify-center text-verde-oliva text-xs font-bold flex-shrink-0">
                           {idx + 1}
