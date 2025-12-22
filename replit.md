@@ -1,288 +1,55 @@
 # ABRACANM - Associação Brasileira de Cannabis Medicinal
 
 ## Overview
-ABRACANM é uma plataforma completa para gestão de pacientes de cannabis medicinal. O sistema oferece cadastro de associados com documentação médica, agendamento de consultas, integração com Stripe para pagamentos, consultas por vídeo e geração de prescrições digitais.
+ABRACANM is a comprehensive platform for managing medical cannabis patients in Brazil. The system facilitates patient registration with medical documentation, appointment scheduling, payment integration via Stripe/Syncpay, video consultations, and digital prescription generation. The mission is to welcome patients seeking quality of life through cannabis medicine, breaking down barriers and taboos with science, safety, and humanity. The platform aims to be accessible to all audiences, focusing on health, quality of life, and longevity.
 
-**Missão:** Acolher pacientes em busca de qualidade de vida através da medicina canábica, quebrando barreiras e tabus com ciência, segurança e humanidade.
+## User Preferences
+I prefer detailed explanations.
+I want iterative development.
+Ask before making major changes.
+Do not make changes to the folder `Z`.
+Do not make changes to the file `Y`.
 
-## Project Structure
-- `/web` - Next.js 14 frontend (React, Tailwind CSS)
-- `/backend` - NestJS API (TypeScript, Prisma ORM)
-- `/docs` - Documentation files
+## System Architecture
+The project follows a modular architecture with a clear separation between frontend and backend.
 
-## Tech Stack
-- **Frontend**: Next.js 14, React 18, Tailwind CSS, Framer Motion
-- **Backend**: NestJS 10, Prisma 5, PostgreSQL
-- **Authentication**: JWT with Passport.js
+**UI/UX Decisions:**
+- **Design:** Minimalist design with white backgrounds, no gradients, and a clean layout.
+- **Branding:** ABRACANM - Associação Brasileira de Cannabis Medicinal.
+- **Communication Tone:** Welcoming, medical, and neutral.
+- **Components:** Shared Header for consistent navigation, animated progress bars for forms, show/hide password buttons, visual validation for terms checkboxes, and smooth transition animations using Framer Motion.
+- **Admin Dashboard:** Features an intuitive dashboard with statistics, graphs, search, filters, and CRUD operations, including document viewing and multi-administrator management.
+- **Profile Page:** Dedicated user profile page for editing personal data with CEP auto-fill.
+- **Admin Login:** Specific login page for administrators with role validation.
 
-## Development
+**Technical Implementations:**
+- **Frontend:** Next.js 14 (React, Tailwind CSS, Framer Motion) for a responsive and dynamic user interface.
+- **Backend:** NestJS 10 (TypeScript) for a robust and scalable API.
+- **Database:** PostgreSQL with Prisma 5 ORM for data management.
+- **Authentication:** JWT with Passport.js for secure user and admin authentication, including role-based access control.
+- **Payment Gateway:** Integration with Syncpay for Pix payments, including webhook processing for payment confirmation and subscription activation.
+- **Telemedicine:** Utilizes Agora Video SDK for secure and reliable video consultations, including virtual waiting rooms and real-time status updates.
+- **Document Upload:** Secure API routes for uploading identity and medical documents.
+- **CPF Validation:** Implements official Brazilian CPF validation algorithm.
+- **Pre-Anamnesis System:** Generates personalized diagnoses based on patient pathology, cannabis use, symptom intensity, comorbidities, and contraindications.
+- **LGPD Compliance:** Includes dedicated pages for Privacy Policy, Terms of Use, and Cookie Policy.
 
-### Running the App
-- Frontend runs on port 5000 (configured for Replit)
-- Backend API runs on port 3001 (localhost)
+**Feature Specifications:**
+- **Member Registration:** A streamlined 4-step process including personal data, address (with ViaCEP auto-fill), identity document upload, and medical information.
+- **Admin Panel:** Comprehensive tools for managing associates, administrators, plans, subscriptions, and payments. Includes audit logs for administrator actions and a mass WhatsApp messaging feature with dynamic templates.
+- **Pre-Anamnesis:** Optimized multi-step questionnaire leading to a personalized ABRACANM Diagnosis.
+- **Appointment Scheduling:** System for managing consultations with various types, statuses, and integration with video calls.
+- **Payment System:** Handles subscription plans and consultation payments, with dynamic pricing and discounts for active subscribers.
+- **Teleconsultation Workflow:** Structured process for doctors and patients to engage in video consultations, from scheduling to session completion.
 
-### Environment Variables
-- `DATABASE_URL` - PostgreSQL connection string (auto-configured)
-- `API_PORT` - Backend port (default: 3001)
-- `API_HOST` - Backend host (default: localhost)
-- `JWT_SECRET` - JWT signing secret
-
-### Database
-Uses PostgreSQL with Prisma ORM. Schema is in `/backend/prisma/schema.prisma`.
-
-To sync database schema:
-```bash
-cd backend && npx prisma db push
-```
-
-## API Endpoints
-
-### Auth (via Next.js API Routes → Backend proxy)
-- `POST /api/auth/register-associado` - Complete member registration
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user (protected)
-
-### Upload (via Next.js API Routes)
-- `POST /api/upload/documento-identidade` - Upload ID document (max 10MB)
-- `POST /api/upload/documentos-medicos` - Upload medical documents (up to 5 files)
-
-### Admin (Role: ADMIN only)
-- `GET /api/admin/stats` - Dashboard statistics
-- `GET /api/admin/associados` - List all members (paginated, with filters)
-- `GET /api/admin/associados/:id` - Get member details
-- `PUT /api/admin/associados/:id` - Update member
-- `DELETE /api/admin/associados/:id` - Delete member
-- `POST /api/admin/associados/:id/toggle-status` - Toggle active/inactive
-- `GET /api/admin/associados/:id/documentos` - View member documents
-- `GET /api/admin/admins` - List administrators
-- `POST /api/admin/admins` - Create administrator
-- `DELETE /api/admin/admins/:id` - Delete administrator
-- `GET /api/admin/planos` - List all plans
-- `POST /api/admin/planos` - Create plan
-- `PUT /api/admin/planos/:id` - Update plan
-- `DELETE /api/admin/planos/:id` - Delete plan
-- `GET /api/admin/assinaturas` - List subscriptions (paginated, with stats)
-
-### User Profile
-- `GET /api/perfil` - Get user profile data
-- `PUT /api/perfil` - Update user profile (nome, CPF, endereço, etc)
-
-### Other
-- `GET /health` - Health check
-- `POST /quiz/intake` - Submit intake quiz
-
-## Working Features
-
-### Member Registration (4 steps)
-1. **Dados e Termos** - Nome, CPF (validado), WhatsApp, email, senha + confirmação (sem copiar/colar), aceite de LGPD/Termos/Política de Privacidade
-2. **Endereço** - CEP com auto-preenchimento via ViaCEP
-3. **Documento** - Upload de documento de identidade com foto
-4. **Informações Médicas** - Dropdown de patologias comuns com CID + opção "Outras", uso de cannabis, documentos médicos
-
-**Validação de CPF**: O CPF é validado usando o algoritmo oficial brasileiro (dígitos verificadores). CPFs inválidos ou com todos os dígitos iguais são rejeitados.
-
-### Other Features
-- User registration and login with JWT authentication
-- Pre-anamnese otimizada (6 steps) - usa dados do cadastro, sem duplicação
-- Diagnóstico ABRACANM personalizado - gerado após pré-anamnese
-- Dashboard com diagnóstico, indicações, recomendações e próximo passo
-- All data saved to PostgreSQL database
-
-### Admin Panel (Role: ADMIN only)
-- **Dashboard** com estatísticas: total de associados, ativos/inativos, novos no mês, crescimento
-- **Gráficos**: cadastros por mês, distribuição por estado, distribuição por patologia
-- **Busca e Filtros**: nome, email, WhatsApp, cidade, estado, patologia, status, pré-anamnese
-- **CRUD de Associados**: editar dados, ativar/desativar, excluir com confirmação
-- **Visualizador de Documentos**: RG e laudos médicos com preview de imagens
-- **Multi-administradores**: criar e gerenciar múltiplos admins
-- **Autenticação centralizada**: verificação de token JWT + validação de admin ativo
-
-### Pre-Anamnese System
-- Pré-anamnese vinculada ao Paciente (modelo PreAnamnese)
-- Não coleta dados já cadastrados (email, whatsapp, cidade, estado)
-- Gera diagnóstico personalizado baseado em:
-  - Patologia do paciente (CID)
-  - Se já usa cannabis medicinal
-  - Intensidade dos sintomas (gravidade)
-  - Comorbidades e contraindicações
-- Dashboard exibe: título, resumo, indicações, contraindicações, recomendações, próximo passo, score de prioridade
-
-## Patologias Comuns (CID)
-- Epilepsia (G40)
-- Dor crônica (R52.1)
-- Ansiedade (F41)
-- Fibromialgia (M79.7)
-- Esclerose Múltipla (G35)
-- Parkinson (G20)
-- Autismo (F84.0)
-- TDAH (F90)
-- Insônia (G47.0)
-- Artrite Reumatoide (M06.9)
-- Dor Oncológica (C80)
-- Depressão (F32)
-- TEPT (F43.1)
-- Síndrome de Tourette (F95.2)
-- Alzheimer (G30)
-
-## Branding & Communication
-- **Nome**: ABRACANM - Associação Brasileira de Cannabis Medicinal
-- **Email**: ouvidoria@abracanm.org.br
-- **Tom**: Acolhedor, medicinal, neutro - foco em saúde, qualidade de vida e longevidade
-- **Objetivo**: Quebrar barreiras e tabus, ser acessível a todos os públicos
-
-## Recent Changes (Dec 2024)
-- Configured for Replit environment with API Routes proxy
-- Updated branding to ABRACANM
-- Reorganized registration: terms on step 1, 4 steps total
-- Added password confirmation with copy/paste prevention
-- Added dropdown with common pathologies and CID codes
-- Removed pre-anamnese from home (now in dashboard only)
-- Updated footer with ouvidoria email and "Fale com o Presida" button
-- Updated all texts with welcoming, medical, and neutral tone
-- Added role-based access control (RolesGuard) for admin endpoints
-- **Admin Panel Completo**: dashboard com estatísticas, gráficos, busca/filtros, CRUD, visualização de documentos, multi-admin
-- **Segurança aprimorada**: autenticação JWT centralizada sem fallback, validação de admin ativo no banco
-
-### Audit Logs
-- Registro de todas as ações dos administradores
-- Tipos de ação: LOGIN, LOGOUT, CRIAR, ATUALIZAR, EXCLUIR, VISUALIZAR, ATIVAR, DESATIVAR, ENVIO_WHATSAPP
-- Filtros por tipo de ação, recurso e período
-- Acesso via `/admin/logs`
-
-### WhatsApp Mass Messaging
-- Templates com variáveis dinâmicas: {nome}, {primeiro_nome}, {cidade}, {estado}, {patologia}
-- Filtros de destinatários por estado, cidade, patologia e status
-- Validação de números de telefone (mínimo 10 dígitos)
-- Gera links wa.me para envio direto
-- Acesso via `/admin/whatsapp`
-
-### Scheduling Module (Agendamentos)
-- Agendamento de consultas com data, hora e duração
-- Tipos de consulta: Primeira Consulta, Retorno, Acompanhamento, Urgente
-- Status: Agendado, Confirmado, Em Andamento, Concluído, Cancelado, Faltou
-- Dashboard com estatísticas: hoje, semana, mês
-- Filtros por status, tipo e período
-- Link para videochamada (opcional)
-- Integração com pacientes cadastrados
-- Acesso via `/admin/agendamentos`
-
-### UI/UX Updates (Dec 2024)
-- **Shared Header Component**: `web/components/shared/Header.tsx` - logo clicável para home, navegação consistente
-- **Design Minimalista**: fundos brancos, sem gradientes, layout limpo
-- **Admin Dashboard com Abas**: aba "Estatísticas" e aba "Associados" na mesma tela
-- **Navegação Consistente**: Header padrão nas páginas de dashboard e pré-anamnese
-- **Barra de Progresso Animada**: formulário de cadastro com barra de progresso igual à pré-anamnese
-- **Mostrar/Ocultar Senha**: botão de olho nos campos de senha para visualização
-- **Validação Visual de Termos**: checkboxes de termos ficam vermelho quando não marcados
-- **Animações de Transição**: slides suaves entre passos do formulário (Framer Motion)
-- **Ícones nos Passos**: cada etapa do cadastro tem ícone representativo (User, MapPin, FileText, Stethoscope)
-
-### LGPD Compliance (Dec 2024)
-- **Política de Privacidade**: `/politica-privacidade` - documento completo com todas as seções exigidas pela LGPD
-- **Termos de Uso**: `/termos-uso` - condições de uso, responsabilidades, propriedade intelectual
-- **Política de Cookies**: `/politica-cookies` - tipos de cookies, finalidades, gerenciamento
-
-### Diagnóstico Melhorado (Dec 2024)
-- **Explicação do Score**: seção expansível "Como calculamos" mostrando critérios, descrição e pontos de cada fator
-- **Score de Prioridade**: cálculo baseado em gravidade, urgência clínica, contraindicações e histórico de tratamento
-- **CTA Agendar Consulta**: botão proeminente após o diagnóstico para agendar consulta
-- **Página de Agendamento**: `/agendar` - opções de teleconsulta e presencial com links para WhatsApp
-
-### Navegação Pré-Anamnese (Dec 2024)
-- **URL Step Persistence**: cada passo da pré-anamnese atualiza a URL (?etapa=objetivo)
-- **Histórico do Navegador**: botão voltar do browser funciona para navegar entre passos
-- **Validação Visual LGPD**: checkbox de consentimento fica vermelho se não marcado
-
-### Sistema de Pagamentos (Dec 2024)
-- **Gateway**: Syncpay (Pix)
-- **Planos**: `/planos` - exibe planos e preços
-- **Checkout**: `/checkout` - gera QR Code Pix e código copia/cola
-- **Webhooks**: `/api/pagamentos/webhook` - recebe confirmação de pagamento
-- **Admin**: `/admin/pagamentos` - dashboard de pagamentos e assinaturas
-
-**Preços Configurados**:
-- Mensalidade: R$ 39,90/mês
-- Consulta: R$ 149,00
-- Primeira consulta: R$ 99,00
-
-**Fluxo de Pagamento**:
-1. Usuário recebe diagnóstico e clica em "Agendar Consulta"
-2. Se não é associado, é direcionado para `/planos`
-3. Escolhe plano e vai para checkout (CPF puxado automaticamente do cadastro)
-4. Gera QR Code Pix e código copia/cola
-5. Webhook recebe confirmação e ativa assinatura (idempotente, calcula duração por tipo de plano)
-6. Página de confirmação mostra benefícios ativados e botão para agendar
-7. Ao agendar, associados veem preço de R$ 99 (desconto de R$ 50)
-
-**Verificação de Assinatura**:
-- `/api/assinatura` - Retorna assinatura ativa do paciente
-- `/agendar` - Verifica se usuário tem assinatura antes de permitir agendamento
-
-**Modelos Prisma**:
-- `Plano` - nome, valores, benefícios
-- `Assinatura` - vínculo paciente-plano, status, datas
-- `Pagamento` - registro de transações, status, dados Syncpay
-
-**Environment Variables**:
-- `SYNCPAY_CLIENT_ID` - UUID do cliente Syncpay
-- `SYNCPAY_CLIENT_SECRET` - Secret do cliente Syncpay
-- `SYNCPAY_API_URL` - URL da API Syncpay (padrão: https://api.syncpayments.com.br)
-
-## Security Notes
-- JWT_SECRET must be configured as environment variable (no fallback)
-- Admin tokens are validated against database to ensure account exists and is active
-- Centralized authentication utility in `web/lib/admin-auth.ts` (server-side)
-- Client-side admin helpers in `web/lib/admin-auth-client.ts`
-- Webhook rejects all requests if SYNCPAY_CLIENT_SECRET not configured (fail closed)
-- All API routes use centralized `getJWTSecret()` from `@/lib/jwt`
-
-### User Profile Page (Dec 2024)
-- **Página de Perfil**: `/perfil` - usuário pode editar seus dados pessoais
-- **Campos editáveis**: nome, CPF, whatsapp, telefone, data de nascimento, endereço completo
-- **CPF obrigatório para Pix**: mensagem explicativa sobre necessidade do CPF para gerar pagamentos
-- **Auto-preenchimento CEP**: busca endereço via ViaCEP
-- **Ícone no Header**: botão de usuário no header para acesso rápido ao perfil
-
-### Admin Login Page (Dec 2024)
-- **Página dedicada**: `/admin/login` - login específico para administradores
-- **Validação de role**: só permite acesso se usuário for ADMIN
-- **Token separado**: usa `admin_token` no localStorage
-
-### Telemedicina / Teleconsultas (Dec 2024)
-- **Tecnologia**: Jitsi Meet (open-source, gratuito, sem limites)
-- **Página do Médico**: `/medico/consultas` - dashboard para iniciar/gerenciar teleconsultas do dia
-- **Página do Paciente**: `/consulta/[id]` - sala de espera virtual e videochamada
-- **Componentes**: `web/components/video/JitsiMeet.tsx`, `web/components/video/WaitingRoom.tsx`
-
-**Fluxo de Teleconsulta**:
-1. Admin agenda consulta em `/admin/agendamentos` com status CONFIRMADO
-2. Médico acessa `/medico/consultas` e clica "Iniciar Consulta"
-3. Sistema gera sala Jitsi única e marca médico como presente
-4. Paciente acessa `/consulta/[id]` e entra na sala de espera
-5. Quando médico entra, paciente é notificado e pode entrar
-6. Ao final, médico clica "Encerrar Consulta" e status muda para CONCLUIDO
-
-**APIs de Teleconsulta**:
-- `GET /api/consulta/[id]/status` - Retorna status da sala
-- `POST /api/consulta/[id]/iniciar` - Médico inicia consulta (gera salaId)
-- `POST /api/consulta/[id]/entrar` - Paciente entra na sala
-- `POST /api/consulta/[id]/encerrar` - Médico encerra consulta
-- `GET /api/minha-consulta/[id]` - Paciente busca dados do agendamento
-
-**Campos Agendamento** (Prisma):
-- `salaId` - ID único da sala Jitsi
-- `medicoPresente` - Boolean, médico está na sala
-- `pacientePresente` - Boolean, paciente está na sala
-- `inicioReal` - DateTime quando consulta começou
-- `fimReal` - DateTime quando consulta terminou
-
-**Botões no Admin**:
-- Link "Teleconsultas" no dashboard admin
-- Ícone de play na lista de agendamentos (status CONFIRMADO)
-- Ícone de vídeo pulsante (status EM_ANDAMENTO)
-
-### Recent Bug Fixes (Dec 2024)
-- Removed all hardcoded JWT fallback secrets from 8 files
-- Fixed null-safe handling for patient whatsapp in checkout
-- Fixed import order issues in admin CSV import/export routes
-- Separated server-only and client-side admin auth modules to fix Next.js bundle errors
+## External Dependencies
+- **PostgreSQL:** Primary database.
+- **Prisma ORM:** Database toolkit for Node.js and TypeScript.
+- **Next.js:** Frontend framework.
+- **NestJS:** Backend framework.
+- **Tailwind CSS:** CSS framework.
+- **Framer Motion:** Animation library.
+- **Passport.js:** Authentication middleware for Node.js.
+- **ViaCEP:** API for Brazilian ZIP code auto-completion.
+- **Syncpay:** Payment gateway for Pix transactions.
+- **Agora Video SDK:** For real-time video consultations.

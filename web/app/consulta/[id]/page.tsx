@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Loader2, ArrowLeft, Video, AlertCircle } from 'lucide-react';
 import Header from '@/components/shared/Header';
-import JitsiMeet from '@/components/video/JitsiMeet';
+import AgoraVideoCall from '@/components/video/AgoraVideoCall';
 import WaitingRoom from '@/components/video/WaitingRoom';
 import { getToken } from '@/lib/auth';
 
@@ -148,8 +148,8 @@ function ConsultaContent() {
   if (emConsulta && agendamento?.salaId) {
     return (
       <div className="h-screen bg-gray-900">
-        <JitsiMeet
-          roomName={agendamento.salaId}
+        <AgoraVideoCall
+          channelName={agendamento.salaId}
           displayName={agendamento.paciente?.nome || 'Paciente'}
           onClose={handleConsultaEncerrada}
         />

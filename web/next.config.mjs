@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  env: {
+    NEXT_PUBLIC_AGORA_APP_ID: process.env.AGORA_APP_ID,
+  },
   images: {
     remotePatterns: [
       {
