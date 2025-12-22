@@ -52,7 +52,7 @@ export default function JitsiMeet({
 
         const domain = 'meet.jit.si';
         const options = {
-          roomName: `abracanm-${roomName}`,
+          roomName: `abracanm-consulta-${roomName}`,
           parentNode: jitsiContainerRef.current,
           width: '100%',
           height: '100%',
@@ -67,6 +67,12 @@ export default function JitsiMeet({
             enableWelcomePage: false,
             enableClosePage: false,
             disableInviteFunctions: true,
+            enableLobbyChat: false,
+            hideLobbyButton: true,
+            requireDisplayName: false,
+            enableInsecureRoomNameWarning: false,
+            disableModeratorIndicator: true,
+            enableNoisyMicDetection: false,
             toolbarButtons: [
               'microphone',
               'camera',

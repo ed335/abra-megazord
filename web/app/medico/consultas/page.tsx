@@ -146,13 +146,18 @@ export default function MedicoConsultasPage() {
               <p className="text-sm text-gray-400">Consulta em andamento</p>
             </div>
           </div>
-          <button
-            onClick={handleEncerrarConsulta}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition"
-          >
-            <StopCircle className="w-4 h-4" />
-            Encerrar Consulta
-          </button>
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-yellow-400 bg-yellow-400/10 px-3 py-1 rounded-full">
+              Clique em &quot;Eu sou o anfitrião&quot; para iniciar
+            </p>
+            <button
+              onClick={handleEncerrarConsulta}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition"
+            >
+              <StopCircle className="w-4 h-4" />
+              Encerrar Consulta
+            </button>
+          </div>
         </div>
         <div className="flex-1">
           <JitsiMeet
