@@ -105,6 +105,9 @@ export default function AgoraVideoCall({
     channel: channelName,
     token: token,
     uid: 0,
+    role: 'host' as const,
+    enableVideo: true,
+    enableAudio: true,
   };
 
   const callbacks = {
