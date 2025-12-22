@@ -20,7 +20,8 @@ import {
   ChevronRight,
   RefreshCw,
   Edit,
-  Trash2
+  Trash2,
+  PlayCircle
 } from 'lucide-react';
 
 type Paciente = {
@@ -581,7 +582,25 @@ export default function AgendamentosPage() {
                               </button>
                             </>
                           )}
-                          {ag.linkVideo && (
+                          {ag.status === 'CONFIRMADO' && (
+                            <Link
+                              href="/medico/consultas"
+                              className="p-1 text-verde-claro hover:bg-verde-claro/10 rounded"
+                              title="Iniciar Teleconsulta"
+                            >
+                              <PlayCircle size={18} />
+                            </Link>
+                          )}
+                          {ag.status === 'EM_ANDAMENTO' && (
+                            <Link
+                              href="/medico/consultas"
+                              className="p-1 text-verde-claro hover:bg-verde-claro/10 rounded animate-pulse"
+                              title="Retomar Teleconsulta"
+                            >
+                              <Video size={18} />
+                            </Link>
+                          )}
+                          {ag.linkVideo && ag.status !== 'CONFIRMADO' && ag.status !== 'EM_ANDAMENTO' && (
                             <a
                               href={ag.linkVideo}
                               target="_blank"

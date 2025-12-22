@@ -248,6 +248,39 @@ cd backend && npx prisma db push
 - **Validação de role**: só permite acesso se usuário for ADMIN
 - **Token separado**: usa `admin_token` no localStorage
 
+### Telemedicina / Teleconsultas (Dec 2024)
+- **Tecnologia**: Jitsi Meet (open-source, gratuito, sem limites)
+- **Página do Médico**: `/medico/consultas` - dashboard para iniciar/gerenciar teleconsultas do dia
+- **Página do Paciente**: `/consulta/[id]` - sala de espera virtual e videochamada
+- **Componentes**: `web/components/video/JitsiMeet.tsx`, `web/components/video/WaitingRoom.tsx`
+
+**Fluxo de Teleconsulta**:
+1. Admin agenda consulta em `/admin/agendamentos` com status CONFIRMADO
+2. Médico acessa `/medico/consultas` e clica "Iniciar Consulta"
+3. Sistema gera sala Jitsi única e marca médico como presente
+4. Paciente acessa `/consulta/[id]` e entra na sala de espera
+5. Quando médico entra, paciente é notificado e pode entrar
+6. Ao final, médico clica "Encerrar Consulta" e status muda para CONCLUIDO
+
+**APIs de Teleconsulta**:
+- `GET /api/consulta/[id]/status` - Retorna status da sala
+- `POST /api/consulta/[id]/iniciar` - Médico inicia consulta (gera salaId)
+- `POST /api/consulta/[id]/entrar` - Paciente entra na sala
+- `POST /api/consulta/[id]/encerrar` - Médico encerra consulta
+- `GET /api/minha-consulta/[id]` - Paciente busca dados do agendamento
+
+**Campos Agendamento** (Prisma):
+- `salaId` - ID único da sala Jitsi
+- `medicoPresente` - Boolean, médico está na sala
+- `pacientePresente` - Boolean, paciente está na sala
+- `inicioReal` - DateTime quando consulta começou
+- `fimReal` - DateTime quando consulta terminou
+
+**Botões no Admin**:
+- Link "Teleconsultas" no dashboard admin
+- Ícone de play na lista de agendamentos (status CONFIRMADO)
+- Ícone de vídeo pulsante (status EM_ANDAMENTO)
+
 ### Recent Bug Fixes (Dec 2024)
 - Removed all hardcoded JWT fallback secrets from 8 files
 - Fixed null-safe handling for patient whatsapp in checkout

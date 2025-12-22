@@ -19,7 +19,8 @@ import {
   Search,
   DollarSign,
   Package,
-  CreditCard
+  CreditCard,
+  Video
 } from 'lucide-react';
 
 type Stats = {
@@ -389,6 +390,10 @@ export default function AdminDashboard() {
               <a href="/admin/agendamentos" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
                 <Calendar size={20} className="text-blue-600 mb-2" />
                 <p className="text-sm font-medium text-cinza-escuro">Agendamentos</p>
+              </a>
+              <a href="/medico/consultas" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition bg-verde-claro/5">
+                <Video size={20} className="text-verde-claro mb-2" />
+                <p className="text-sm font-medium text-cinza-escuro">Teleconsultas</p>
               </a>
             </div>
 

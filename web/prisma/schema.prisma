@@ -371,6 +371,11 @@ model Agendamento {
   
   // Para consulta por vídeo
   linkVideo       String?
+  salaId          String?   @unique // ID único da sala Jitsi
+  medicoPresente  Boolean   @default(false)
+  pacientePresente Boolean  @default(false)
+  inicioReal      DateTime? // Quando a consulta realmente começou
+  fimReal         DateTime? // Quando a consulta terminou
   
   criadoEm        DateTime  @default(now())
   atualizadoEm    DateTime  @updatedAt
@@ -378,6 +383,7 @@ model Agendamento {
   @@index([pacienteId])
   @@index([dataHora])
   @@index([status])
+  @@index([salaId])
 }
 
 // ============= Pagamentos (Syncpay) =============
