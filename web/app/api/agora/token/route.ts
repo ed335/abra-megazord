@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RtcTokenBuilder, RtcRole } from 'agora-token';
+import { RtcTokenBuilder, RtcRole } from 'agora-access-token';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
       channelName,
       uid,
       RtcRole.PUBLISHER,
-      privilegeExpiredTs,
       privilegeExpiredTs
     );
 
