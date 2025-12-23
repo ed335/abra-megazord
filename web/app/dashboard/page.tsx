@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getToken, clearToken, fetchWithAuth } from '@/lib/auth';
-import Header from '@/components/shared/Header';
+import AppLayout from '@/components/layout/AppLayout';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { 
   CheckCircle2, 
   ClipboardList, 
@@ -22,7 +26,9 @@ import {
   Calendar,
   ChevronDown,
   ChevronUp,
-  Info
+  Info,
+  CreditCard,
+  User
 } from 'lucide-react';
 
 type User = {
@@ -113,36 +119,33 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white">
-        <Header />
+      <AppLayout title="Dashboard">
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <Loader2 className="w-8 h-8 text-verde-oliva animate-spin mx-auto" />
             <p className="mt-3 text-cinza-medio text-sm">Carregando...</p>
           </div>
         </div>
-      </main>
+      </AppLayout>
     );
   }
 
   if (error || !user) {
     return (
-      <main className="min-h-screen bg-white">
-        <Header />
-        <div className="max-w-md mx-auto px-4 py-16">
-          <div className="text-center">
-            <AlertCircle className="w-12 h-12 text-erro mx-auto mb-4" />
-            <h1 className="text-xl font-semibold text-cinza-escuro mb-2">Sessão expirada</h1>
-            <p className="text-cinza-medio text-sm mb-6">{error || 'Faça login para continuar.'}</p>
-            <button
-              onClick={() => router.push('/login')}
-              className="px-6 py-2.5 bg-verde-oliva text-white rounded-lg text-sm font-medium hover:bg-verde-oliva/90 transition"
-            >
-              Fazer login
-            </button>
-          </div>
+      <AppLayout title="Dashboard">
+        <div className="max-w-md mx-auto py-16">
+          <Card>
+            <CardContent className="text-center py-8">
+              <AlertCircle className="w-12 h-12 text-erro mx-auto mb-4" />
+              <h1 className="text-xl font-semibold text-cinza-escuro mb-2">Sessão expirada</h1>
+              <p className="text-cinza-medio text-sm mb-6">{error || 'Faça login para continuar.'}</p>
+              <Button onClick={() => router.push('/login')}>
+                Fazer login
+              </Button>
+            </CardContent>
+          </Card>
         </div>
-      </main>
+      </AppLayout>
     );
   }
 
@@ -189,19 +192,36 @@ export default function DashboardPage() {
     alta: { color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-200' },
   };
 
+  const progressPercent = (journeySteps.filter(s => s.status === 'completed').length / journeySteps.length) * 100;
+
   return (
-    <main className="min-h-screen bg-white">
-      <Header />
-      
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-cinza-escuro">
-            Olá, {user.nome?.split(' ')[0] || 'Associado'}
-          </h1>
-          <p className="text-cinza-medio text-sm mt-1">
-            Acompanhe sua jornada na medicina canábica
-          </p>
-        </div>
+    <AppLayout title="Dashboard">
+      <div className="max-w-5xl mx-auto space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-semibold text-cinza-escuro">
+                  Olá, {user.nome?.split(' ')[0] || 'Associado'}
+                </h1>
+                <p className="text-cinza-medio text-sm mt-1">
+                  Acompanhe sua jornada na medicina canábica
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Badge variant="success">Associado Ativo</Badge>
+              </div>
+            </div>
+            
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-cinza-medio">Progresso da jornada</span>
+                <span className="text-sm font-medium text-verde-oliva">{Math.round(progressPercent)}%</span>
+              </div>
+              <Progress value={progressPercent} />
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="flex items-center gap-2 mb-8 pb-6 border-b border-cinza-claro">
           {journeySteps.map((step, idx) => (
@@ -400,32 +420,56 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="grid sm:grid-cols-4 gap-4">
-          <Link href="/planos" className="p-4 border border-verde-oliva bg-verde-claro/5 rounded-xl hover:bg-verde-claro/10 transition group">
-            <Activity className="w-5 h-5 text-verde-oliva mb-2" />
-            <h3 className="font-medium text-cinza-escuro text-sm">Planos</h3>
-            <p className="text-xs text-cinza-medio mt-0.5">Ver planos e assinar</p>
-          </Link>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+            <Link href="/planos">
+              <CardContent className="p-4">
+                <div className="w-10 h-10 bg-verde-oliva/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-verde-oliva/20 transition-colors">
+                  <CreditCard className="w-5 h-5 text-verde-oliva" />
+                </div>
+                <h3 className="font-medium text-cinza-escuro">Planos</h3>
+                <p className="text-xs text-cinza-medio mt-1">Ver planos e assinar</p>
+              </CardContent>
+            </Link>
+          </Card>
 
-          <Link href="/educacao" className="p-4 border border-cinza-claro rounded-xl hover:border-verde-oliva/50 transition group">
-            <BookOpen className="w-5 h-5 text-verde-oliva mb-2" />
-            <h3 className="font-medium text-cinza-escuro text-sm">Educação</h3>
-            <p className="text-xs text-cinza-medio mt-0.5">Artigos e informações</p>
-          </Link>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+            <Link href="/educacao">
+              <CardContent className="p-4">
+                <div className="w-10 h-10 bg-verde-oliva/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-verde-oliva/20 transition-colors">
+                  <BookOpen className="w-5 h-5 text-verde-oliva" />
+                </div>
+                <h3 className="font-medium text-cinza-escuro">Educação</h3>
+                <p className="text-xs text-cinza-medio mt-1">Artigos e informações</p>
+              </CardContent>
+            </Link>
+          </Card>
 
-          <a href="mailto:ouvidoria@abracanm.org.br" className="p-4 border border-cinza-claro rounded-xl hover:border-verde-oliva/50 transition group">
-            <MessageCircle className="w-5 h-5 text-verde-oliva mb-2" />
-            <h3 className="font-medium text-cinza-escuro text-sm">Suporte</h3>
-            <p className="text-xs text-cinza-medio mt-0.5">Fale com a ouvidoria</p>
-          </a>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+            <a href="mailto:ouvidoria@abracanm.org.br">
+              <CardContent className="p-4">
+                <div className="w-10 h-10 bg-verde-oliva/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-verde-oliva/20 transition-colors">
+                  <MessageCircle className="w-5 h-5 text-verde-oliva" />
+                </div>
+                <h3 className="font-medium text-cinza-escuro">Suporte</h3>
+                <p className="text-xs text-cinza-medio mt-1">Fale com a ouvidoria</p>
+              </CardContent>
+            </a>
+          </Card>
 
-          <Link href="/doacoes" className="p-4 border border-cinza-claro rounded-xl hover:border-verde-oliva/50 transition group">
-            <Heart className="w-5 h-5 text-verde-oliva mb-2" />
-            <h3 className="font-medium text-cinza-escuro text-sm">Doações</h3>
-            <p className="text-xs text-cinza-medio mt-0.5">Apoie a ABRACANM</p>
-          </Link>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+            <Link href="/doacoes">
+              <CardContent className="p-4">
+                <div className="w-10 h-10 bg-verde-oliva/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-verde-oliva/20 transition-colors">
+                  <Heart className="w-5 h-5 text-verde-oliva" />
+                </div>
+                <h3 className="font-medium text-cinza-escuro">Doações</h3>
+                <p className="text-xs text-cinza-medio mt-1">Apoie a ABRACANM</p>
+              </CardContent>
+            </Link>
+          </Card>
         </div>
       </div>
-    </main>
+    </AppLayout>
   );
 }

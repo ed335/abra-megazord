@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import Header from '@/components/shared/Header';
+import AdminLayout from '@/components/layout/AdminLayout';
 import { 
   Users, 
   UserPlus, 
@@ -207,45 +207,39 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white">
-        <Header />
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-6 bg-cinza-claro rounded w-1/4" />
-            <div className="grid grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="h-24 bg-cinza-claro rounded-lg" />
-              ))}
-            </div>
+      <AdminLayout title="Dashboard">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-cinza-claro rounded w-1/4" />
+          <div className="grid grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-24 bg-cinza-claro rounded-lg" />
+            ))}
           </div>
         </div>
-      </main>
+      </AdminLayout>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen bg-white">
-        <Header />
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
-            {error}
-          </div>
+      <AdminLayout title="Dashboard">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+          {error}
         </div>
-      </main>
+      </AdminLayout>
     );
   }
 
   const maxCadastro = stats ? Math.max(...stats.cadastrosPorMes.map(c => c.total), 1) : 1;
 
   return (
-    <main className="min-h-screen bg-white">
-      <Header />
-      
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-cinza-escuro">Painel Administrativo</h1>
-          <p className="text-sm text-cinza-medio mt-1">Gerencie associados e acompanhe métricas</p>
+    <AdminLayout title="Dashboard">
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-cinza-escuro">Painel Administrativo</h1>
+            <p className="text-sm text-cinza-medio mt-1">Gerencie associados e acompanhe métricas</p>
+          </div>
         </div>
 
         <div className="flex border-b border-cinza-claro mb-6">
@@ -522,6 +516,6 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
-    </main>
+    </AdminLayout>
   );
 }
