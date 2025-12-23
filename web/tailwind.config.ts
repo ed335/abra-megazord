@@ -12,6 +12,7 @@ const config: Config = {
         'off-white': '#FAFAF8',
         'verde-oliva': '#6B7C59',
         'verde-claro': '#A8C686',
+        'verde-escuro': '#4A5A3A',
         'dourado': '#D4A574',
         
         // Neutros
