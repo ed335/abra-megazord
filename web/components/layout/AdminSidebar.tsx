@@ -56,8 +56,7 @@ export default function AdminSidebar({ isOpen, onClose, collapsed = false, onTog
 
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-full bg-cinza-escuro transition-all duration-300 ease-in-out",
-          "lg:sticky lg:top-0 lg:z-30",
+          "fixed top-0 left-0 z-50 h-screen bg-cinza-escuro transition-all duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
           collapsed ? "lg:w-20" : "lg:w-64",
           "w-72"
