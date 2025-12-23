@@ -60,6 +60,12 @@ export default function AdminHeader({ onMenuClick, title, actions }: AdminHeader
     router.push('/admin/login');
   };
 
+  const handleRefresh = () => {
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+  };
+
   return (
     <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-cinza-claro">
       <div className="flex items-center justify-between h-16 px-4 lg:px-6">
@@ -91,7 +97,7 @@ export default function AdminHeader({ onMenuClick, title, actions }: AdminHeader
             <Bell className="w-5 h-5 text-cinza-medio" />
           </Button>
 
-          <Button variant="ghost" size="sm" onClick={() => window.location.reload()}>
+          <Button variant="ghost" size="sm" onClick={handleRefresh}>
             <RefreshCw className="w-5 h-5 text-cinza-medio" />
           </Button>
 
