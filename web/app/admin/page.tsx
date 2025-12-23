@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { getToken } from '@/lib/auth';
+import { getAdminToken } from '@/lib/admin-auth-client';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { 
   Users, 
@@ -103,9 +103,9 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState('');
 
   const fetchStats = useCallback(async () => {
-    const token = getToken();
+    const token = getAdminToken();
     if (!token) {
-      router.push('/login');
+      router.push('/admin/login');
       return;
     }
 
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
       });
 
       if (response.status === 401 || response.status === 403) {
-        router.push('/login');
+        router.push('/admin/login');
         return;
       }
 
@@ -131,9 +131,9 @@ export default function AdminDashboard() {
 
   const fetchAssociados = useCallback(async (page: number, searchTerm: string = '') => {
     setAssociadosLoading(true);
-    const token = getToken();
+    const token = getAdminToken();
     if (!token) {
-      router.push('/login');
+      router.push('/admin/login');
       return;
     }
 
