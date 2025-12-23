@@ -3,19 +3,19 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-  "relative w-full rounded-xl border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  "relative w-full rounded-xl border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[1rem_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
   {
     variants: {
       variant: {
         default: "bg-white text-cinza-escuro border-cinza-claro",
         destructive:
-          "text-red-600 bg-red-50 border-red-200 [&>svg]:text-red-600",
+          "text-erro bg-erro/10 border-erro/30 [&>svg]:text-erro",
         success:
-          "text-green-600 bg-green-50 border-green-200 [&>svg]:text-green-600",
+          "text-sucesso bg-sucesso/10 border-sucesso/30 [&>svg]:text-sucesso",
         warning:
-          "text-amber-600 bg-amber-50 border-amber-200 [&>svg]:text-amber-600",
+          "text-aviso bg-aviso/10 border-aviso/30 [&>svg]:text-aviso",
         info:
-          "text-blue-600 bg-blue-50 border-blue-200 [&>svg]:text-blue-600",
+          "text-info bg-info/10 border-info/30 [&>svg]:text-info",
       },
     },
     defaultVariants: {

@@ -11,7 +11,6 @@ import {
   Zap,
   Shield,
   Users,
-  ChevronRight,
   Sparkles,
   Copy,
   Eye,

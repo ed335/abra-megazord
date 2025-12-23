@@ -13,15 +13,15 @@ const badgeVariants = cva(
         secondary:
           "border-transparent bg-off-white text-cinza-escuro",
         destructive:
-          "border-transparent bg-red-500 text-white",
+          "border-transparent bg-erro text-white",
         outline:
           "text-cinza-escuro border-cinza-claro bg-white",
         success:
-          "border-transparent bg-green-500 text-white",
+          "border-transparent bg-sucesso text-white",
         warning:
-          "border-transparent bg-amber-500 text-white",
+          "border-transparent bg-aviso text-white",
         info:
-          "border-transparent bg-blue-500 text-white",
+          "border-transparent bg-info text-white",
       },
     },
     defaultVariants: {
