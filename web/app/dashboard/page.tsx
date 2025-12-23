@@ -7,63 +7,51 @@ import { getToken, clearToken, fetchWithAuth } from '@/lib/auth';
 import AppLayout from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
 import { 
-  CheckCircle2, 
   ClipboardList, 
-  Stethoscope, 
-  FileText, 
+  Calendar,
+  CreditCard,
+  FileText,
+  User,
+  MessageCircle,
   Loader2,
   AlertCircle,
-  AlertTriangle,
-  Calendar,
-  ChevronRight
+  Clock,
+  CheckCircle2,
+  ChevronRight,
+  Pill
 } from 'lucide-react';
 
-type User = {
+type UserData = {
   id: string;
   email: string;
   role: string;
   nome: string;
 };
 
-interface ScoreExplanation {
-  criterio: string;
-  descricao: string;
-  pontos: number;
-}
-
 interface Diagnostico {
   titulo: string;
   resumo: string;
   nivelUrgencia: 'baixa' | 'moderada' | 'alta';
   indicacoes: string[];
-  contraindicacoes: string[];
   observacoes: string;
-  scoreExplicacao?: ScoreExplanation[];
 }
 
 interface PreAnamneseData {
   id: string;
-  perfil: string;
-  objetivoPrincipal: string;
-  gravidade: number;
   diagnostico: Diagnostico;
-  recomendacoes: string[];
-  proximosPasso: string;
   scorePrioridade: number;
   criadoEm: string;
 }
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [preAnamnese, setPreAnamnese] = useState<PreAnamneseData | null>(null);
-  const [preAnamneseCompleted, setPreAnamneseCompleted] = useState(false);
 
   useEffect(() => {
     const token = getToken();
-    
     if (!token) {
       router.replace('/login');
       return;
@@ -72,7 +60,7 @@ export default function DashboardPage() {
     Promise.all([
       fetch('/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` },
-      }).then(async (res) => {
+      }).then(res => {
         if (!res.ok) throw new Error('Sessão inválida');
         return res.json();
       }),
@@ -83,7 +71,6 @@ export default function DashboardPage() {
         setUser(userData);
         if (preAnamneseData.completed && preAnamneseData.preAnamnese) {
           setPreAnamnese(preAnamneseData.preAnamnese);
-          setPreAnamneseCompleted(true);
         }
         setLoading(false);
       })
@@ -107,172 +94,86 @@ export default function DashboardPage() {
   if (error || !user) {
     return (
       <AppLayout title="Início">
-        <div className="max-w-sm mx-auto text-center py-16">
+        <div className="text-center py-16">
           <AlertCircle className="w-10 h-10 text-erro mx-auto mb-4" />
-          <p className="text-cinza-escuro mb-4">Sua sessão expirou</p>
-          <Button onClick={() => router.push('/login')}>Entrar novamente</Button>
+          <p className="text-cinza-escuro mb-4">Sessão expirada</p>
+          <Button onClick={() => router.push('/login')}>Entrar</Button>
         </div>
       </AppLayout>
     );
   }
 
   const firstName = user.nome?.split(' ')[0] || 'Associado';
-  const completedSteps = preAnamneseCompleted ? 2 : 1;
+  const hasPreAnamnese = !!preAnamnese;
+
+  const quickActions = [
+    { 
+      href: '/pre-anamnese', 
+      icon: ClipboardList, 
+      label: 'Pré-Anamnese',
+      done: hasPreAnamnese
+    },
+    { 
+      href: '/agendar', 
+      icon: Calendar, 
+      label: 'Agendar Consulta',
+      done: false
+    },
+    { 
+      href: '/planos', 
+      icon: CreditCard, 
+      label: 'Planos',
+      done: false
+    },
+    { 
+      href: '/perfil', 
+      icon: User, 
+      label: 'Meu Perfil',
+      done: false
+    },
+  ];
 
   return (
     <AppLayout title="Início">
-      <div className="max-w-3xl">
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-cinza-escuro">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-xl font-medium text-cinza-escuro">
             Olá, {firstName}
           </h1>
-          <p className="text-cinza-medio mt-1">
-            Veja como está sua jornada na ABRACANM
-          </p>
+          <p className="text-sm text-cinza-medio">O que você precisa hoje?</p>
         </div>
 
-        <div className="bg-white border border-cinza-claro rounded-lg p-5 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-cinza-medio">Seu progresso</span>
-            <span className="text-sm font-medium text-cinza-escuro">{completedSteps} de 4</span>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <StepIndicator 
-              icon={CheckCircle2} 
-              label="Cadastro" 
-              status="done" 
-            />
-            <div className="flex-1 h-px bg-cinza-claro" />
-            <StepIndicator 
-              icon={ClipboardList} 
-              label="Pré-Anamnese" 
-              status={preAnamneseCompleted ? "done" : "current"} 
-              href={preAnamneseCompleted ? undefined : "/pre-anamnese"}
-            />
-            <div className="flex-1 h-px bg-cinza-claro" />
-            <StepIndicator 
-              icon={Stethoscope} 
-              label="Consulta" 
-              status={preAnamneseCompleted ? "current" : "pending"} 
-              href={preAnamneseCompleted ? "/agendar" : undefined}
-            />
-            <div className="flex-1 h-px bg-cinza-claro" />
-            <StepIndicator 
-              icon={FileText} 
-              label="Prescrição" 
-              status="pending" 
-            />
-          </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {quickActions.map((action) => (
+            <Link key={action.href} href={action.href}>
+              <div className="bg-white border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/40 transition-colors h-full">
+                <div className="flex items-center justify-between mb-3">
+                  <action.icon className="w-5 h-5 text-verde-oliva" />
+                  {action.done && (
+                    <CheckCircle2 className="w-4 h-4 text-sucesso" />
+                  )}
+                </div>
+                <p className="text-sm font-medium text-cinza-escuro">{action.label}</p>
+              </div>
+            </Link>
+          ))}
         </div>
 
-        {!preAnamneseCompleted && (
-          <Link href="/pre-anamnese">
-            <div className="bg-verde-oliva/5 border border-verde-oliva/20 rounded-lg p-5 mb-6 hover:bg-verde-oliva/10 transition-colors cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-cinza-escuro">Próximo passo: Pré-Anamnese</p>
-                  <p className="text-sm text-cinza-medio mt-1">
-                    Responda algumas perguntas para que possamos entender melhor suas necessidades
-                  </p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-verde-oliva flex-shrink-0" />
+        {!hasPreAnamnese && (
+          <div className="bg-verde-oliva/5 border border-verde-oliva/20 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-verde-oliva/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <ClipboardList className="w-5 h-5 text-verde-oliva" />
               </div>
-            </div>
-          </Link>
-        )}
-
-        {preAnamneseCompleted && preAnamnese && (
-          <Link href="/agendar">
-            <div className="bg-verde-oliva/5 border border-verde-oliva/20 rounded-lg p-5 mb-6 hover:bg-verde-oliva/10 transition-colors cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-cinza-escuro">Próximo passo: Agendar consulta</p>
-                  <p className="text-sm text-cinza-medio mt-1">
-                    Sua pré-anamnese foi concluída. Agora você pode agendar sua consulta médica
-                  </p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-verde-oliva flex-shrink-0" />
-              </div>
-            </div>
-          </Link>
-        )}
-
-        {preAnamnese && preAnamnese.diagnostico && (
-          <div className="bg-white border border-cinza-claro rounded-lg overflow-hidden mb-6">
-            <div className="px-5 py-4 border-b border-cinza-claro">
-              <h2 className="font-medium text-cinza-escuro">Resultado da sua pré-anamnese</h2>
-            </div>
-            
-            <div className="p-5">
-              <h3 className="text-lg font-medium text-cinza-escuro mb-2">
-                {preAnamnese.diagnostico.titulo}
-              </h3>
-              <p className="text-cinza-medio text-sm mb-4">
-                {preAnamnese.diagnostico.resumo}
-              </p>
-
-              <UrgencyBadge level={preAnamnese.diagnostico.nivelUrgencia} />
-
-              {preAnamnese.diagnostico.observacoes && (
-                <p className="text-sm text-cinza-escuro mt-4 p-3 bg-off-white rounded">
-                  {preAnamnese.diagnostico.observacoes}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-cinza-escuro">Complete sua pré-anamnese</p>
+                <p className="text-sm text-cinza-medio mt-0.5">
+                  Precisamos de algumas informações para preparar sua consulta
                 </p>
-              )}
-
-              {(preAnamnese.diagnostico.indicacoes || []).length > 0 && (
-                <div className="mt-5">
-                  <p className="text-sm font-medium text-cinza-escuro mb-2">O que pode ajudar:</p>
-                  <ul className="space-y-1">
-                    {preAnamnese.diagnostico.indicacoes.map((item, i) => (
-                      <li key={i} className="text-sm text-cinza-medio flex items-start gap-2">
-                        <span className="text-sucesso mt-0.5">•</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {(preAnamnese.diagnostico.contraindicacoes || []).length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm font-medium text-cinza-escuro mb-2">Pontos de atenção:</p>
-                  <ul className="space-y-1">
-                    {preAnamnese.diagnostico.contraindicacoes.map((item, i) => (
-                      <li key={i} className="text-sm text-cinza-medio flex items-start gap-2">
-                        <span className="text-aviso mt-0.5">•</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {(preAnamnese.recomendacoes || []).length > 0 && (
-                <div className="mt-5 pt-5 border-t border-cinza-claro">
-                  <p className="text-sm font-medium text-cinza-escuro mb-3">Recomendações:</p>
-                  <div className="space-y-2">
-                    {preAnamnese.recomendacoes.map((rec, i) => (
-                      <div key={i} className="text-sm text-cinza-medio p-3 bg-off-white rounded flex gap-3">
-                        <span className="text-verde-oliva font-medium">{i + 1}.</span>
-                        {rec}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-6 pt-5 border-t border-cinza-claro flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-cinza-medio">Score de prioridade</p>
-                  <p className="text-2xl font-semibold text-verde-oliva">
-                    {preAnamnese.scorePrioridade}<span className="text-sm font-normal text-cinza-medio">/100</span>
-                  </p>
-                </div>
-                <Link href="/agendar">
-                  <Button>
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Agendar consulta
+                <Link href="/pre-anamnese">
+                  <Button size="sm" className="mt-3">
+                    Começar agora
+                    <ChevronRight className="w-4 h-4 ml-1" />
                   </Button>
                 </Link>
               </div>
@@ -280,17 +181,68 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <Link href="/planos">
-            <div className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/30 transition-colors">
-              <p className="font-medium text-cinza-escuro">Planos de associação</p>
-              <p className="text-sm text-cinza-medio mt-1">Conheça os benefícios</p>
+        {preAnamnese && (
+          <div className="bg-white border border-cinza-claro rounded-lg overflow-hidden">
+            <div className="px-4 py-3 border-b border-cinza-claro flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Pill className="w-4 h-4 text-verde-oliva" />
+                <span className="text-sm font-medium text-cinza-escuro">Sua avaliação</span>
+              </div>
+              <UrgencyBadge level={preAnamnese.diagnostico.nivelUrgencia} />
+            </div>
+            <div className="p-4">
+              <p className="font-medium text-cinza-escuro">{preAnamnese.diagnostico.titulo}</p>
+              <p className="text-sm text-cinza-medio mt-1 line-clamp-2">{preAnamnese.diagnostico.resumo}</p>
+              
+              {preAnamnese.diagnostico.indicacoes?.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-cinza-claro">
+                  <p className="text-xs text-cinza-medio mb-2">Indicações:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {preAnamnese.diagnostico.indicacoes.slice(0, 3).map((item, i) => (
+                      <span key={i} className="text-xs bg-verde-oliva/10 text-verde-escuro px-2 py-1 rounded">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-cinza-medio">
+                  <Clock className="w-3.5 h-3.5" />
+                  Próximo: agendar consulta
+                </div>
+                <Link href="/agendar">
+                  <Button size="sm" variant="outline">
+                    Agendar
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="grid sm:grid-cols-2 gap-3">
+          <Link href="/educacao">
+            <div className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/40 transition-colors">
+              <div className="flex items-center gap-3">
+                <FileText className="w-5 h-5 text-verde-oliva" />
+                <div>
+                  <p className="text-sm font-medium text-cinza-escuro">Educação</p>
+                  <p className="text-xs text-cinza-medio">Artigos sobre cannabis medicinal</p>
+                </div>
+              </div>
             </div>
           </Link>
           <Link href="/contato">
-            <div className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/30 transition-colors">
-              <p className="font-medium text-cinza-escuro">Precisa de ajuda?</p>
-              <p className="text-sm text-cinza-medio mt-1">Fale com nossa equipe</p>
+            <div className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/40 transition-colors">
+              <div className="flex items-center gap-3">
+                <MessageCircle className="w-5 h-5 text-verde-oliva" />
+                <div>
+                  <p className="text-sm font-medium text-cinza-escuro">Suporte</p>
+                  <p className="text-xs text-cinza-medio">Fale com nossa equipe</p>
+                </div>
+              </div>
             </div>
           </Link>
         </div>
@@ -299,59 +251,16 @@ export default function DashboardPage() {
   );
 }
 
-function StepIndicator({ 
-  icon: Icon, 
-  label, 
-  status,
-  href 
-}: { 
-  icon: React.ElementType; 
-  label: string; 
-  status: 'done' | 'current' | 'pending';
-  href?: string;
-}) {
-  const content = (
-    <div className={`flex flex-col items-center gap-1.5 ${href ? 'cursor-pointer' : ''}`}>
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-        status === 'done' 
-          ? 'bg-sucesso text-white' 
-          : status === 'current' 
-          ? 'bg-verde-oliva text-white' 
-          : 'bg-cinza-claro text-cinza-medio'
-      }`}>
-        {status === 'done' ? (
-          <CheckCircle2 className="w-4 h-4" />
-        ) : (
-          <Icon className="w-4 h-4" />
-        )}
-      </div>
-      <span className={`text-xs ${
-        status === 'pending' ? 'text-cinza-medio' : 'text-cinza-escuro'
-      }`}>
-        {label}
-      </span>
-    </div>
-  );
-
-  if (href) {
-    return <Link href={href}>{content}</Link>;
-  }
-  
-  return content;
-}
-
 function UrgencyBadge({ level }: { level: 'baixa' | 'moderada' | 'alta' }) {
   const config = {
-    baixa: { bg: 'bg-sucesso/10', text: 'text-sucesso', label: 'Prioridade baixa' },
-    moderada: { bg: 'bg-aviso/10', text: 'text-aviso', label: 'Prioridade moderada' },
-    alta: { bg: 'bg-erro/10', text: 'text-erro', label: 'Prioridade alta' },
+    baixa: { bg: 'bg-sucesso/10', text: 'text-sucesso', label: 'Baixa' },
+    moderada: { bg: 'bg-aviso/10', text: 'text-aviso', label: 'Moderada' },
+    alta: { bg: 'bg-erro/10', text: 'text-erro', label: 'Alta' },
   };
-  
   const { bg, text, label } = config[level];
   
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm ${bg} ${text}`}>
-      <AlertTriangle className="w-3.5 h-3.5" />
+    <span className={`text-xs px-2 py-0.5 rounded ${bg} ${text}`}>
       {label}
     </span>
   );
