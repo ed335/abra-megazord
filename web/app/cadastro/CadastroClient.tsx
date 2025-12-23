@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Button from '@/components/shared/Button';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
 import { API_URL, setToken } from '@/lib/auth';
+import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 const roles = [
   { value: 'PACIENTE', label: 'Paciente' },
@@ -56,39 +59,66 @@ export default function CadastroClient() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-16">
-      <div className="max-w-3xl mx-auto bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 sm:p-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <p className="text-sm text-verde-oliva font-medium mb-2">Abracanm</p>
-            <h1 className="text-3xl sm:text-4xl font-bold text-cinza-escuro">
-              Crie sua conta
-            </h1>
-            <p className="text-cinza-medio mt-2">
-              Cadastre-se como paciente ou prescritor para acessar a plataforma.
-            </p>
+    <main className="min-h-screen bg-off-white px-4 sm:px-6 lg:px-8 py-16">
+      <Card className="max-w-3xl mx-auto">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-verde-oliva font-medium mb-2">ABRACANM</p>
+              <CardTitle className="text-2xl sm:text-3xl">Crie sua conta</CardTitle>
+              <CardDescription>
+                Cadastre-se como paciente ou prescritor para acessar a plataforma.
+              </CardDescription>
+            </div>
+            <Link href="/" className="text-sm text-verde-oliva hover:underline">
+              Voltar
+            </Link>
           </div>
-          <Link href="/" className="text-sm text-verde-oliva hover:underline">
-            Voltar
-          </Link>
-        </div>
+        </CardHeader>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-cinza-escuro">E-mail</span>
+        <CardContent>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-cinza-escuro">
+                Tipo de conta
+              </label>
+              <div className="flex flex-wrap gap-3">
+                {roles.map((r) => (
+                  <button
+                    key={r.value}
+                    type="button"
+                    onClick={() => setRole(r.value)}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      role === r.value
+                        ? 'bg-verde-oliva text-white'
+                        : 'bg-off-white border border-cinza-claro text-cinza-escuro hover:border-verde-oliva'
+                    }`}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-cinza-escuro">
+                E-mail
+              </label>
               <input
                 type="email"
                 name="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-cinza-claro px-3 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva"
+                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
                 placeholder="voce@email.com"
               />
-            </label>
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-cinza-escuro">Senha</span>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-cinza-escuro">
+                Senha
+              </label>
               <input
                 type="password"
                 name="password"
@@ -96,58 +126,48 @@ export default function CadastroClient() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-cinza-claro px-3 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva"
-                placeholder="Min. 8 caracteres"
+                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
+                placeholder="Mínimo 8 caracteres"
               />
-            </label>
-          </div>
-
-          <div className="space-y-3">
-            <span className="text-sm font-medium text-cinza-escuro">Tipo de conta</span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {roles.map((r) => (
-                <button
-                  key={r.value}
-                  type="button"
-                  onClick={() => setRole(r.value as typeof role)}
-                  className={`rounded-lg border px-4 py-3 text-left transition ${
-                    role === r.value
-                      ? 'border-verde-oliva bg-verde-claro/10 text-verde-oliva'
-                      : 'border-cinza-claro text-cinza-escuro hover:border-verde-oliva'
-                  }`}
-                >
-                  <span className="text-sm font-medium">{r.label}</span>
-                </button>
-              ))}
             </div>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-            <p className="text-sm text-cinza-medio">
-              Seus dados são protegidos conforme LGPD. Use um e-mail válido.
-            </p>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              disabled={status === 'loading'}
-            >
-              {status === 'loading' ? 'Enviando...' : 'Enviar cadastro'}
-            </Button>
-          </div>
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+              <p className="text-sm text-cinza-medio">
+                Já tem uma conta?{' '}
+                <Link href="/login" className="text-verde-oliva hover:underline font-medium">
+                  Entrar
+                </Link>
+              </p>
+              <Button
+                type="submit"
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Cadastrando...
+                  </>
+                ) : (
+                  'Criar conta'
+                )}
+              </Button>
+            </div>
 
-          {status === 'success' && (
-            <p className="text-sm text-sucesso bg-sucesso/10 border border-sucesso/30 rounded-lg px-4 py-3">
-              {message}
-            </p>
-          )}
-          {status === 'error' && (
-            <p className="text-sm text-erro bg-erro/10 border border-erro/30 rounded-lg px-4 py-3">
-              {message}
-            </p>
-          )}
-        </form>
-      </div>
+            {status === 'success' && (
+              <Alert variant="success">
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertDescription>{message}</AlertDescription>
+              </Alert>
+            )}
+            {status === 'error' && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{message}</AlertDescription>
+              </Alert>
+            )}
+          </form>
+        </CardContent>
+      </Card>
     </main>
   );
 }

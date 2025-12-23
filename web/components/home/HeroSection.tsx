@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Button from '@/components/shared/Button';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ShieldCheck, BookOpen, Ban, User, Activity, QrCode } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -66,16 +67,15 @@ export default function HeroSection() {
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
-                  variant="primary"
                   size="lg"
-                  className="group transform transition duration-200 hover:scale-[1.01] shadow-md"
+                  className="group"
                   onClick={() => router.push('/cadastro')}
                 >
                   Quero me Associar
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   size="lg"
                   onClick={() => {
                     const target = document.getElementById('como-funciona');
@@ -85,7 +85,6 @@ export default function HeroSection() {
                       router.push('/#como-funciona');
                     }
                   }}
-                  className="transform transition duration-200 hover:scale-[1.01] border border-verde-oliva text-verde-oliva bg-white"
                 >
                   Saiba Como Funciona
                 </Button>
@@ -108,9 +107,9 @@ export default function HeroSection() {
                   <p className="text-lg font-semibold text-cinza-escuro">Maria Oliveira</p>
                 </div>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-verde-claro/20 text-verde-oliva">
+              <Badge variant="success" className="bg-verde-claro/20 text-verde-oliva border-verde-claro/30">
                 Tratamento Ativo
-              </span>
+              </Badge>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-4 text-sm text-cinza-escuro">

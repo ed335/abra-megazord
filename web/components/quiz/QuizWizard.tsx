@@ -19,7 +19,7 @@ import {
   Users,
   Moon,
 } from 'lucide-react';
-import Button from '@/components/shared/Button';
+import { Button } from '@/components/ui/button';
 
 type PerfilIntake = 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';
 
@@ -582,7 +582,7 @@ export default function QuizWizard() {
       <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3">
         <Button
           variant="secondary"
-          size="md"
+          size="default"
           className="w-full sm:w-auto"
           onClick={goBack}
           disabled={step === 0 || isSubmitting}
@@ -594,8 +594,8 @@ export default function QuizWizard() {
         <div className="hidden sm:flex flex-1" />
 
         <Button
-          variant="primary"
-          size="md"
+          variant="default"
+          size="default"
           className="w-full sm:w-auto"
           onClick={goNext}
           disabled={!canContinue || isSubmitting}

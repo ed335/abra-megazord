@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Clock3, CheckCircle2, User, MapPin, FileText, Stethoscope } from 'lucide-react';
-import Button from '@/components/shared/Button';
+import { Button } from '@/components/ui/button';
 import { setToken } from '@/lib/auth';
 
 const STORAGE_KEY = 'abracanm_cadastro_form';
@@ -1019,7 +1019,7 @@ export default function CadastroAssociadoClient() {
 
           <div className="flex justify-between mt-8">
             {currentStep > 1 ? (
-              <Button variant="secondary" onClick={prevStep}>
+              <Button variant="outline" onClick={prevStep}>
                 Voltar
               </Button>
             ) : (
@@ -1027,12 +1027,11 @@ export default function CadastroAssociadoClient() {
             )}
             
             {currentStep < 4 ? (
-              <Button variant="primary" onClick={nextStep}>
+              <Button onClick={nextStep}>
                 Continuar
               </Button>
             ) : (
               <Button 
-                variant="primary" 
                 onClick={handleSubmit}
                 disabled={status === 'loading'}
               >

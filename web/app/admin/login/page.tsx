@@ -4,7 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { setAdminToken } from '@/lib/admin-auth-client';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, AlertCircle, Shield } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -49,53 +52,57 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
-          <div className="text-center mb-8">
-            <Link href="/" className="text-2xl font-bold text-verde-oliva">
-              ABRACANM
-            </Link>
-            <h1 className="text-xl font-bold text-gray-900 mt-4">Painel Administrativo</h1>
-            <p className="text-sm text-gray-500 mt-1">Entre com suas credenciais de administrador</p>
+    <main className="min-h-screen bg-off-white flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto w-12 h-12 bg-verde-oliva/10 rounded-xl flex items-center justify-center mb-4">
+            <Shield className="w-6 h-6 text-verde-oliva" />
           </div>
+          <Link href="/" className="text-2xl font-bold text-verde-oliva">
+            ABRACANM
+          </Link>
+          <CardTitle className="text-xl mt-4">Painel Administrativo</CardTitle>
+          <CardDescription>Entre com suas credenciais de administrador</CardDescription>
+        </CardHeader>
 
+        <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
-                {error}
-              </div>
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-cinza-escuro">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
+                className="w-full px-4 py-2.5 border border-cinza-claro rounded-xl text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none transition-all"
                 placeholder="admin@abracanm.org.br"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-cinza-escuro">Senha</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
+                className="w-full px-4 py-2.5 border border-cinza-claro rounded-xl text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none transition-all"
                 placeholder="Sua senha"
               />
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="w-full py-2 bg-verde-oliva text-white rounded-lg text-sm font-medium hover:bg-verde-oliva/90 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full"
             >
               {loading ? (
                 <>
@@ -105,16 +112,16 @@ export default function AdminLoginPage() {
               ) : (
                 'Entrar'
               )}
-            </button>
+            </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <Link href="/login" className="text-sm text-gray-500 hover:text-verde-oliva">
-              Nao e administrador? Acesse como associado
+            <Link href="/login" className="text-sm text-cinza-medio hover:text-verde-oliva transition-colors">
+              Não é administrador? Acesse como associado
             </Link>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </main>
   );
 }

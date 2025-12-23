@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Button from './Button';
+import { Button } from '@/components/ui/button';
 import { clearToken, getToken } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { Shield, User } from 'lucide-react';
@@ -64,13 +64,13 @@ export default function Header() {
             ABRACANM
           </Link>
           <nav className="hidden sm:flex items-center gap-4 text-sm text-cinza-medio">
-            <Link href="/#como-funciona" className="hover:text-cinza-escuro">
+            <Link href="/#como-funciona" className="hover:text-cinza-escuro transition-colors">
               Como funciona
             </Link>
-            <Link href="/#sobre" className="hover:text-cinza-escuro">
+            <Link href="/#sobre" className="hover:text-cinza-escuro transition-colors">
               Sobre nós
             </Link>
-            <Link href="/contato" className="hover:text-cinza-escuro">
+            <Link href="/contato" className="hover:text-cinza-escuro transition-colors">
               Contato
             </Link>
           </nav>
@@ -97,7 +97,7 @@ export default function Header() {
               >
                 <User size={18} />
               </Link>
-              <Button variant="secondary" size="sm" onClick={handleLogout}>
+              <Button variant="outline" size="sm" onClick={handleLogout}>
                 Sair
               </Button>
             </>
@@ -106,7 +106,7 @@ export default function Header() {
               <Link href="/login" className="text-sm text-cinza-escuro underline">
                 Entrar
               </Link>
-              <Button variant="primary" size="sm" onClick={() => router.push('/cadastro')}>
+              <Button size="sm" onClick={() => router.push('/cadastro')}>
                 Associe-se
               </Button>
             </>

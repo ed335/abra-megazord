@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Button from '@/components/shared/Button';
+import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -56,7 +56,7 @@ export default function CTASection() {
           />
           <Button
             type="submit"
-            variant="primary"
+            variant="secondary"
             size="lg"
             className="bg-white text-verde-oliva hover:bg-off-white group w-full sm:w-auto font-semibold shadow-md"
           >
