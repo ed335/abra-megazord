@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
 import { 
-  ArrowLeft, 
   Calendar, 
   Clock, 
   Plus, 
@@ -23,6 +22,7 @@ import {
   Trash2,
   PlayCircle
 } from 'lucide-react';
+import AdminLayout from '@/components/layout/AdminLayout';
 
 type Paciente = {
   id: string;
@@ -343,36 +343,22 @@ export default function AgendamentosPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Link 
-              href="/admin" 
-              className="p-2 text-cinza-medio hover:text-cinza-escuro hover:bg-cinza-muito-claro rounded-lg transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div>
-              <p className="text-sm text-verde-oliva font-medium mb-1">Administração</p>
-              <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro">
-                Agendamentos
-              </h1>
-            </div>
-          </div>
-          
-          <button
-            onClick={() => {
-              fetchPacientes();
-              setShowNovoModal(true);
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-escuro transition-colors"
-          >
-            <Plus size={18} />
-            <span className="hidden sm:inline">Novo Agendamento</span>
-          </button>
-        </div>
-
+    <AdminLayout 
+      title="Agendamentos"
+      actions={
+        <button
+          onClick={() => {
+            fetchPacientes();
+            setShowNovoModal(true);
+          }}
+          className="flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-escuro transition-colors"
+        >
+          <Plus size={18} />
+          <span className="hidden sm:inline">Novo Agendamento</span>
+        </button>
+      }
+    >
+      <div className="space-y-6">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
             {error}
@@ -923,6 +909,6 @@ export default function AgendamentosPage() {
           </div>
         </div>
       )}
-    </main>
+    </AdminLayout>
   );
 }

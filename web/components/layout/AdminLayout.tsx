@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils';
 interface AdminLayoutProps {
   children: React.ReactNode;
   title?: string;
+  actions?: React.ReactNode;
 }
 
-export default function AdminLayout({ children, title }: AdminLayoutProps) {
+export default function AdminLayout({ children, title, actions }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -30,6 +31,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
         <AdminHeader 
           onMenuClick={() => setSidebarOpen(true)} 
           title={title}
+          actions={actions}
         />
         
         <main className="flex-1 p-4 lg:p-6">

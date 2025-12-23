@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ArrowLeft, MessageCircle, Send, Users, Filter, Copy, ExternalLink, Check, AlertCircle } from 'lucide-react';
+import { MessageCircle, Send, Users, Filter, Copy, ExternalLink, Check, AlertCircle } from 'lucide-react';
+import AdminLayout from '@/components/layout/AdminLayout';
 
 type Mensagem = {
   id: string;
@@ -106,23 +106,8 @@ export default function WhatsAppPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <Link 
-            href="/admin" 
-            className="p-2 text-cinza-medio hover:text-cinza-escuro hover:bg-cinza-muito-claro rounded-lg transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </Link>
-          <div>
-            <p className="text-sm text-verde-oliva font-medium mb-1">Administração</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro">
-              Mensagens WhatsApp
-            </h1>
-          </div>
-        </div>
-
+    <AdminLayout title="Mensagens WhatsApp">
+      <div className="space-y-6">
         {error && (
           <div className="mb-4 p-4 bg-erro/10 border border-erro/30 rounded-lg text-erro flex items-center gap-2">
             <AlertCircle size={18} />
@@ -328,6 +313,6 @@ export default function WhatsAppPage() {
           </div>
         </div>
       </div>
-    </main>
+    </AdminLayout>
   );
 }

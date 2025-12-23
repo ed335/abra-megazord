@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { getAdminToken, fetchWithAdminAuth } from '@/lib/admin-auth-client';
 import { 
-  ArrowLeft, 
   Loader2, 
   Plus,
   Edit2,
@@ -14,6 +12,7 @@ import {
   ToggleRight,
   Package
 } from 'lucide-react';
+import AdminLayout from '@/components/layout/AdminLayout';
 
 interface Plano {
   id: string;
@@ -167,36 +166,28 @@ export default function AdminPlanosPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
-      </main>
+      <AdminLayout title="Planos">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
+        </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/admin" className="p-2 hover:bg-gray-100 rounded-lg transition">
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Planos</h1>
-              <p className="text-sm text-gray-500">Gerencie os planos de assinatura</p>
-            </div>
-          </div>
-          <button
-            onClick={() => { resetForm(); setEditingPlano(null); setShowForm(true); }}
-            className="flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg text-sm font-medium hover:bg-verde-oliva/90"
-          >
-            <Plus className="w-4 h-4" />
-            Novo Plano
-          </button>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    <AdminLayout 
+      title="Planos"
+      actions={
+        <button
+          onClick={() => { resetForm(); setEditingPlano(null); setShowForm(true); }}
+          className="flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg text-sm font-medium hover:bg-verde-oliva/90"
+        >
+          <Plus className="w-4 h-4" />
+          Novo Plano
+        </button>
+      }
+    >
+      <div className="space-y-6">
         {showForm && (
           <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
@@ -378,6 +369,6 @@ export default function AdminPlanosPage() {
           )}
         </div>
       </div>
-    </main>
+    </AdminLayout>
   );
 }

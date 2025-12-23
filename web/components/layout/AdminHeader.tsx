@@ -38,9 +38,10 @@ function parseJwt(token: string): { role?: string; email?: string; nome?: string
 interface AdminHeaderProps {
   onMenuClick: () => void;
   title?: string;
+  actions?: React.ReactNode;
 }
 
-export default function AdminHeader({ onMenuClick, title }: AdminHeaderProps) {
+export default function AdminHeader({ onMenuClick, title, actions }: AdminHeaderProps) {
   const router = useRouter();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userInfo, setUserInfo] = useState<{ email?: string; nome?: string; role?: string } | null>(null);
@@ -80,6 +81,7 @@ export default function AdminHeader({ onMenuClick, title }: AdminHeaderProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          {actions}
           <Badge variant="warning" className="hidden sm:flex">
             <Shield className="w-3 h-3 mr-1" />
             Administrador

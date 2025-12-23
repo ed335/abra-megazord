@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { Shield, UserPlus, Trash2, X, ArrowLeft, Mail, Lock, User } from 'lucide-react';
+import { Shield, UserPlus, Trash2, X, Mail, Lock, User } from 'lucide-react';
+import AdminLayout from '@/components/layout/AdminLayout';
 
 type Admin = {
   id: string;
@@ -140,32 +140,19 @@ export default function AdminsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Link 
-              href="/admin" 
-              className="p-2 text-cinza-medio hover:text-cinza-escuro hover:bg-cinza-muito-claro rounded-lg transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div>
-              <p className="text-sm text-verde-oliva font-medium mb-1">Administração</p>
-              <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro">
-                Gerenciar Administradores
-              </h1>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors text-sm font-medium"
-          >
-            <UserPlus size={16} />
-            Novo Admin
-          </button>
-        </div>
-
+    <AdminLayout 
+      title="Gerenciar Administradores"
+      actions={
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors text-sm font-medium"
+        >
+          <UserPlus size={16} />
+          Novo Admin
+        </button>
+      }
+    >
+      <div className="space-y-6">
         {error && (
           <div className="mb-4 p-4 bg-erro/10 border border-erro/30 rounded-lg text-erro">
             {error}
@@ -343,6 +330,6 @@ export default function AdminsPage() {
           </div>
         )}
       </div>
-    </main>
+    </AdminLayout>
   );
 }
