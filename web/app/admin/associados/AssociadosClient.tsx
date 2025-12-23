@@ -3,9 +3,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getAdminToken } from '@/lib/admin-auth-client';
-import AdminLayout from '@/components/layout/AdminLayout';
+import { getToken } from '@/lib/auth';
 import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, Power, Trash2, Eye, Image } from 'lucide-react';
 
 type PreAnamnese = {
@@ -113,9 +113,9 @@ export default function AssociadosClient() {
     setLoading(true);
     setError('');
 
-    const token = getAdminToken();
+    const token = getToken();
     if (!token) {
-      router.push('/admin/login');
+      router.push('/login');
       return;
     }
 
@@ -207,7 +207,7 @@ export default function AssociadosClient() {
   const handleViewDocs = async (id: string) => {
     setDocsLoading(true);
     setShowDocsModal(true);
-    const token = getAdminToken();
+    const token = getToken();
 
     try {
       const response = await fetch(`/api/admin/associados/${id}/documentos`, {
@@ -254,7 +254,7 @@ export default function AssociadosClient() {
     if (!editingAssociado) return;
     
     setSaving(true);
-    const token = getAdminToken();
+    const token = getToken();
     
     try {
       const response = await fetch(`/api/admin/associados/${editingAssociado.id}`, {
@@ -282,7 +282,7 @@ export default function AssociadosClient() {
 
   const handleToggleStatus = async (id: string) => {
     setTogglingId(id);
-    const token = getAdminToken();
+    const token = getToken();
     
     try {
       const response = await fetch(`/api/admin/associados/${id}/toggle-status`, {
@@ -306,7 +306,7 @@ export default function AssociadosClient() {
 
   const handleDelete = async (id: string) => {
     setDeletingId(id);
-    const token = getAdminToken();
+    const token = getToken();
     
     try {
       const response = await fetch(`/api/admin/associados/${id}`, {
@@ -343,9 +343,9 @@ export default function AssociadosClient() {
 
   const handleExport = async () => {
     setExporting(true);
-    const token = getAdminToken();
+    const token = getToken();
     if (!token) {
-      router.push('/admin/login');
+      router.push('/login');
       return;
     }
 
@@ -377,9 +377,9 @@ export default function AssociadosClient() {
   };
 
   const handleDownloadTemplate = async () => {
-    const token = getAdminToken();
+    const token = getToken();
     if (!token) {
-      router.push('/admin/login');
+      router.push('/login');
       return;
     }
 
@@ -416,9 +416,9 @@ export default function AssociadosClient() {
     setImportResult(null);
     setError('');
 
-    const token = getAdminToken();
+    const token = getToken();
     if (!token) {
-      router.push('/admin/login');
+      router.push('/login');
       return;
     }
 
@@ -479,26 +479,21 @@ export default function AssociadosClient() {
   };
 
   const getUrgencyBadge = (nivel: string) => {
-    const styles: Record<string, string> = {
+    const styles = {
       baixa: 'bg-green-100 text-green-800',
       moderada: 'bg-yellow-100 text-yellow-800',
       alta: 'bg-red-100 text-red-800',
     };
-    const labels: Record<string, string> = {
+    const labels = {
       baixa: 'Baixa',
       moderada: 'Moderada',
       alta: 'Alta',
     };
-    return styles[nivel] || styles.baixa;
-  };
-
-  const getUrgencyLabel = (nivel: string) => {
-    const labels: Record<string, string> = {
-      baixa: 'Baixa',
-      moderada: 'Moderada',
-      alta: 'Alta',
-    };
-    return labels[nivel] || nivel;
+    return (
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[nivel as keyof typeof styles] || styles.baixa}`}>
+        {labels[nivel as keyof typeof labels] || nivel}
+      </span>
+    );
   };
 
   const getPerfilLabel = (perfil: string) => {
@@ -511,26 +506,24 @@ export default function AssociadosClient() {
   };
 
   return (
-    <AdminLayout title="Associados">
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-cinza-escuro">
+            <p className="text-sm text-verde-oliva font-medium mb-1">Admin</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro">
               Lista de Associados
             </h1>
-            <p className="text-sm text-cinza-medio mt-1">
-              Gerencie os associados cadastrados
-            </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={handleDownloadTemplate}
-              className="inline-flex items-center gap-2 px-3 py-2 border border-cinza-claro text-cinza-escuro rounded-lg hover:bg-cinza-muito-claro transition-colors text-sm font-medium"
+              className="inline-flex items-center gap-2 px-3 py-2 border border-verde-oliva text-verde-oliva rounded-lg hover:bg-verde-oliva/10 transition-colors text-sm font-medium"
             >
               <FileSpreadsheet size={16} />
               Modelo
             </button>
-            <label className="inline-flex items-center gap-2 px-3 py-2 border border-cinza-claro text-cinza-escuro rounded-lg hover:bg-cinza-muito-claro transition-colors text-sm font-medium cursor-pointer">
+            <label className="inline-flex items-center gap-2 px-3 py-2 border border-verde-oliva text-verde-oliva rounded-lg hover:bg-verde-oliva/10 transition-colors text-sm font-medium cursor-pointer">
               <Upload size={16} />
               {importing ? 'Importando...' : 'Importar'}
               <input
@@ -549,6 +542,9 @@ export default function AssociadosClient() {
               <Download size={16} />
               {exporting ? 'Exportando...' : 'Exportar'}
             </button>
+            <Link href="/dashboard" className="text-sm text-verde-oliva hover:underline">
+              Voltar
+            </Link>
           </div>
         </div>
 
@@ -1277,7 +1273,6 @@ export default function AssociadosClient() {
           </div>
         </div>
       )}
-      </div>
-    </AdminLayout>
+    </main>
   );
 }
