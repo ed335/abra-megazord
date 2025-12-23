@@ -17,6 +17,8 @@ The project follows a modular architecture with a clear separation between front
 - **Design:** Minimalist design with white backgrounds, no gradients, and a clean layout.
 - **Branding:** ABRACANM - Associação Brasileira de Cannabis Medicinal.
 - **Communication Tone:** Welcoming, medical, and neutral.
+- **Design System:** Complete component library in `web/components/ui/` with Button (6 variants), Card (7 subcomponents), Badge (7 variants), Tabs, Alert (5 variants), and Progress components - all using ABRACANM semantic colors.
+- **Color Palette:** verde-oliva (#6B7C59) primary, verde-claro (#A8C686), verde-escuro (#4A5A3A), dourado (#D4A574), semantic colors (sucesso, erro, aviso, info).
 - **Components:** Shared Header for consistent navigation, animated progress bars for forms, show/hide password buttons, visual validation for terms checkboxes, and smooth transition animations using Framer Motion.
 - **Admin Dashboard:** Features an intuitive dashboard with statistics, graphs, search, filters, and CRUD operations, including document viewing and multi-administrator management.
 - **Profile Page:** Dedicated user profile page for editing personal data with CEP auto-fill.
