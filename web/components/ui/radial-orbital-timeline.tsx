@@ -64,7 +64,7 @@ export function RadialOrbitalTimeline({
                   whileTap={{ scale: 0.95 }}
                 >
                   {item.icon ? (
-                    <span className="w-6 h-6">{item.icon}</span>
+                    <span className="w-6 h-6 flex items-center justify-center [&>svg]:w-5 [&>svg]:h-5">{item.icon}</span>
                   ) : (
                     <span className="text-xl font-bold">{index + 1}</span>
                   )}
@@ -103,7 +103,7 @@ export function RadialOrbitalTimeline({
             className="mt-12 text-center"
           >
             <div className="inline-flex items-center gap-3 bg-white rounded-2xl px-8 py-6 shadow-lg border border-[#e5e5e5]">
-              <div className="w-12 h-12 rounded-xl bg-[#6B7C59]/10 flex items-center justify-center text-[#6B7C59]">
+              <div className="w-12 h-12 rounded-xl bg-[#6B7C59]/10 flex items-center justify-center text-[#6B7C59] [&>svg]:w-6 [&>svg]:h-6">
                 {items[activeIndex].icon || <span className="text-xl font-bold">{activeIndex + 1}</span>}
               </div>
               <div className="text-left">
@@ -149,7 +149,7 @@ export function RadialOrbitalTimeline({
                 <div className="bg-white rounded-xl p-4 border border-[#e5e5e5] shadow-sm hover:shadow-md hover:border-[#6B7C59]/30 transition-all">
                   <div className="flex items-start gap-3">
                     {item.icon && (
-                      <div className="w-10 h-10 rounded-lg bg-[#6B7C59]/10 flex items-center justify-center text-[#6B7C59] flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-[#6B7C59]/10 flex items-center justify-center text-[#6B7C59] flex-shrink-0 [&>svg]:w-5 [&>svg]:h-5">
                         {item.icon}
                       </div>
                     )}
