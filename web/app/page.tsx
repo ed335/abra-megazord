@@ -22,7 +22,47 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Hover3DCard } from "@/components/ui/hover-3d-card";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import Header from "@/components/shared/Header";
+
+const testimonials = [
+  {
+    id: 1,
+    name: "Maria S.",
+    role: "Paciente",
+    company: "Dor Crônica",
+    content: "Depois de anos sofrendo com dores, finalmente encontrei qualidade de vida. A equipe da ABRACANM me acolheu desde o primeiro contato.",
+    rating: 5,
+    avatar: "",
+  },
+  {
+    id: 2,
+    name: "João P.",
+    role: "Paciente",
+    company: "Ansiedade",
+    content: "O tratamento mudou minha vida. Hoje durmo melhor, trabalho melhor e vivo melhor. Gratidão a toda equipe.",
+    rating: 5,
+    avatar: "",
+  },
+  {
+    id: 3,
+    name: "Ana C.",
+    role: "Mãe de paciente",
+    company: "Epilepsia",
+    content: "Minha filha tinha crises diárias. Com o tratamento, as crises reduziram drasticamente. A ABRACANM foi fundamental nessa conquista.",
+    rating: 5,
+    avatar: "",
+  },
+  {
+    id: 4,
+    name: "Carlos R.",
+    role: "Paciente",
+    company: "Fibromialgia",
+    content: "Encontrei na ABRACANM o suporte que precisava. Os médicos são atenciosos e o processo de obtenção da receita foi muito tranquilo.",
+    rating: 5,
+    avatar: "",
+  },
+];
 
 const fadeUpVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -308,68 +348,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="depoimentos" className="py-24 px-4 md:px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-              O que dizem nossos pacientes
-            </h2>
-            <p className="text-xl text-[#86868b] max-w-2xl mx-auto">
-              Histórias reais de transformação.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Maria S.",
-                condition: "Dor Crônica",
-                quote: "Depois de anos sofrendo com dores, finalmente encontrei qualidade de vida. A equipe da ABRACANM me acolheu desde o primeiro contato.",
-              },
-              {
-                name: "João P.",
-                condition: "Ansiedade",
-                quote: "O tratamento mudou minha vida. Hoje durmo melhor, trabalho melhor e vivo melhor. Gratidão a toda equipe.",
-              },
-              {
-                name: "Ana C.",
-                condition: "Epilepsia",
-                quote: "Minha filha tinha crises diárias. Com o tratamento, as crises reduziram drasticamente. A ABRACANM foi fundamental.",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Hover3DCard className="h-full">
-                  <Card className="border border-[#e5e5e5] shadow-sm h-full rounded-2xl bg-white">
-                    <CardContent className="pt-8 pb-8 px-6">
-                      <div className="flex gap-1 mb-4">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 text-[#D4A574] fill-current" />
-                        ))}
-                      </div>
-                      <p className="text-[#1d1d1f] mb-6 leading-relaxed">&quot;{item.quote}&quot;</p>
-                      <div>
-                        <p className="font-semibold text-[#1d1d1f]">{item.name}</p>
-                        <p className="text-sm text-[#6B7C59]">{item.condition}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Hover3DCard>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+      <section id="depoimentos">
+        <AnimatedTestimonials
+          testimonials={testimonials}
+          title="O que dizem nossos pacientes"
+          subtitle="Histórias reais de transformação através da cannabis medicinal."
+          badgeText="Depoimentos reais"
+          autoRotateInterval={6000}
+        />
       </section>
 
       <section id="contato" className="py-24 px-4 md:px-6 bg-[#fafaf8]">
