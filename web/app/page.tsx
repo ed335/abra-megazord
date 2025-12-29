@@ -18,7 +18,42 @@ import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import { BenefitsCarousel } from "@/components/ui/benefits-carousel";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { FaqAccordion } from "@/components/ui/faq-chat-accordion";
 import Header from "@/components/shared/Header";
+
+const faqData = [
+  {
+    id: 1,
+    question: "O tratamento com cannabis medicinal é legal no Brasil?",
+    answer: "Sim! A ANVISA regulamenta o uso de produtos à base de cannabis para fins medicinais desde 2015. Com prescrição médica válida, você pode importar ou adquirir legalmente.",
+    icon: "✅",
+    iconPosition: "right" as const,
+  },
+  {
+    id: 2,
+    question: "Como funciona a teleconsulta?",
+    answer: "A consulta é realizada por vídeo com médicos especializados em cannabis medicinal. Você recebe orientação personalizada e, se indicado, a prescrição digital válida em todo o Brasil.",
+  },
+  {
+    id: 3,
+    question: "Quanto tempo leva para começar o tratamento?",
+    answer: "Após a consulta, você recebe a prescrição em até 48 horas. O processo de importação pode levar de 15 a 30 dias, dependendo do produto e fornecedor escolhido.",
+    icon: "⏰",
+    iconPosition: "left" as const,
+  },
+  {
+    id: 4,
+    question: "Quais condições podem ser tratadas com cannabis medicinal?",
+    answer: "Diversas condições como dor crônica, epilepsia, ansiedade, insônia, fibromialgia, Parkinson, Alzheimer, autismo e muitas outras podem se beneficiar do tratamento.",
+  },
+  {
+    id: 5,
+    question: "A ABRACANM oferece suporte após a consulta?",
+    answer: "Sim! Oferecemos acompanhamento contínuo via WhatsApp, orientação sobre importação, e acesso a conteúdo educativo exclusivo para nossos associados.",
+    icon: "💚",
+    iconPosition: "right" as const,
+  },
+];
 
 const testimonials = [
   {
@@ -380,6 +415,38 @@ export default function Home() {
           </motion.div>
 
           <BenefitsCarousel benefits={benefits} />
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-20 px-4 md:px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Perguntas Frequentes
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Tire suas dúvidas sobre o tratamento com cannabis medicinal
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true }}
+          >
+            <FaqAccordion 
+              data={faqData}
+              className="max-w-3xl mx-auto"
+            />
+          </motion.div>
         </div>
       </section>
 
