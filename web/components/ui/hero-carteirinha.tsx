@@ -1,6 +1,6 @@
 'use client'
 
-import { User, ChevronRight, CreditCard, Wifi, Home, History, UserCircle, Check } from "lucide-react"
+import { ChevronLeft, CreditCard, Wifi, Home, History, UserCircle, Plus } from "lucide-react"
 import { cn } from '@/lib/utils'
 
 interface HeroCarteirinhaProps {
@@ -12,44 +12,82 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
     <div className={cn("w-full max-w-[320px]", className)}>
       {/* iPhone Frame */}
       <div 
-        className="rounded-[44px] overflow-hidden bg-white"
+        className="rounded-[44px] overflow-hidden"
         style={{ 
-          boxShadow: "0 50px 100px -20px rgba(0, 0, 0, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.2), inset 0 0 0 8px #1a1a1a"
+          background: "linear-gradient(180deg, #1B4332 0%, #2D6A4F 50%, #3FA174 100%)",
+          boxShadow: "0 50px 100px -20px rgba(0, 0, 0, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.2)"
         }}
       >
-        {/* Header Verde */}
-        <div 
-          className="pt-6 pb-8 px-6"
-          style={{ background: "linear-gradient(180deg, #1B4332 0%, #2D6A4F 100%)" }}
-        >
-          {/* Greeting Row */}
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <ChevronRight className="w-5 h-5 text-white rotate-180" />
-              <span className="text-white text-lg font-medium">Olá, Associado</span>
-              <span className="text-[11px] bg-[#3FA174] text-white px-2.5 py-1 rounded-full font-bold">PLUS</span>
+        {/* Header Verde Escuro */}
+        <div className="pt-6 pb-4 px-5">
+          {/* Back + Title */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+              <ChevronLeft className="w-5 h-5 text-white" />
             </div>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-500 flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
-            </div>
+            <h1 className="text-white text-xl font-bold">Sua Carteirinha</h1>
           </div>
 
-          {/* Status */}
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-white text-3xl font-bold">Ativo</span>
-              <Check className="w-7 h-7 text-white" strokeWidth={3} />
+          {/* Message + Add Button */}
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-white/90 text-lg leading-snug">
+                Sua carteirinha foi
+              </p>
+              <p className="text-white/90 text-lg leading-snug">
+                adicionada com sucesso
+              </p>
             </div>
-            <p className="text-white/60 text-sm">Seu status</p>
+            <div className="w-12 h-12 rounded-xl bg-amber-400 flex items-center justify-center shadow-lg">
+              <Plus className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+
+        {/* Cards Stack */}
+        <div className="relative px-5 pb-4">
+          {/* Back Card (Green) */}
+          <div 
+            className="absolute left-8 right-8 top-2 h-16 rounded-t-2xl"
+            style={{ background: "#4CAF50" }}
+          />
+          
+          {/* Front Card (Golden/Orange) */}
+          <div 
+            className="relative rounded-2xl p-5 mt-6"
+            style={{ background: "linear-gradient(135deg, #F5A623 0%, #E8963A 100%)" }}
+          >
+            {/* Balance */}
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <p className="text-white/70 text-sm mb-1">Status</p>
+                <p className="text-white text-3xl font-bold italic">Ativo</p>
+              </div>
+              <div className="flex -space-x-2">
+                <div className="w-10 h-10 rounded-full bg-white/30" />
+                <div className="w-10 h-10 rounded-full bg-white/50" />
+              </div>
+            </div>
+
+            {/* Card Number */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-9 bg-yellow-200/50 rounded-md flex items-center justify-center">
+                <div className="grid grid-cols-3 gap-0.5">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="w-1.5 h-1 bg-yellow-700/40 rounded-sm" />
+                  ))}
+                </div>
+              </div>
+              <p className="text-white font-mono text-lg tracking-widest">
+                ••••  ••••  ••••  0001
+              </p>
+            </div>
           </div>
         </div>
 
         {/* White Content Area */}
-        <div className="bg-white rounded-t-[32px] -mt-5 pt-6 px-6 pb-6">
-          {/* Cards Label */}
-          <h3 className="text-gray-900 text-xl font-bold mb-4">Carteirinha</h3>
-
-          {/* Green Card */}
+        <div className="bg-white rounded-t-[32px] pt-6 px-6 pb-5 -mt-2">
+          {/* Green Card Preview */}
           <div 
             className="relative rounded-2xl p-5 mb-5 overflow-hidden"
             style={{ background: "linear-gradient(135deg, #3FA174 0%, #2D7A5A 100%)" }}
@@ -61,22 +99,17 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
             </div>
 
             {/* Chip + Wifi */}
-            <div className="flex items-center gap-3 mb-10">
+            <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-8 bg-yellow-400 rounded-md" />
               <Wifi className="w-5 h-5 text-white/70 rotate-90" />
             </div>
 
             {/* Card Name */}
             <p className="text-white/70 text-xs uppercase tracking-wider mb-1">Nome do Associado</p>
-            <p className="text-white text-xl font-bold mb-5">SEU NOME AQUI</p>
+            <p className="text-white text-xl font-bold mb-4">SEU NOME AQUI</p>
 
-            {/* Card Number + Arrow */}
-            <div className="flex items-center justify-between">
-              <p className="text-white font-mono text-base tracking-widest">**** **** **** 0001</p>
-              <ChevronRight className="w-7 h-7 text-white" />
-            </div>
-
-            {/* Expiry */}
+            {/* Card Number */}
+            <p className="text-white font-mono text-base tracking-widest">**** **** **** 0001</p>
             <p className="text-white/50 text-sm text-right mt-1">12/25</p>
           </div>
 
@@ -120,7 +153,6 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
               <span className="text-xs text-gray-400">Profile</span>
             </div>
           </div>
-
         </div>
       </div>
     </div>
