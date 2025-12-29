@@ -29,6 +29,7 @@ import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import DisplayCards from "@/components/ui/display-cards";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { RadialOrbitalTimeline } from "@/components/ui/radial-orbital-timeline";
+import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -306,21 +307,51 @@ export default function Home() {
               </motion.div>
             </div>
 
-            {/* Display Cards */}
+            {/* Hero Carteirinha */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="hidden lg:flex justify-center items-center"
+              className="flex justify-center items-center"
             >
-              <DisplayCards cards={displayCardsData} />
+              <HeroCarteirinha />
             </motion.div>
           </div>
         </div>
       </section>
 
+      {/* Serviços Section - Display Cards */}
+      <section id="servicos" className="py-24 px-4 md:px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
+              Nossos serviços
+            </h2>
+            <p className="text-xl text-[#86868b] max-w-2xl mx-auto">
+              Tudo o que você precisa para iniciar seu tratamento com cannabis medicinal.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="flex justify-center"
+          >
+            <DisplayCards cards={displayCardsData} />
+          </motion.div>
+        </div>
+      </section>
+
       {/* Mission Section */}
-      <section id="sobre" className="py-24 px-4 md:px-6 bg-white">
+      <section id="sobre" className="py-24 px-4 md:px-6 bg-[#fafaf8]">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
