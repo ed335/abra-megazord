@@ -146,104 +146,95 @@ export default function Home() {
     <div className="relative min-h-screen w-full bg-white">
       <Header />
 
-      {/* Hero Section - Light Gradient */}
-      <section id="inicio" className="relative min-h-[90vh] w-full overflow-hidden pt-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#E8F4F8] via-[#F0F9FF] to-white" />
-        
-        <div className="absolute top-20 right-10 w-72 h-72 bg-[#3FA174]/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-[#6EC1E4]/10 rounded-full blur-3xl" />
-
-        <div className="relative z-10 container mx-auto px-4 md:px-6 py-16">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 shadow-sm mb-8"
+      {/* Hero Section - Pure White */}
+      <section id="inicio" className="relative min-h-[85vh] w-full bg-white pt-24">
+        <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="text-center lg:text-left max-w-xl">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+                className="text-[#3FA174] font-medium mb-4 tracking-wide text-sm uppercase"
               >
-                <Leaf className="h-4 w-4 text-[#3FA174]" />
-                <span className="text-sm text-gray-600 font-medium">
-                  Associação Brasileira de Cannabis Medicinal
-                </span>
-              </motion.div>
+                Cannabis Medicinal no Brasil
+              </motion.p>
 
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight text-gray-900 leading-tight"
+                className="text-4xl sm:text-5xl md:text-[3.5rem] font-bold mb-6 tracking-tight text-gray-900 leading-[1.1]"
               >
-                Médicos prescritores de{" "}
-                <span className="text-[#3FA174]">Cannabis Medicinal</span>
+                Acesse seu tratamento de forma{" "}
+                <span className="text-[#3FA174]">legal e humanizada</span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-xl"
+                className="text-lg text-gray-500 mb-10 leading-relaxed"
               >
-                Conectamos você a médicos especializados com suporte completo 
-                em toda sua jornada de tratamento.
+                Conectamos você a médicos prescritores especializados. 
+                Consultas por vídeo, receita digital válida em todo Brasil.
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-10"
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center"
               >
                 <Button
                   asChild
                   size="lg"
-                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6 text-lg rounded-full shadow-lg shadow-[#3FA174]/25"
+                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6 text-base font-medium"
                 >
                   <Link href="/cadastro">
-                    Iniciar jornada
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    Agendar consulta
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-6 text-lg rounded-full"
+                <Link 
+                  href="/planos"
+                  className="text-gray-600 hover:text-[#3FA174] font-medium text-base flex items-center gap-1 transition-colors"
                 >
-                  <Link href="/planos">
-                    Entenda como funciona
-                  </Link>
-                </Button>
+                  Como funciona
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-wrap justify-center lg:justify-start gap-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="mt-14 pt-8 border-t border-gray-100"
               >
-                {stats.slice(0, 3).map((stat, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 px-4 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm"
-                  >
-                    <div className="w-10 h-10 bg-[#3FA174]/10 rounded-xl flex items-center justify-center">
-                      <stat.icon className="h-5 w-5 text-[#3FA174]" />
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold text-gray-900">{stat.value}</p>
-                      <p className="text-xs text-gray-500">{stat.label}</p>
-                    </div>
+                <div className="flex items-center justify-center lg:justify-start gap-8 text-sm">
+                  <div>
+                    <span className="text-2xl font-bold text-gray-900">+5.000</span>
+                    <p className="text-gray-400 mt-0.5">pacientes</p>
                   </div>
-                ))}
+                  <div className="w-px h-10 bg-gray-200" />
+                  <div>
+                    <span className="text-2xl font-bold text-gray-900">48h</span>
+                    <p className="text-gray-400 mt-0.5">atendimento</p>
+                  </div>
+                  <div className="w-px h-10 bg-gray-200" />
+                  <div>
+                    <span className="text-2xl font-bold text-gray-900">100%</span>
+                    <p className="text-gray-400 mt-0.5">legal</p>
+                  </div>
+                </div>
               </motion.div>
             </div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex justify-center items-center"
+              className="hidden lg:flex justify-center items-center"
             >
               <HeroCarteirinha />
             </motion.div>
@@ -290,60 +281,59 @@ export default function Home() {
       </section>
 
       {/* Statement Section */}
-      <section id="destaque" className="py-20 px-4 md:px-6 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-4xl mx-auto text-center">
+      <section id="destaque" className="py-24 px-4 md:px-6 bg-white border-y border-gray-100">
+        <div className="max-w-3xl mx-auto text-center">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-2xl md:text-3xl lg:text-4xl font-medium text-gray-900 leading-relaxed"
+            className="text-xl md:text-2xl text-gray-600 leading-relaxed"
           >
-            A <span className="text-[#3FA174] font-bold">ABRACANM</span> 🌿 está democratizando
-            o acesso a tratamentos com Cannabis Medicinal no Brasil 🇧🇷 oferecendo
-            consultas médicas com especialistas de forma{" "}
-            <span className="bg-[#3FA174]/10 px-2 py-1 rounded-lg text-[#3FA174] font-bold">
-              100% legal e segura
-            </span>
+            Democratizamos o acesso a tratamentos com cannabis medicinal no Brasil, 
+            conectando pacientes a médicos prescritores especializados de forma
+            <span className="text-gray-900 font-semibold"> 100% legal e segura</span>.
           </motion.p>
         </div>
       </section>
 
-      {/* Services Section - Clean Cards */}
-      <section id="servicos" className="py-20 px-4 md:px-6 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
+      {/* Services Section - Minimal */}
+      <section id="servicos" className="py-24 px-4 md:px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center mb-14"
+            className="mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
               Como funciona
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Tudo o que você precisa para iniciar seu tratamento de forma simples e segura.
+            <p className="text-gray-500 max-w-lg">
+              Processo simples e seguro para iniciar seu tratamento.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
                   viewport={{ once: true }}
-                  className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#3FA174]/20 transition-all duration-300"
+                  className="flex gap-4"
                 >
-                  <div className="w-14 h-14 bg-[#3FA174]/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-[#3FA174]/20 transition-colors">
-                    <Icon className="h-7 w-7 text-[#3FA174]" />
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-[#3FA174]" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{service.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900 mb-1">{service.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{service.description}</p>
+                  </div>
                 </motion.div>
               );
             })}
@@ -351,137 +341,140 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Mission Section - Clean Cards */}
-      <section id="sobre" className="py-20 px-4 md:px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
+      {/* Mission Section - Minimal */}
+      <section id="sobre" className="py-24 px-4 md:px-6 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Nossa missão
+              </h2>
+              <p className="text-gray-500 leading-relaxed mb-6">
+                Acolhemos pacientes que buscam qualidade de vida através da cannabis medicinal, 
+                quebrando barreiras e tabus com ciência, segurança e humanidade.
+              </p>
+              <Link 
+                href="/sobre"
+                className="text-[#3FA174] font-medium text-sm flex items-center gap-1 hover:gap-2 transition-all"
+              >
+                Conheça nossa história
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              {[
+                { title: "Cuidado humanizado", desc: "Apoio completo no acesso ao tratamento" },
+                { title: "Ciência e educação", desc: "Informação científica de qualidade" },
+                { title: "Comunidade ativa", desc: "Rede de apoio entre pacientes" },
+              ].map((item, index) => (
+                <div key={index} className="flex gap-4 items-start">
+                  <div className="w-2 h-2 rounded-full bg-[#3FA174] mt-2 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{item.title}</h3>
+                    <p className="text-gray-500 text-sm">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Journey Timeline */}
+      <section id="jornada" className="py-24 px-4 md:px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center mb-14"
+            className="mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Nossa missão
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              Sua jornada
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Acolhemos pacientes que buscam qualidade de vida através da cannabis medicinal.
+            <p className="text-gray-500">
+              4 passos simples para iniciar seu tratamento.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Heart,
-                title: "Cuidado humanizado",
-                description: "Apoio completo aos pacientes e familiares no acesso ao tratamento",
-                color: "#3FA174",
-              },
-              {
-                icon: BookOpen,
-                title: "Ciência e educação",
-                description: "Informação científica de qualidade e capacitação contínua",
-                color: "#6EC1E4",
-              },
-              {
-                icon: Users,
-                title: "Comunidade",
-                description: "Rede de apoio e compartilhamento de experiências",
-                color: "#3FA174",
-              },
-            ].map((item, index) => (
+          <div className="grid md:grid-cols-4 gap-8">
+            {journeyItems.map((item, index) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
+                key={item.id}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="text-center p-8 rounded-3xl bg-gray-50 hover:bg-white hover:shadow-lg border border-transparent hover:border-gray-100 transition-all duration-300"
+                className="relative"
               >
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
-                  style={{ backgroundColor: `${item.color}15` }}
-                >
-                  <item.icon className="h-8 w-8" style={{ color: item.color }} />
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-[#3FA174] font-bold text-sm">{String(index + 1).padStart(2, '0')}</span>
+                  {index < journeyItems.length - 1 && (
+                    <div className="hidden md:block flex-1 h-px bg-gray-200" />
+                  )}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
+                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                <p className="text-gray-500 text-sm">{item.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Journey Timeline */}
-      <section id="jornada" className="py-20 px-4 md:px-6 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center mb-10"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Sua jornada de tratamento
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Do cadastro até o início do tratamento em 4 passos simples.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="flex justify-center"
-          >
-            <RadialOrbitalTimeline 
-              items={journeyItems} 
-              title="ABRACANM"
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Benefits Section - Clean Grid */}
-      <section id="beneficios" className="py-20 px-4 md:px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center mb-14"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Por que escolher a ABRACANM?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Benefícios exclusivos para nossos associados.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {benefits.map((benefit, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                viewport={{ once: true }}
-                className="flex items-start gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-[#3FA174]/5 border border-transparent hover:border-[#3FA174]/20 transition-all duration-200"
+      {/* Benefits Section - Minimal List */}
+      <section id="beneficios" className="py-24 px-4 md:px-6 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Por que a ABRACANM?
+              </h2>
+              <p className="text-gray-500 mb-8">
+                Benefícios exclusivos para nossos associados.
+              </p>
+              <Button
+                asChild
+                className="bg-[#3FA174] hover:bg-[#359966] text-white"
               >
-                <div className="w-10 h-10 bg-[#3FA174]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <CheckCircle className="h-5 w-5 text-[#3FA174]" />
+                <Link href="/planos">
+                  Ver planos
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-2 gap-x-8 gap-y-6"
+            >
+              {benefits.map((benefit, index) => (
+                <div key={index}>
+                  <h3 className="font-semibold text-gray-900 text-sm mb-1">{benefit.title}</h3>
+                  <p className="text-gray-400 text-xs">{benefit.description}</p>
                 </div>
-                <div>
-                  <h3 className="font-bold text-gray-900 mb-1">{benefit.title}</h3>
-                  <p className="text-gray-600 text-sm">{benefit.description}</p>
-                </div>
-              </motion.div>
-            ))}
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
@@ -497,100 +490,95 @@ export default function Home() {
         />
       </section>
 
-      {/* Contact Section - Clean */}
-      <section id="contato" className="py-20 px-4 md:px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Entre em contato
-            </h2>
-            <p className="text-lg text-gray-600">
-              Estamos aqui para ajudar você.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-6"
-          >
-            {[
-              { icon: Phone, title: "WhatsApp", value: "(11) 99999-9999", href: "https://wa.me/5511999999999" },
-              { icon: Mail, title: "Email", value: "contato@abracanm.org.br", href: "mailto:contato@abracanm.org.br" },
-              { icon: MapPin, title: "Localização", value: "São Paulo, SP" },
-            ].map((contact, index) => (
-              <div
-                key={index}
-                className="text-center p-6 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-md border border-transparent hover:border-gray-100 transition-all duration-300"
+      {/* Contact Section - Minimal */}
+      <section id="contato" className="py-24 px-4 md:px-6 bg-white border-t border-gray-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Fale conosco
+              </h2>
+              <p className="text-gray-500 mb-8">
+                Tire suas dúvidas sobre cannabis medicinal e tratamentos.
+              </p>
+              <a
+                href="https://wa.me/5511999999999"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#3FA174] hover:bg-[#359966] text-white px-6 py-3 rounded-lg font-medium transition-colors"
               >
-                <div className="w-14 h-14 bg-[#3FA174]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <contact.icon className="h-6 w-6 text-[#3FA174]" />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-1">{contact.title}</h3>
-                {contact.href ? (
-                  <a
-                    href={contact.href}
-                    target={contact.href.startsWith("http") ? "_blank" : undefined}
-                    rel={contact.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="text-gray-600 hover:text-[#3FA174] transition-colors"
-                  >
-                    {contact.value}
-                  </a>
-                ) : (
-                  <p className="text-gray-600">{contact.value}</p>
-                )}
+                <Phone className="h-4 w-4" />
+                Falar no WhatsApp
+              </a>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <div>
+                <p className="text-gray-400 text-sm mb-1">Email</p>
+                <a href="mailto:contato@abracanm.org.br" className="text-gray-900 hover:text-[#3FA174] transition-colors">
+                  contato@abracanm.org.br
+                </a>
               </div>
-            ))}
-          </motion.div>
+              <div>
+                <p className="text-gray-400 text-sm mb-1">Telefone</p>
+                <a href="tel:+5511999999999" className="text-gray-900 hover:text-[#3FA174] transition-colors">
+                  (11) 99999-9999
+                </a>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm mb-1">Localização</p>
+                <p className="text-gray-900">São Paulo, SP</p>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section id="cta" className="py-20 px-4 md:px-6 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-4xl mx-auto text-center">
+      <section id="cta" className="py-24 px-4 md:px-6 bg-gray-50">
+        <div className="max-w-3xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <div className="w-20 h-20 bg-[#3FA174]/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
-              <Leaf className="h-10 w-10 text-[#3FA174]" />
-            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Comece sua jornada hoje
+              Pronto para começar?
             </h2>
-            <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
-              Associe-se à ABRACANM e tenha acesso a médicos especializados, 
-              suporte contínuo e preços acessíveis.
+            <p className="text-gray-500 mb-10">
+              Associe-se e tenha acesso a médicos especializados em cannabis medicinal.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 asChild
                 size="lg"
-                className="bg-[#3FA174] hover:bg-[#359966] text-white px-10 py-6 text-lg rounded-full shadow-lg shadow-[#3FA174]/25"
+                className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6"
               >
                 <Link href="/cadastro">
-                  Associar-se agora
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  Agendar consulta
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-10 py-6 text-lg rounded-full"
+                className="border-gray-300 text-gray-600 hover:bg-white px-8 py-6"
               >
                 <Link href="/planos">
-                  Conhecer planos
+                  Ver planos
                 </Link>
               </Button>
             </div>
