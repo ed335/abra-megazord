@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/shared/Header';
-import { Check, ArrowRight, Loader2, Shield, Users, Clock, HeartPulse, FileText, MessageCircle, Stethoscope, Star, X } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Check, ArrowRight, Shield, Users, Clock, HeartPulse, FileText, MessageCircle, Stethoscope, Star, X } from 'lucide-react';
 
 interface Plano {
   id: string;
@@ -102,46 +106,58 @@ export default function PlanosPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-background">
         <Header />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
-        </div>
+        <section className="bg-primary/5 py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-4">
+            <Skeleton className="h-10 w-3/4 mx-auto" />
+            <Skeleton className="h-6 w-2/3 mx-auto" />
+            <div className="flex justify-center gap-6 pt-4">
+              <Skeleton className="h-8 w-28" />
+              <Skeleton className="h-8 w-28" />
+              <Skeleton className="h-8 w-28" />
+            </div>
+          </div>
+        </section>
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+          <div className="grid md:grid-cols-2 gap-8">
+            <Skeleton className="h-96 rounded-2xl" />
+            <Skeleton className="h-96 rounded-2xl" />
+          </div>
+        </section>
       </main>
     );
   }
 
-  const plano = planos[0];
-
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       <Header />
       
-      <section className="bg-verde-claro/10 py-16">
+      <section className="bg-primary/5 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold text-cinza-escuro mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Seu caminho para o tratamento com cannabis medicinal
           </h1>
-          <p className="text-lg text-cinza-medio max-w-2xl mx-auto mb-8">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             A ABRACANM conecta você a médicos prescritores, oferece suporte completo 
             e acompanha toda sua jornada de tratamento de forma segura e legal.
           </p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-cinza-escuro">
+          <div className="flex flex-wrap justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-verde-oliva/10 rounded-full flex items-center justify-center">
-                <Shield className="w-4 h-4 text-verde-oliva" />
+              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <Shield className="w-4 h-4 text-primary" />
               </div>
               <span>100% Legal</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-verde-oliva/10 rounded-full flex items-center justify-center">
-                <Users className="w-4 h-4 text-verde-oliva" />
+              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <Users className="w-4 h-4 text-primary" />
               </div>
               <span>+5.000 pacientes</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-verde-oliva/10 rounded-full flex items-center justify-center">
-                <Clock className="w-4 h-4 text-verde-oliva" />
+              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <Clock className="w-4 h-4 text-primary" />
               </div>
               <span>Atendimento em até 48h</span>
             </div>
@@ -150,212 +166,227 @@ export default function PlanosPage() {
       </section>
 
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-        <h2 className="text-2xl font-bold text-cinza-escuro text-center mb-10">
+        <h2 className="text-2xl font-bold text-foreground text-center mb-10">
           Escolha a melhor opção para você
         </h2>
 
         <div className="grid md:grid-cols-2 gap-8 mb-16">
-          {plano && (
-            <div className="relative border-2 border-verde-oliva rounded-2xl p-8 bg-verde-claro/5">
-              <div className="absolute -top-3 left-6 bg-verde-oliva text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1">
-                <Star className="w-3 h-3" />
-                Mais vantajoso
-              </div>
+          {planos.map((plano, index) => (
+            <Card key={plano.id} className={`relative ${index === 0 ? 'border-2 border-primary bg-primary/5' : ''}`}>
+              {index === 0 && (
+                <Badge className="absolute -top-3 left-6 bg-primary text-primary-foreground">
+                  <Star className="w-3 h-3 mr-1" />
+                  Mais vantajoso
+                </Badge>
+              )}
               
-              <h3 className="text-2xl font-bold text-cinza-escuro mb-2">Associado ABRACANM</h3>
-              <p className="text-cinza-medio mb-6">
-                Acompanhamento completo para quem busca tratamento contínuo
-              </p>
+              <CardHeader>
+                <CardTitle className="text-2xl">{plano.nome}</CardTitle>
+                <CardDescription>
+                  {plano.descricao}
+                </CardDescription>
+              </CardHeader>
               
-              <div className="mb-6">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-verde-oliva">
-                    {formatCurrency(plano.valorMensalidade)}
-                  </span>
-                  <span className="text-cinza-medio">/mês</span>
+              <CardContent className="space-y-6">
+                <div>
+                  <div className="flex items-baseline gap-1">
+                    <span className={`text-4xl font-bold ${index === 0 ? 'text-primary' : ''}`}>
+                      {formatCurrency(plano.valorMensalidade)}
+                    </span>
+                    <span className="text-muted-foreground">/mês</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {plano.valorMensalidade > 0 ? `Menos de R$ ${(plano.valorMensalidade / 30).toFixed(2).replace('.', ',')} por dia` : 'Sem mensalidade'}
+                  </p>
                 </div>
-                <p className="text-sm text-cinza-medio mt-1">
-                  Menos de R$ 1,33 por dia
+
+                <div className={`${index === 0 ? 'bg-primary/10' : 'bg-muted'} rounded-xl p-4`}>
+                  <p className={`text-sm font-medium ${index === 0 ? 'text-primary' : ''} mb-2`}>Inclui consultas com desconto:</p>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span>Primeira Consulta</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground line-through text-xs">R$ 149</span>
+                      <span className={`font-bold ${index === 0 ? 'text-primary' : ''}`}>{formatCurrency(plano.valorPrimeiraConsulta)}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Consultas de Retorno</span>
+                    <span className="font-medium">{formatCurrency(plano.valorConsulta)}</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 text-sm">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span><strong>Economia de R$ 50</strong> na primeira consulta</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span>Suporte contínuo via WhatsApp para dúvidas</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span>Conteúdo educativo sobre cannabis medicinal</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span>Acompanhamento do tratamento</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span>Orientação jurídica e sobre importação</span>
+                  </li>
+                </ul>
+
+                <Button asChild size="lg" className="w-full text-lg py-6">
+                  <Link href={`/checkout?plano=${plano.id}&tipo=MENSALIDADE`}>
+                    Tornar-se Associado
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
+                
+                <p className="text-xs text-center text-muted-foreground">
+                  Cancele quando quiser, sem multa
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Consulta Avulsa</CardTitle>
+              <CardDescription>
+                Para quem prefere pagar apenas quando precisar
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-6">
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold">
+                    {formatCurrency(149.00)}
+                  </span>
+                  <span className="text-muted-foreground">/consulta</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Sem mensalidade
                 </p>
               </div>
 
-              <div className="bg-verde-oliva/5 rounded-xl p-4 mb-6">
-                <p className="text-sm font-medium text-verde-oliva mb-2">Inclui consultas com desconto:</p>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-cinza-escuro">Primeira Consulta</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-cinza-medio line-through text-xs">R$ 149</span>
-                    <span className="font-bold text-verde-oliva">{formatCurrency(plano.valorPrimeiraConsulta)}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-cinza-escuro">Consultas de Retorno</span>
-                  <span className="font-medium text-cinza-escuro">{formatCurrency(plano.valorConsulta)}</span>
-                </div>
-              </div>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                  <Check className="w-5 h-5 text-verde-oliva flex-shrink-0 mt-0.5" />
-                  <span><strong>Economia de R$ 50</strong> na primeira consulta</span>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3 text-sm">
+                  <Check className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                  <span>Consulta com médico prescritor</span>
                 </li>
-                <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                  <Check className="w-5 h-5 text-verde-oliva flex-shrink-0 mt-0.5" />
-                  <span>Suporte contínuo via WhatsApp para dúvidas</span>
+                <li className="flex items-start gap-3 text-sm">
+                  <Check className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                  <span>Receita digital se indicado</span>
                 </li>
-                <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                  <Check className="w-5 h-5 text-verde-oliva flex-shrink-0 mt-0.5" />
-                  <span>Conteúdo educativo sobre cannabis medicinal</span>
+                <li className="flex items-start gap-3 text-sm">
+                  <Check className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                  <span>Orientações sobre o tratamento</span>
                 </li>
-                <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                  <Check className="w-5 h-5 text-verde-oliva flex-shrink-0 mt-0.5" />
-                  <span>Acompanhamento do tratamento</span>
+                <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <X className="w-5 h-5 text-muted flex-shrink-0 mt-0.5" />
+                  <span>Sem suporte contínuo</span>
                 </li>
-                <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                  <Check className="w-5 h-5 text-verde-oliva flex-shrink-0 mt-0.5" />
-                  <span>Orientação jurídica e sobre importação</span>
+                <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <X className="w-5 h-5 text-muted flex-shrink-0 mt-0.5" />
+                  <span>Sem desconto na primeira consulta</span>
                 </li>
               </ul>
 
-              <Link
-                href={`/checkout?plano=${plano.id}&tipo=MENSALIDADE`}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition text-lg"
-              >
-                Tornar-se Associado
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              
-              <p className="text-xs text-center text-cinza-medio mt-3">
-                Cancele quando quiser, sem multa
-              </p>
-            </div>
-          )}
-
-          <div className="border border-cinza-claro rounded-2xl p-8">
-            <h3 className="text-2xl font-bold text-cinza-escuro mb-2">Consulta Avulsa</h3>
-            <p className="text-cinza-medio mb-6">
-              Para quem prefere pagar apenas quando precisar
-            </p>
-            
-            <div className="mb-6">
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-cinza-escuro">
-                  {formatCurrency(149.00)}
-                </span>
-                <span className="text-cinza-medio">/consulta</span>
-              </div>
-              <p className="text-sm text-cinza-medio mt-1">
-                Sem mensalidade
-              </p>
-            </div>
-
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                <Check className="w-5 h-5 text-cinza-medio flex-shrink-0 mt-0.5" />
-                <span>Consulta com médico prescritor</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                <Check className="w-5 h-5 text-cinza-medio flex-shrink-0 mt-0.5" />
-                <span>Receita digital se indicado</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-cinza-escuro">
-                <Check className="w-5 h-5 text-cinza-medio flex-shrink-0 mt-0.5" />
-                <span>Orientações sobre o tratamento</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-cinza-medio">
-                <X className="w-5 h-5 text-cinza-claro flex-shrink-0 mt-0.5" />
-                <span>Sem suporte contínuo</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-cinza-medio">
-                <X className="w-5 h-5 text-cinza-claro flex-shrink-0 mt-0.5" />
-                <span>Sem desconto na primeira consulta</span>
-              </li>
-            </ul>
-
-            <Link
-              href="/checkout?tipo=CONSULTA"
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 border-2 border-cinza-claro text-cinza-escuro rounded-xl font-medium hover:border-verde-oliva hover:text-verde-oliva transition text-lg"
-            >
-              Agendar Consulta
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
+              <Button asChild variant="outline" size="lg" className="w-full text-lg py-6">
+                <Link href="/checkout?tipo=CONSULTA">
+                  Agendar Consulta
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="bg-cinza-muito-claro rounded-2xl p-8 mb-16">
-          <h2 className="text-xl font-bold text-cinza-escuro text-center mb-8">
-            Compare as opções
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-cinza-claro">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-cinza-escuro"></th>
-                  <th className="text-center py-3 px-4 text-sm font-medium text-verde-oliva">Associado</th>
-                  <th className="text-center py-3 px-4 text-sm font-medium text-cinza-medio">Avulso</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARATIVO.map((row, idx) => (
-                  <tr key={idx} className="border-b border-cinza-claro/50">
-                    <td className="py-3 px-4 text-sm text-cinza-escuro">{row.item}</td>
-                    <td className="text-center py-3 px-4">
-                      {row.associado ? (
-                        <Check className="w-5 h-5 text-verde-oliva mx-auto" />
-                      ) : (
-                        <X className="w-5 h-5 text-cinza-claro mx-auto" />
-                      )}
-                    </td>
-                    <td className="text-center py-3 px-4">
-                      {row.avulso ? (
-                        <Check className="w-5 h-5 text-cinza-medio mx-auto" />
-                      ) : (
-                        <X className="w-5 h-5 text-cinza-claro mx-auto" />
-                      )}
-                    </td>
+        <Card className="mb-16 bg-muted/50">
+          <CardHeader>
+            <CardTitle className="text-xl text-center">Compare as opções</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4 text-sm font-medium"></th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-primary">Associado</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Avulso</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                </thead>
+                <tbody>
+                  {COMPARATIVO.map((row, idx) => (
+                    <tr key={idx} className="border-b border-border/50">
+                      <td className="py-3 px-4 text-sm">{row.item}</td>
+                      <td className="text-center py-3 px-4">
+                        {row.associado ? (
+                          <Check className="w-5 h-5 text-primary mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-muted mx-auto" />
+                        )}
+                      </td>
+                      <td className="text-center py-3 px-4">
+                        {row.avulso ? (
+                          <Check className="w-5 h-5 text-muted-foreground mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-muted mx-auto" />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
 
-        <h2 className="text-2xl font-bold text-cinza-escuro text-center mb-10">
+        <h2 className="text-2xl font-bold text-foreground text-center mb-10">
           O que você recebe como associado
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {BENEFICIOS_DETALHADOS.map((beneficio, idx) => {
             const Icon = beneficio.icon;
             return (
-              <div key={idx} className="p-6 border border-cinza-claro rounded-xl hover:border-verde-oliva/50 transition">
-                <div className="w-12 h-12 bg-verde-oliva/10 rounded-xl flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-verde-oliva" />
-                </div>
-                <h3 className="font-semibold text-cinza-escuro mb-2">{beneficio.titulo}</h3>
-                <p className="text-sm text-cinza-medio">{beneficio.descricao}</p>
-              </div>
+              <Card key={idx} className="hover:border-primary/50 transition">
+                <CardContent className="pt-6">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-2">{beneficio.titulo}</h3>
+                  <p className="text-sm text-muted-foreground">{beneficio.descricao}</p>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
 
-        <div className="bg-verde-oliva/5 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-cinza-escuro mb-3">
-            Ainda tem dúvidas?
-          </h2>
-          <p className="text-cinza-medio mb-6 max-w-lg mx-auto">
-            Nossa equipe está pronta para ajudar você a entender se a cannabis medicinal 
-            é indicada para o seu caso. Fale conosco sem compromisso.
-          </p>
-          <a
-            href="https://wa.me/5511999999999?text=Olá! Gostaria de saber mais sobre os planos da ABRACANM"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-verde-oliva text-verde-oliva rounded-xl font-medium hover:bg-verde-oliva hover:text-white transition"
-          >
-            <MessageCircle className="w-5 h-5" />
-            Falar pelo WhatsApp
-          </a>
-        </div>
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="py-8 text-center">
+            <h2 className="text-2xl font-bold mb-3">
+              Ainda tem dúvidas?
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+              Nossa equipe está pronta para ajudar você a entender se a cannabis medicinal 
+              é indicada para o seu caso. Fale conosco sem compromisso.
+            </p>
+            <Button variant="outline" asChild>
+              <a
+                href="https://wa.me/5511999999999?text=Olá! Gostaria de saber mais sobre os planos da ABRACANM"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Falar pelo WhatsApp
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
       </section>
     </main>
   );

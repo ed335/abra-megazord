@@ -5,7 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/shared/Header';
 import { getToken, fetchWithAuth } from '@/lib/auth';
-import { ArrowLeft, Copy, Check, Loader2, Clock, AlertCircle, CheckCircle2, Calendar, ArrowRight, Sparkles } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
+import { ArrowLeft, Copy, Check, Loader2, Clock, CheckCircle2, Calendar, ArrowRight, Sparkles } from 'lucide-react';
 
 interface CheckoutData {
   id: string;
@@ -82,9 +86,11 @@ function CheckoutContent() {
         
         if (data.pagamento?.status === 'PAGO') {
           setPaymentStatus('paid');
+          toast.success('Pagamento confirmado!');
           clearInterval(interval);
         } else if (data.pagamento?.status === 'EXPIRADO' || data.pagamento?.status === 'FALHOU') {
           setPaymentStatus('expired');
+          toast.error('Pagamento expirou ou falhou');
           clearInterval(interval);
         }
       } catch (err) {
@@ -99,6 +105,7 @@ function CheckoutContent() {
     if (checkout?.pixCode) {
       navigator.clipboard.writeText(checkout.pixCode);
       setCopied(true);
+      toast.success('Código Pix copiado!');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -121,10 +128,22 @@ function CheckoutContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-background">
         <Header />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
+        <div className="max-w-md mx-auto px-4 py-8">
+          <Skeleton className="h-5 w-32 mb-6" />
+          <div className="text-center mb-8 space-y-2">
+            <Skeleton className="h-8 w-48 mx-auto" />
+            <Skeleton className="h-5 w-32 mx-auto" />
+          </div>
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              <Skeleton className="h-5 w-40 mx-auto" />
+              <Skeleton className="h-12 w-32 mx-auto" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </CardContent>
+          </Card>
         </div>
       </main>
     );
@@ -134,20 +153,20 @@ function CheckoutContent() {
     const isMensalidade = tipo === 'MENSALIDADE';
     
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-background">
         <Header />
         <div className="max-w-lg mx-auto px-4 py-12">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-verde-oliva/10 rounded-full flex items-center justify-center mx-auto mb-6 relative">
-              <CheckCircle2 className="w-10 h-10 text-verde-oliva" />
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+              <CheckCircle2 className="w-10 h-10 text-primary" />
               <div className="absolute -top-1 -right-1">
-                <Sparkles className="w-6 h-6 text-verde-oliva" />
+                <Sparkles className="w-6 h-6 text-primary" />
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">
               Pagamento Confirmado!
             </h1>
-            <p className="text-cinza-medio">
+            <p className="text-muted-foreground">
               {isMensalidade 
                 ? 'Parabéns! Você agora é associado ABRACANM.' 
                 : 'Seu pagamento foi processado com sucesso.'}
@@ -155,66 +174,75 @@ function CheckoutContent() {
           </div>
 
           {isMensalidade ? (
-            <div className="bg-verde-claro/10 border border-verde-oliva/20 rounded-xl p-6 mb-6">
-              <h3 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
-                <Check className="w-5 h-5 text-verde-oliva" />
-                Benefícios ativados:
-              </h3>
-              <ul className="space-y-2 text-sm text-cinza-escuro">
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
-                  Primeira consulta por R$ 99 (economia de R$ 50)
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
-                  Suporte contínuo via WhatsApp
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
-                  Acompanhamento do tratamento
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-verde-oliva rounded-full"></div>
-                  Orientação jurídica sobre importação
-                </li>
-              </ul>
-            </div>
+            <Card className="mb-6 border-primary/20 bg-primary/5">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Check className="w-5 h-5 text-primary" />
+                  Benefícios ativados:
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    Primeira consulta por R$ 99 (economia de R$ 50)
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    Suporte contínuo via WhatsApp
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    Acompanhamento do tratamento
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    Orientação jurídica sobre importação
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           ) : (
-            <div className="bg-cinza-muito-claro/50 border border-cinza-claro rounded-xl p-6 mb-6">
-              <h3 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
-                <Check className="w-5 h-5 text-verde-oliva" />
-                Consulta paga com sucesso
-              </h3>
-              <p className="text-sm text-cinza-medio">
-                Seu pagamento foi confirmado. Nossa equipe entrará em contato 
-                para confirmar o agendamento da sua consulta.
-              </p>
-            </div>
+            <Card className="mb-6 bg-muted/50">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Check className="w-5 h-5 text-primary" />
+                  Consulta paga com sucesso
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Seu pagamento foi confirmado. Nossa equipe entrará em contato 
+                  para confirmar o agendamento da sua consulta.
+                </p>
+              </CardContent>
+            </Card>
           )}
 
-          <div className="bg-cinza-muito-claro/50 rounded-xl p-6 mb-8">
-            <h3 className="font-semibold text-cinza-escuro mb-4 text-center">
-              Próximo passo
-            </h3>
-            <p className="text-sm text-cinza-medio text-center mb-4">
-              {isMensalidade 
-                ? 'Agende sua primeira consulta com desconto exclusivo de associado!' 
-                : 'Entre em contato para agendar sua consulta.'}
-            </p>
-            <Link
-              href="/agendar"
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-verde-oliva text-white rounded-xl font-medium hover:bg-verde-oliva/90 transition text-lg"
-            >
-              <Calendar className="w-5 h-5" />
-              Agendar Minha Consulta
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
+          <Card className="mb-8 bg-muted/50">
+            <CardContent className="pt-6 text-center">
+              <h3 className="font-semibold mb-4">
+                Próximo passo
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {isMensalidade 
+                  ? 'Agende sua primeira consulta com desconto exclusivo de associado!' 
+                  : 'Entre em contato para agendar sua consulta.'}
+              </p>
+              <Button asChild size="lg" className="w-full">
+                <Link href="/agendar">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Agendar Minha Consulta
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
 
           <div className="text-center">
             <Link
               href="/dashboard"
-              className="text-sm text-cinza-medio hover:text-verde-oliva transition underline"
+              className="text-sm text-muted-foreground hover:text-primary transition underline"
             >
               Ou ir para o Dashboard
             </Link>
@@ -225,83 +253,89 @@ function CheckoutContent() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       <Header />
       
       <div className="max-w-md mx-auto px-4 py-8">
         <Link 
           href="/planos" 
-          className="inline-flex items-center gap-2 text-sm text-cinza-medio hover:text-verde-oliva transition mb-6"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar aos planos
         </Link>
 
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-cinza-escuro mb-1">
+          <h1 className="text-2xl font-bold mb-1">
             Pague com Pix
           </h1>
-          <p className="text-cinza-medio text-sm">{getTipoLabel()}</p>
+          <p className="text-muted-foreground text-sm">{getTipoLabel()}</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-erro/10 border border-erro/20 rounded-xl flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-erro flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-erro">{error}</p>
-          </div>
+          <Card className="mb-6 border-destructive/50 bg-destructive/5">
+            <CardContent className="pt-6">
+              <p className="text-sm text-destructive">{error}</p>
+            </CardContent>
+          </Card>
         )}
 
         {checkout && (
           <div className="space-y-6">
-            <div className="p-6 border border-cinza-claro rounded-xl text-center">
-              <div className="flex items-center justify-center gap-2 text-sm text-cinza-medio mb-4">
-                <Clock className="w-4 h-4" />
-                Válido por 30 minutos
-              </div>
-
-              <div className="text-3xl font-bold text-verde-oliva mb-6">
-                {formatCurrency(checkout.valor)}
-              </div>
-
-              <div className="bg-cinza-muito-claro p-4 rounded-lg mb-4">
-                <p className="text-xs text-cinza-medio mb-2">Código Pix Copia e Cola:</p>
-                <div className="bg-white p-3 rounded border border-cinza-claro break-all text-xs text-cinza-escuro font-mono">
-                  {checkout.pixCode.slice(0, 80)}...
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-4">
+                  <Clock className="w-4 h-4" />
+                  Válido por 30 minutos
                 </div>
-              </div>
 
-              <button
-                onClick={copyPixCode}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-verde-oliva text-verde-oliva rounded-xl font-medium hover:bg-verde-oliva/5 transition"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Copiado!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-5 h-5" />
-                    Copiar Código Pix
-                  </>
-                )}
-              </button>
-            </div>
+                <div className="text-3xl font-bold text-primary mb-6">
+                  {formatCurrency(checkout.valor)}
+                </div>
 
-            <div className="p-4 bg-verde-claro/10 rounded-xl">
-              <div className="flex items-center gap-2 text-sm text-verde-oliva font-medium mb-2">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Aguardando pagamento...
-              </div>
-              <p className="text-xs text-cinza-medio">
-                Após o pagamento, esta página será atualizada automaticamente.
-              </p>
-            </div>
+                <div className="bg-muted p-4 rounded-lg mb-4">
+                  <p className="text-xs text-muted-foreground mb-2">Código Pix Copia e Cola:</p>
+                  <div className="bg-background p-3 rounded border break-all text-xs font-mono">
+                    {checkout.pixCode.slice(0, 80)}...
+                  </div>
+                </div>
+
+                <Button
+                  onClick={copyPixCode}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-5 h-5 mr-2" />
+                      Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-5 h-5 mr-2" />
+                      Copiar Código Pix
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-primary/30 bg-primary/5">
+              <CardContent className="pt-4 pb-4">
+                <div className="flex items-center gap-2 text-sm text-primary font-medium mb-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Aguardando pagamento...
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Após o pagamento, esta página será atualizada automaticamente.
+                </p>
+              </CardContent>
+            </Card>
 
             <div className="text-center">
-              <p className="text-xs text-cinza-medio">
+              <p className="text-xs text-muted-foreground">
                 Problemas com o pagamento?{' '}
-                <a href="mailto:ouvidoria@abracanm.org.br" className="text-verde-oliva underline">
+                <a href="mailto:ouvidoria@abracanm.org.br" className="text-primary underline">
                   Entre em contato
                 </a>
               </p>
@@ -316,8 +350,8 @@ function CheckoutContent() {
 export default function CheckoutPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
       </main>
     }>
       <CheckoutContent />

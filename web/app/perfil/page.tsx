@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getToken } from '@/lib/auth';
 import Header from '@/components/shared/Header';
-import { Loader2, Save, User, MapPin, Phone, FileText, ArrowLeft, AlertCircle, CheckCircle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
+import { Save, User, MapPin, Phone, FileText, ArrowLeft, Loader2 } from 'lucide-react';
 
 interface Perfil {
   id: string;
@@ -35,8 +41,6 @@ export default function PerfilPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [perfil, setPerfil] = useState<Perfil | null>(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     const token = getToken();
@@ -62,7 +66,7 @@ export default function PerfilPage() {
         const data = await response.json();
         setPerfil(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar perfil');
+        toast.error(err instanceof Error ? err.message : 'Erro ao carregar perfil');
       } finally {
         setLoading(false);
       }
@@ -76,8 +80,6 @@ export default function PerfilPage() {
     if (!perfil) return;
 
     setSaving(true);
-    setError('');
-    setSuccess('');
 
     try {
       const token = getToken();
@@ -96,10 +98,9 @@ export default function PerfilPage() {
         throw new Error(data.message || 'Erro ao salvar perfil');
       }
 
-      setSuccess('Perfil atualizado com sucesso!');
-      setTimeout(() => setSuccess(''), 3000);
+      toast.success('Perfil atualizado com sucesso!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar perfil');
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar perfil');
     } finally {
       setSaving(false);
     }
@@ -142,6 +143,7 @@ export default function PerfilPage() {
             cidade: data.localidade || prev.cidade,
             estado: data.uf || prev.estado,
           } : null);
+          toast.success('Endereço preenchido automaticamente');
         }
       } catch {}
     }
@@ -149,10 +151,46 @@ export default function PerfilPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-background">
         <Header />
-        <div className="flex items-center justify-center py-24">
-          <Loader2 className="w-8 h-8 text-verde-oliva animate-spin" />
+        <div className="max-w-3xl mx-auto px-4 py-8">
+          <div className="flex items-center gap-4 mb-8">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div className="space-y-2">
+              <Skeleton className="h-7 w-32" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+          </div>
+          
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-6 w-40" />
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-6 w-32" />
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2].map(i => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     );
@@ -160,210 +198,193 @@ export default function PerfilPage() {
 
   if (!perfil) {
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-background">
         <Header />
         <div className="max-w-2xl mx-auto px-4 py-12">
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
-            {error || 'Perfil nao encontrado'}
-          </div>
+          <Card className="border-destructive/50 bg-destructive/5">
+            <CardContent className="pt-6 text-center text-destructive">
+              Perfil não encontrado. Por favor, faça login novamente.
+            </CardContent>
+          </Card>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       <Header />
 
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
-          <Link href="/dashboard" className="p-2 hover:bg-gray-100 rounded-lg transition">
-            <ArrowLeft className="w-5 h-5 text-cinza-medio" />
+          <Link href="/dashboard" className="p-2 hover:bg-muted rounded-lg transition">
+            <ArrowLeft className="w-5 h-5 text-muted-foreground" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-cinza-escuro">Meu Perfil</h1>
-            <p className="text-sm text-cinza-medio">Atualize seus dados pessoais</p>
+            <h1 className="text-2xl font-bold text-foreground">Meu Perfil</h1>
+            <p className="text-sm text-muted-foreground">Atualize seus dados pessoais</p>
           </div>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
-            <AlertCircle className="w-5 h-5" />
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-600">
-            <CheckCircle className="w-5 h-5" />
-            {success}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <section className="bg-white border border-cinza-claro rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <User className="w-5 h-5 text-verde-oliva" />
-              <h2 className="text-lg font-semibold text-cinza-escuro">Dados Pessoais</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Nome Completo</label>
-                <input
-                  type="text"
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <User className="w-5 h-5 text-primary" />
+                Dados Pessoais
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="nome">Nome Completo</Label>
+                <Input
+                  id="nome"
                   value={perfil.nome}
                   onChange={(e) => setPerfil({ ...perfil, nome: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                   required
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Email</label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
                   type="email"
                   value={perfil.email}
                   disabled
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-medio bg-gray-50 cursor-not-allowed"
+                  className="bg-muted cursor-not-allowed"
                 />
-                <p className="text-xs text-cinza-medio mt-1">O email nao pode ser alterado</p>
+                <p className="text-xs text-muted-foreground">O email não pode ser alterado</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">
-                  CPF <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
+              <div className="space-y-2">
+                <Label htmlFor="cpf">
+                  CPF <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="cpf"
                   value={formatCPF(perfil.cpf)}
                   onChange={(e) => setPerfil({ ...perfil, cpf: e.target.value.replace(/\D/g, '') })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                   placeholder="000.000.000-00"
                   required
                 />
-                <p className="text-xs text-cinza-medio mt-1">Necessario para gerar pagamento via Pix</p>
+                <p className="text-xs text-muted-foreground">Necessário para gerar pagamento via Pix</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Data de Nascimento</label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="dataNascimento">Data de Nascimento</Label>
+                <Input
+                  id="dataNascimento"
                   type="date"
                   value={perfil.dataNascimento}
                   onChange={(e) => setPerfil({ ...perfil, dataNascimento: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                 />
               </div>
-            </div>
-          </section>
+            </CardContent>
+          </Card>
 
-          <section className="bg-white border border-cinza-claro rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Phone className="w-5 h-5 text-verde-oliva" />
-              <h2 className="text-lg font-semibold text-cinza-escuro">Contato</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">WhatsApp</label>
-                <input
-                  type="text"
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Phone className="w-5 h-5 text-primary" />
+                Contato
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp">WhatsApp</Label>
+                <Input
+                  id="whatsapp"
                   value={formatPhone(perfil.whatsapp)}
                   onChange={(e) => setPerfil({ ...perfil, whatsapp: e.target.value.replace(/\D/g, '') })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                   placeholder="(00) 00000-0000"
                   required
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Telefone (opcional)</label>
-                <input
-                  type="text"
+              <div className="space-y-2">
+                <Label htmlFor="telefone">Telefone (opcional)</Label>
+                <Input
+                  id="telefone"
                   value={formatPhone(perfil.telefone)}
                   onChange={(e) => setPerfil({ ...perfil, telefone: e.target.value.replace(/\D/g, '') })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                   placeholder="(00) 00000-0000"
                 />
               </div>
-            </div>
-          </section>
+            </CardContent>
+          </Card>
 
-          <section className="bg-white border border-cinza-claro rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <MapPin className="w-5 h-5 text-verde-oliva" />
-              <h2 className="text-lg font-semibold text-cinza-escuro">Endereco</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">CEP</label>
-                <input
-                  type="text"
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <MapPin className="w-5 h-5 text-primary" />
+                Endereço
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="cep">CEP</Label>
+                <Input
+                  id="cep"
                   value={formatCEP(perfil.cep)}
                   onChange={(e) => handleCEPChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                   placeholder="00000-000"
                 />
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Rua</label>
-                <input
-                  type="text"
+              <div className="md:col-span-2 space-y-2">
+                <Label htmlFor="rua">Rua</Label>
+                <Input
+                  id="rua"
                   value={perfil.rua}
                   onChange={(e) => setPerfil({ ...perfil, rua: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Numero</label>
-                <input
-                  type="text"
+              <div className="space-y-2">
+                <Label htmlFor="numero">Número</Label>
+                <Input
+                  id="numero"
                   value={perfil.numero}
                   onChange={(e) => setPerfil({ ...perfil, numero: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Complemento</label>
-                <input
-                  type="text"
+              <div className="space-y-2">
+                <Label htmlFor="complemento">Complemento</Label>
+                <Input
+                  id="complemento"
                   value={perfil.complemento}
                   onChange={(e) => setPerfil({ ...perfil, complemento: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                   placeholder="Apto, bloco..."
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Bairro</label>
-                <input
-                  type="text"
+              <div className="space-y-2">
+                <Label htmlFor="bairro">Bairro</Label>
+                <Input
+                  id="bairro"
                   value={perfil.bairro}
                   onChange={(e) => setPerfil({ ...perfil, bairro: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Cidade</label>
-                <input
-                  type="text"
+              <div className="space-y-2">
+                <Label htmlFor="cidade">Cidade</Label>
+                <Input
+                  id="cidade"
                   value={perfil.cidade}
                   onChange={(e) => setPerfil({ ...perfil, cidade: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-cinza-escuro mb-1">Estado</label>
+              <div className="space-y-2">
+                <Label htmlFor="estado">Estado</Label>
                 <select
+                  id="estado"
                   value={perfil.estado}
                   onChange={(e) => setPerfil({ ...perfil, estado: e.target.value })}
-                  className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-escuro focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva outline-none"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <option value="">Selecione</option>
                   {estadosBrasileiros.map(uf => (
@@ -371,53 +392,49 @@ export default function PerfilPage() {
                   ))}
                 </select>
               </div>
-            </div>
-          </section>
+            </CardContent>
+          </Card>
 
-          <section className="bg-white border border-cinza-claro rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <FileText className="w-5 h-5 text-verde-oliva" />
-              <h2 className="text-lg font-semibold text-cinza-escuro">Informacoes Medicas</h2>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-cinza-escuro mb-1">Patologia (CID)</label>
-              <input
-                type="text"
-                value={perfil.patologiaCID}
-                disabled
-                className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-cinza-medio bg-gray-50 cursor-not-allowed"
-              />
-            </div>
-            <p className="text-xs text-cinza-medio mt-2">
-              As informacoes medicas sao atualizadas durante a consulta com o prescritor.
-            </p>
-          </section>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <FileText className="w-5 h-5 text-primary" />
+                Informações Médicas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="patologiaCID">Patologia (CID)</Label>
+                <Input
+                  id="patologiaCID"
+                  value={perfil.patologiaCID}
+                  disabled
+                  className="bg-muted cursor-not-allowed"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                As informações médicas são atualizadas durante a consulta com o prescritor.
+              </p>
+            </CardContent>
+          </Card>
 
           <div className="flex gap-4">
-            <Link
-              href="/dashboard"
-              className="px-6 py-3 border border-cinza-claro text-cinza-escuro rounded-lg text-sm font-medium hover:bg-gray-50 transition"
-            >
-              Cancelar
-            </Link>
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex-1 px-6 py-3 bg-verde-oliva text-white rounded-lg text-sm font-medium hover:bg-verde-oliva/90 disabled:opacity-50 flex items-center justify-center gap-2 transition"
-            >
+            <Button variant="outline" asChild>
+              <Link href="/dashboard">Cancelar</Link>
+            </Button>
+            <Button type="submit" disabled={saving} className="flex-1">
               {saving ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Salvando...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4" />
-                  Salvar Alteracoes
+                  <Save className="w-4 h-4 mr-2" />
+                  Salvar Alterações
                 </>
               )}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
