@@ -4,200 +4,184 @@ import * as React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Facebook, Instagram, Linkedin, Moon, Send, Sun, Youtube, Heart, ArrowRight } from "lucide-react"
+  Facebook, 
+  Instagram, 
+  Youtube, 
+  Linkedin,
+  Send,
+  MapPin,
+  Clock,
+  Phone,
+  Mail,
+  ArrowRight,
+  Leaf
+} from "lucide-react"
 
 function FooterSection() {
-  const [isDarkMode, setIsDarkMode] = React.useState(false)
-
-  React.useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-    }
-  }, [isDarkMode])
-
   return (
-    <footer className="relative">
-      <div className="bg-[#1B4332] py-16 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
+    <footer className="relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#1B4332] via-[#2D5A45] to-[#1B4332] py-16 md:py-20 px-4">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/20 blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-[#3FA174]/30 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
+        </div>
+        
+        <div className="container mx-auto max-w-4xl text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6">
+            <Leaf className="w-4 h-4 text-[#3FA174]" />
+            <span className="text-white/90 text-sm font-medium">Cannabis Medicinal Legal</span>
+          </div>
+          
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
             Pronto para começar seu tratamento?
           </h2>
-          <p className="text-white/70 text-base md:text-lg mb-8 max-w-xl mx-auto">
-            Agende sua consulta agora e dê o primeiro passo para uma vida com mais qualidade
+          <p className="text-white/70 text-base md:text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+            Agende sua consulta agora e dê o primeiro passo para uma vida com mais qualidade e bem-estar
           </p>
+          
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/cadastro">
-              <Button className="bg-white text-[#1B4332] hover:bg-gray-100 px-8 py-6 text-base font-medium rounded-full">
+              <Button className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6 text-base font-semibold rounded-full shadow-lg shadow-[#3FA174]/30 transition-all hover:shadow-xl hover:shadow-[#3FA174]/40 hover:scale-105">
                 Agendar consulta
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <Link href="/contato">
-              <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-6 text-base font-medium rounded-full">
-                Fale conosco
+            <Link href="https://wa.me/5511999999999" target="_blank">
+              <Button variant="outline" className="border-2 border-white/40 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-[#1B4332] px-8 py-6 text-base font-semibold rounded-full transition-all">
+                Falar no WhatsApp
               </Button>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300">
-        <div className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-[#3FA174] rounded-full flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
+      <div className="bg-gray-50 py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#3FA174] to-[#2D8B5F] rounded-xl flex items-center justify-center shadow-lg shadow-[#3FA174]/20">
+                  <Leaf className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-xl font-bold">ABRACANM</span>
+                <span className="text-xl font-bold text-gray-900">ABRACANM</span>
               </div>
-              <p className="mb-6 text-gray-600 dark:text-gray-400 text-sm">
-                Associação Brasileira de Cannabis Medicinal. Conectando pacientes a tratamentos seguros e legais.
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                Associação Brasileira de Cannabis Medicinal. Conectando pacientes a tratamentos seguros, legais e humanizados.
               </p>
-              <form className="relative">
+              <div className="relative">
                 <Input
                   type="email"
                   placeholder="Seu melhor e-mail"
-                  className="pr-12 backdrop-blur-sm bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                  className="pr-12 bg-white border-gray-200 rounded-full h-12 shadow-sm"
                 />
                 <Button
                   type="submit"
                   size="icon"
-                  className="absolute right-1 top-1 h-8 w-8 rounded-full bg-[#3FA174] text-white transition-transform hover:scale-105 hover:bg-[#359966]"
+                  className="absolute right-1.5 top-1.5 h-9 w-9 rounded-full bg-[#3FA174] text-white hover:bg-[#359966] transition-all hover:scale-105"
                 >
                   <Send className="h-4 w-4" />
-                  <span className="sr-only">Inscrever</span>
                 </Button>
-              </form>
-              <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
                 Receba novidades e conteúdos exclusivos
               </p>
             </div>
 
             <div>
-              <h3 className="mb-4 text-base font-semibold">Links Rápidos</h3>
-              <nav className="space-y-3 text-sm">
-                <Link href="/" className="block text-gray-600 dark:text-gray-400 transition-colors hover:text-[#3FA174]">
-                  Início
-                </Link>
-                <Link href="/sobre" className="block text-gray-600 dark:text-gray-400 transition-colors hover:text-[#3FA174]">
-                  Sobre Nós
-                </Link>
-                <Link href="/planos" className="block text-gray-600 dark:text-gray-400 transition-colors hover:text-[#3FA174]">
-                  Planos
-                </Link>
-                <Link href="/educacao" className="block text-gray-600 dark:text-gray-400 transition-colors hover:text-[#3FA174]">
-                  Educação
-                </Link>
-                <Link href="/contato" className="block text-gray-600 dark:text-gray-400 transition-colors hover:text-[#3FA174]">
-                  Contato
-                </Link>
+              <h3 className="text-base font-bold text-gray-900 mb-5">Links Rápidos</h3>
+              <nav className="space-y-3">
+                {["Início", "Sobre Nós", "Planos", "Educação", "Contato"].map((item) => (
+                  <Link 
+                    key={item}
+                    href={`/${item.toLowerCase().replace(" ", "-").replace("início", "")}`} 
+                    className="block text-gray-600 text-sm hover:text-[#3FA174] transition-colors hover:translate-x-1 transform duration-200"
+                  >
+                    {item}
+                  </Link>
+                ))}
               </nav>
             </div>
 
             <div>
-              <h3 className="mb-4 text-base font-semibold">Contato</h3>
-              <address className="space-y-3 text-sm not-italic text-gray-600 dark:text-gray-400">
-                <p>São Paulo, SP - Brasil</p>
-                <p>Segunda a Sexta: 8h às 18h</p>
-                <p>Tel: (11) 99999-9999</p>
-                <p>contato@abracanm.com.br</p>
-              </address>
+              <h3 className="text-base font-bold text-gray-900 mb-5">Contato</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <MapPin className="w-4 h-4 text-[#3FA174]" />
+                  </div>
+                  <p className="text-gray-600 text-sm">São Paulo, SP - Brasil</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Clock className="w-4 h-4 text-[#3FA174]" />
+                  </div>
+                  <p className="text-gray-600 text-sm">Segunda a Sexta: 8h às 18h</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Phone className="w-4 h-4 text-[#3FA174]" />
+                  </div>
+                  <p className="text-gray-600 text-sm">(11) 99999-9999</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Mail className="w-4 h-4 text-[#3FA174]" />
+                  </div>
+                  <p className="text-gray-600 text-sm">contato@abracanm.com.br</p>
+                </div>
+              </div>
             </div>
 
-            <div className="relative">
-              <h3 className="mb-4 text-base font-semibold">Siga-nos</h3>
-              <div className="mb-6 flex space-x-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-gray-200 dark:border-gray-800 hover:bg-[#3FA174] hover:text-white hover:border-[#3FA174]">
-                        <Facebook className="h-4 w-4" />
-                        <span className="sr-only">Facebook</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Siga no Facebook</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-gray-200 dark:border-gray-800 hover:bg-[#3FA174] hover:text-white hover:border-[#3FA174]">
-                        <Instagram className="h-4 w-4" />
-                        <span className="sr-only">Instagram</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Siga no Instagram</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-gray-200 dark:border-gray-800 hover:bg-[#3FA174] hover:text-white hover:border-[#3FA174]">
-                        <Youtube className="h-4 w-4" />
-                        <span className="sr-only">YouTube</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Inscreva-se no YouTube</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-gray-200 dark:border-gray-800 hover:bg-[#3FA174] hover:text-white hover:border-[#3FA174]">
-                        <Linkedin className="h-4 w-4" />
-                        <span className="sr-only">LinkedIn</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Conecte no LinkedIn</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+            <div>
+              <h3 className="text-base font-bold text-gray-900 mb-5">Siga-nos</h3>
+              <div className="flex gap-3 mb-6">
+                {[
+                  { icon: Facebook, label: "Facebook", href: "#" },
+                  { icon: Instagram, label: "Instagram", href: "#" },
+                  { icon: Youtube, label: "YouTube", href: "#" },
+                  { icon: Linkedin, label: "LinkedIn", href: "#" },
+                ].map((social) => (
+                  <Link 
+                    key={social.label} 
+                    href={social.href}
+                    className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-[#3FA174] hover:text-white hover:border-[#3FA174] transition-all hover:scale-110 shadow-sm"
+                  >
+                    <social.icon className="w-4 h-4" />
+                  </Link>
+                ))}
               </div>
-              <div className="flex items-center space-x-2">
-                <Sun className="h-4 w-4 text-gray-400" />
-                <Switch
-                  id="dark-mode"
-                  checked={isDarkMode}
-                  onCheckedChange={setIsDarkMode}
-                />
-                <Moon className="h-4 w-4 text-gray-400" />
-                <Label htmlFor="dark-mode" className="sr-only">
-                  Alternar modo escuro
-                </Label>
+              <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                <p className="text-xs text-gray-500 mb-2">Selo de Segurança</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center">
+                    <svg className="w-4 h-4 text-[#3FA174]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">100% Legal e Seguro</span>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-200 dark:border-gray-800 pt-8 text-center md:flex-row">
-            <p className="text-sm text-gray-500 dark:text-gray-500">
+      <div className="bg-white border-t border-gray-100 py-6 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-gray-500 text-center md:text-left">
               © 2024 ABRACANM - Associação Brasileira de Cannabis Medicinal. Todos os direitos reservados.
             </p>
-            <nav className="flex gap-4 text-sm">
-              <Link href="/privacidade" className="text-gray-500 transition-colors hover:text-[#3FA174]">
+            <nav className="flex flex-wrap justify-center gap-6 text-sm">
+              <Link href="/privacidade" className="text-gray-500 hover:text-[#3FA174] transition-colors">
                 Política de Privacidade
               </Link>
-              <Link href="/termos" className="text-gray-500 transition-colors hover:text-[#3FA174]">
+              <Link href="/termos" className="text-gray-500 hover:text-[#3FA174] transition-colors">
                 Termos de Uso
               </Link>
-              <Link href="/cookies" className="text-gray-500 transition-colors hover:text-[#3FA174]">
+              <Link href="/cookies" className="text-gray-500 hover:text-[#3FA174] transition-colors">
                 Cookies
               </Link>
             </nav>
