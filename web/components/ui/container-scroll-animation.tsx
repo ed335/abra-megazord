@@ -5,11 +5,9 @@ import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 export const ContainerScroll = ({
   titleComponent,
   children,
-  floatingElements,
 }: {
   titleComponent: string | React.ReactNode;
   children: React.ReactNode;
-  floatingElements?: React.ReactNode;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -38,7 +36,7 @@ export const ContainerScroll = ({
 
   return (
     <div
-      className="h-[50rem] md:h-[60rem] flex items-center justify-center relative p-2 md:p-20 overflow-visible"
+      className="h-[50rem] md:h-[60rem] flex items-center justify-center relative p-2 md:p-20"
       ref={containerRef}
     >
       <div
@@ -48,16 +46,9 @@ export const ContainerScroll = ({
         }}
       >
         <Header translate={translate} titleComponent={titleComponent} />
-        <div className="relative">
-          <Card rotate={rotate} translate={translate} scale={scale}>
-            {children}
-          </Card>
-          {floatingElements && (
-            <div className="absolute inset-0 pointer-events-none overflow-visible" style={{ perspective: "1500px" }}>
-              {floatingElements}
-            </div>
-          )}
-        </div>
+        <Card rotate={rotate} translate={translate} scale={scale}>
+          {children}
+        </Card>
       </div>
     </div>
   );
