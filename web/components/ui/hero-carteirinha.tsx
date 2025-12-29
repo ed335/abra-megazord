@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Leaf, Shield, CreditCard, QrCode } from "lucide-react"
-import { motion } from "framer-motion"
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { cn } from '@/lib/utils'
 
 interface HeroCarteirinhaProps {
@@ -11,17 +11,45 @@ interface HeroCarteirinhaProps {
 
 export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
   const [isFlipped, setIsFlipped] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
+  
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  
+  const rotateX = useSpring(useTransform(y, [-100, 100], [15, -15]), { stiffness: 300, damping: 30 })
+  const rotateY = useSpring(useTransform(x, [-100, 100], [-15, 15]), { stiffness: 300, damping: 30 })
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || isFlipped) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    x.set(e.clientX - centerX)
+    y.set(e.clientY - centerY)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
 
   return (
     <div 
-      className={cn("perspective-1000 cursor-pointer w-full max-w-sm", className)}
+      ref={cardRef}
+      className={cn("perspective-1000 cursor-pointer w-full max-w-md", className)}
       onClick={() => setIsFlipped(!isFlipped)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <motion.div
         className="relative w-full aspect-[1.586/1] preserve-3d"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
+        style={{ 
+          transformStyle: "preserve-3d",
+          rotateX: isFlipped ? 0 : rotateX,
+          rotateY: isFlipped ? 180 : rotateY
+        }}
         transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
-        style={{ transformStyle: "preserve-3d" }}
       >
         {/* Frente do Cartão */}
         <motion.div

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import { BenefitsCarousel } from "@/components/ui/benefits-carousel";
+import { FlipWords } from "@/components/ui/flip-words";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -152,7 +153,9 @@ export default function Home() {
                 className="text-4xl sm:text-5xl md:text-[3.5rem] font-bold mb-6 tracking-tight text-gray-900 leading-[1.1]"
               >
                 Acesse seu tratamento de forma{" "}
-                <span className="text-[#3FA174]">legal e humanizada</span>
+                <span className="text-[#3FA174] inline-block">
+                  <FlipWords words={["legal", "humanizada", "segura", "acessível"]} />
+                </span>
               </motion.h1>
 
               <motion.p
