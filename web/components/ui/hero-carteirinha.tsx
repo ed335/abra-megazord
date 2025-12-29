@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { Leaf, Shield, CreditCard, QrCode } from "lucide-react"
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
+import { motion } from "framer-motion"
 import { cn } from '@/lib/utils'
 
 interface HeroCarteirinhaProps {
@@ -11,41 +11,24 @@ interface HeroCarteirinhaProps {
 
 export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
   const [isFlipped, setIsFlipped] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
-  
-  const y = useMotionValue(0)
-  
-  const rotateX = useSpring(useTransform(y, [-100, 100], [10, -10]), { stiffness: 300, damping: 30 })
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || isFlipped) return
-    const rect = cardRef.current.getBoundingClientRect()
-    const centerY = rect.top + rect.height / 2
-    y.set(e.clientY - centerY)
-  }
-
-  const handleMouseLeave = () => {
-    y.set(0)
-  }
+  const [isHovered, setIsHovered] = useState(false)
 
   return (
     <div 
-      ref={cardRef}
       className={cn("perspective-1000 cursor-pointer w-full max-w-md", className)}
       onClick={() => setIsFlipped(!isFlipped)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <motion.div
         className="relative w-full aspect-[1.586/1] preserve-3d"
         animate={{ 
           rotateY: isFlipped ? 180 : 0,
+          scale: isHovered ? 1.03 : 1,
+          rotateX: isHovered && !isFlipped ? 5 : 0,
         }}
-        style={{ 
-          transformStyle: "preserve-3d",
-          rotateX: isFlipped ? 0 : rotateX,
-        }}
-        transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
+        transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 15 }}
+        style={{ transformStyle: "preserve-3d" }}
       >
         {/* Frente do Cartão */}
         <motion.div
@@ -54,8 +37,6 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
             backfaceVisibility: "hidden",
             background: "linear-gradient(135deg, #6B7C59 0%, #4A5A3A 50%, #3d4a30 100%)"
           }}
-          whileHover={{ scale: 1.02 }}
-          transition={{ type: "spring", stiffness: 300, damping: 15 }}
         >
           {/* Padrão decorativo */}
           <div className="absolute inset-0 opacity-10">
