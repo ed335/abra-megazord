@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { Leaf, ChevronLeft, User } from "lucide-react"
+import { ArrowLeft, User, CheckCircle2, Wallet } from "lucide-react"
 import { motion } from "framer-motion"
 import { cn } from '@/lib/utils'
 
@@ -14,175 +14,223 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
 
   return (
     <div 
-      className={cn("perspective-1000 cursor-pointer w-full max-w-[320px] sm:max-w-[360px]", className)}
+      className={cn("perspective-1000 cursor-pointer w-full max-w-[340px]", className)}
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <motion.div
-        className="relative w-full aspect-[7/11] preserve-3d"
+        className="relative w-full aspect-[9/16] preserve-3d"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 15 }}
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Frente do Cartão */}
+        {/* Frente - Estilo Mockup iPhone */}
         <motion.div
-          className="absolute inset-0 rounded-[28px] overflow-hidden backface-hidden bg-white"
+          className="absolute inset-0 rounded-[40px] overflow-hidden backface-hidden bg-white border border-gray-200"
           style={{ 
             backfaceVisibility: "hidden",
-            boxShadow: "0 30px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05)"
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)"
           }}
         >
-          {/* Barra verde lateral */}
-          <div className="absolute left-0 top-0 bottom-0 w-3 bg-[#3FA174]" />
+          {/* Status Bar */}
+          <div className="flex items-center justify-between px-6 pt-3 pb-2">
+            <span className="text-xs font-semibold text-black">11:35</span>
+            <div className="flex items-center gap-1">
+              <div className="flex gap-0.5">
+                <div className="w-1 h-1 rounded-full bg-black" />
+                <div className="w-1 h-1 rounded-full bg-black" />
+                <div className="w-1 h-1 rounded-full bg-black" />
+                <div className="w-1 h-1 rounded-full bg-black/30" />
+              </div>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+              </svg>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="2" y="7" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/>
+                <rect x="20" y="10" width="2" height="4" rx="1" fill="currentColor"/>
+                <rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
 
           {/* Header */}
-          <div className="flex items-center justify-between px-6 pt-5 pl-8">
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <ChevronLeft className="w-4 h-4" />
-              <span className="text-[11px] font-semibold uppercase tracking-widest">Minha Carteira</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Leaf className="w-5 h-5 text-[#3FA174]" />
-            </div>
+          <div className="flex items-center gap-3 px-5 py-3">
+            <ArrowLeft className="w-5 h-5 text-black" />
+            <span className="text-base font-medium text-black">ID</span>
           </div>
 
-          {/* Foto do Associado */}
-          <div className="flex justify-center mt-5 mb-5 pl-3">
+          {/* Card Content */}
+          <div className="px-5 pt-2">
+            {/* Card Container */}
             <div 
-              className="w-[120px] h-[150px] sm:w-[140px] sm:h-[175px] bg-slate-100 rounded-[20px] overflow-hidden flex items-center justify-center border-2 border-slate-200"
-              style={{ boxShadow: "0 12px 30px -8px rgba(0,0,0,0.15)" }}
+              className="bg-white rounded-2xl p-5 border border-gray-100"
+              style={{ boxShadow: "0 4px 20px -4px rgba(0,0,0,0.08)" }}
             >
-              <User className="w-14 h-14 text-slate-300" />
-            </div>
-          </div>
-
-          {/* Nome */}
-          <div className="text-center px-6 pl-8 mb-5">
-            <h2 className="text-slate-900 text-xl sm:text-2xl tracking-tight">
-              SEU <span className="font-black">NOME AQUI</span>
-            </h2>
-            <p className="text-[#3FA174] text-xs font-bold mt-1.5 uppercase tracking-[0.2em]">
-              Associado Verificado
-            </p>
-          </div>
-
-          {/* Dados e QR */}
-          <div className="px-6 pl-8 flex gap-5">
-            {/* Dados */}
-            <div className="flex-1 space-y-3">
-              <div>
-                <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest">Registro</p>
-                <p className="text-slate-900 font-bold text-sm">ABR-2024-0001</p>
-              </div>
-              <div>
-                <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest">Plano</p>
-                <p className="text-slate-900 font-bold text-sm">Premium</p>
-              </div>
-              <div>
-                <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest">Validade</p>
-                <p className="text-slate-900 font-bold text-sm">12/12/2025</p>
-              </div>
-            </div>
-
-            {/* QR Code */}
-            <div className="flex-shrink-0">
-              <div 
-                className="w-[88px] h-[88px] sm:w-[100px] sm:h-[100px] bg-[#3FA174] rounded-2xl p-2.5 flex items-center justify-center"
-                style={{ boxShadow: "0 12px 24px -6px rgba(63,161,116,0.35)" }}
-              >
-                <div className="w-full h-full bg-white rounded-xl grid grid-cols-5 gap-0.5 p-1.5">
-                  {[...Array(25)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={`rounded-sm ${
-                        [0,1,2,4,5,6,10,12,14,18,19,20,22,23,24].includes(i) 
-                          ? 'bg-[#3FA174]' 
-                          : 'bg-transparent'
-                      }`}
-                    />
-                  ))}
+              {/* Foto */}
+              <div className="flex justify-center mb-5">
+                <div className="w-28 h-32 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center border border-gray-200">
+                  <User className="w-12 h-12 text-gray-300" />
                 </div>
               </div>
-              <p className="text-center text-slate-400 text-[9px] font-medium mt-2 uppercase tracking-wider">
-                Validar
-              </p>
+
+              {/* Nome com Verificado */}
+              <div className="flex items-center justify-center gap-2 mb-5">
+                <CheckCircle2 className="w-5 h-5 text-[#3FA174] fill-[#3FA174] stroke-white" />
+                <span className="text-lg font-semibold text-gray-900">Seu Nome Aqui</span>
+              </div>
+
+              {/* Dados em Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p className="text-[11px] text-gray-400 mb-0.5">ID number</p>
+                  <p className="text-sm font-semibold text-gray-900">ABR00001</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-gray-400 mb-0.5">Birth date</p>
+                  <p className="text-sm font-semibold text-gray-900">01/01/1990</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-gray-400 mb-0.5">Plan</p>
+                  <p className="text-sm font-semibold text-gray-900">PREMIUM</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-gray-400 mb-0.5">Expiration date</p>
+                  <p className="text-sm font-semibold text-gray-900">12/12/2025</p>
+                </div>
+              </div>
+
+              {/* QR Code */}
+              <div className="flex justify-center">
+                <div className="w-32 h-32 bg-white p-2 border border-gray-200 rounded-lg">
+                  <div className="w-full h-full grid grid-cols-7 gap-px">
+                    {[...Array(49)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`${
+                          [0,1,2,4,5,6,7,13,14,20,21,27,28,34,35,36,42,43,44,46,47,48,
+                           8,9,10,12,16,17,18,22,24,26,30,31,32,38,40].includes(i) 
+                            ? 'bg-gray-900' 
+                            : 'bg-white'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Assinatura */}
-          <div className="absolute bottom-0 left-0 right-0 px-6 pb-5 pl-8">
-            <div className="border-t border-slate-200 pt-3">
-              <p className="text-slate-400 text-[9px] font-semibold uppercase tracking-widest mb-1">Assinatura</p>
-              <div className="h-7 border-b border-dashed border-slate-200 flex items-end pb-1">
-                <span className="text-slate-600 text-lg italic font-light">Seu Nome</span>
-              </div>
-            </div>
+          {/* Home Indicator */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
+            <div className="w-32 h-1 bg-black rounded-full" />
           </div>
         </motion.div>
 
-        {/* Verso do Cartão */}
+        {/* Verso */}
         <motion.div
-          className="absolute inset-0 rounded-[28px] overflow-hidden backface-hidden bg-[#3FA174]"
+          className="absolute inset-0 rounded-[40px] overflow-hidden backface-hidden bg-white border border-gray-200"
           style={{ 
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
-            boxShadow: "0 30px 60px -15px rgba(63, 161, 116, 0.4)"
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)"
           }}
         >
-          {/* Header */}
-          <div className="flex items-center justify-center gap-2 pt-8 pb-4">
-            <Leaf className="w-7 h-7 text-white" />
-            <span className="text-white font-black text-xl tracking-tight">ABRACANM</span>
-          </div>
-
-          <p className="text-center text-white/60 text-[10px] uppercase tracking-[0.2em] mb-6">
-            Associação Brasileira de Cannabis Medicinal
-          </p>
-
-          {/* Tarja */}
-          <div className="h-12 bg-black/20 mb-8" />
-
-          {/* QR Code Grande */}
-          <div className="flex justify-center mb-6">
-            <div 
-              className="w-36 h-36 bg-white rounded-2xl p-3 flex items-center justify-center"
-              style={{ boxShadow: "0 15px 30px -10px rgba(0,0,0,0.2)" }}
-            >
-              <div className="w-full h-full bg-[#3FA174] rounded-xl grid grid-cols-7 gap-0.5 p-2">
-                {[...Array(49)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={`rounded-sm ${
-                      [0,1,2,4,5,6,7,13,14,20,21,22,24,27,28,34,35,36,42,43,44,46,47,48].includes(i) 
-                        ? 'bg-white' 
-                        : 'bg-transparent'
-                    }`}
-                  />
-                ))}
+          {/* Status Bar */}
+          <div className="flex items-center justify-between px-6 pt-3 pb-2">
+            <span className="text-xs font-semibold text-black">11:35</span>
+            <div className="flex items-center gap-1">
+              <div className="flex gap-0.5">
+                <div className="w-1 h-1 rounded-full bg-black" />
+                <div className="w-1 h-1 rounded-full bg-black" />
+                <div className="w-1 h-1 rounded-full bg-black" />
+                <div className="w-1 h-1 rounded-full bg-black/30" />
               </div>
             </div>
           </div>
 
-          {/* Texto */}
-          <div className="px-8 text-center space-y-3">
-            <p className="text-white/70 text-xs leading-relaxed">
-              Apresente este QR Code para validar sua associação em estabelecimentos parceiros.
-            </p>
-            <p className="text-white font-bold text-sm">
-              abracanm.org.br
-            </p>
+          {/* Header */}
+          <div className="flex items-center gap-3 px-5 py-3">
+            <ArrowLeft className="w-5 h-5 text-black" />
+            <span className="text-base font-medium text-black">ID</span>
           </div>
 
-          {/* Footer */}
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-6 text-center">
-            <p className="text-white/40 text-[10px] uppercase tracking-widest font-medium">
-              Toque para virar
-            </p>
+          {/* Card Content - Layout 2 */}
+          <div className="px-5 pt-2">
+            <div 
+              className="bg-white rounded-2xl p-5 border border-gray-100"
+              style={{ boxShadow: "0 4px 20px -4px rgba(0,0,0,0.08)" }}
+            >
+              {/* Foto + QR lado a lado */}
+              <div className="flex gap-4 mb-4">
+                <div className="w-24 h-28 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center border border-gray-200 flex-shrink-0">
+                  <User className="w-10 h-10 text-gray-300" />
+                </div>
+                <div className="flex flex-col items-center justify-center">
+                  <div className="w-16 h-16 bg-white p-1 border border-gray-200 rounded-lg mb-1">
+                    <div className="w-full h-full grid grid-cols-5 gap-px">
+                      {[...Array(25)].map((_, i) => (
+                        <div 
+                          key={i} 
+                          className={`${
+                            [0,1,2,4,5,6,10,12,14,18,19,20,22,23,24].includes(i) 
+                              ? 'bg-gray-900' 
+                              : 'bg-white'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#3FA174] fill-[#3FA174] stroke-white" />
+                    <span className="text-[10px] font-semibold text-[#3FA174] uppercase">Valid</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dados em Grid 2 colunas */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                <div>
+                  <p className="text-[10px] text-gray-400 mb-0.5">Name</p>
+                  <p className="text-sm font-semibold text-gray-900">Seu</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 mb-0.5">ID number</p>
+                  <p className="text-sm font-semibold text-gray-900">ABR00001</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 mb-0.5">Last name</p>
+                  <p className="text-sm font-semibold text-gray-900">Nome</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 mb-0.5">Nationality</p>
+                  <p className="text-sm font-semibold text-gray-900">BRAZILIAN</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 mb-0.5">Birth date</p>
+                  <p className="text-sm font-semibold text-gray-900">01.01.1990</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 mb-0.5">Expiration date</p>
+                  <p className="text-sm font-semibold text-gray-900">12.12.2025</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Add to Wallet Button */}
+            <button className="w-full mt-4 py-3 px-4 border border-gray-200 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
+              <Wallet className="w-4 h-4 text-gray-600" />
+              <span className="text-sm font-medium text-gray-700">Add to wallet</span>
+            </button>
+          </div>
+
+          {/* Home Indicator */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
+            <div className="w-32 h-1 bg-black rounded-full" />
           </div>
         </motion.div>
       </motion.div>
       
       <p className="text-center text-gray-400 text-sm mt-5 font-medium">
-        Clique no cartão para ver o verso
+        Clique para ver outro layout
       </p>
     </div>
   )
