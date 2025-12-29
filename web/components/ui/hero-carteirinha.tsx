@@ -157,9 +157,9 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
         </motion.div>
       ))}
 
-      <div className="absolute -z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[400px] md:h-[400px]">
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#3FA174]/10 to-transparent blur-3xl" />
-        <div className="absolute inset-8 rounded-full bg-gradient-to-tl from-amber-400/10 to-transparent blur-2xl" />
+      <div className="absolute -z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] md:w-[500px] md:h-[500px]">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#3FA174]/5 to-transparent blur-[80px]" />
+        <div className="absolute inset-12 rounded-full bg-gradient-to-tl from-amber-400/5 to-transparent blur-[60px]" />
       </div>
     </div>
   )
