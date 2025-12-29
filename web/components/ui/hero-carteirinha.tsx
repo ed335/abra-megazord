@@ -11,22 +11,15 @@ interface HeroCarteirinhaProps {
 
 export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
   const [isFlipped, setIsFlipped] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
 
   return (
     <div 
       className={cn("perspective-1000 cursor-pointer w-full max-w-md", className)}
       onClick={() => setIsFlipped(!isFlipped)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <motion.div
         className="relative w-full aspect-[1.586/1] preserve-3d"
-        animate={{ 
-          rotateY: isFlipped ? 180 : 0,
-          scale: isHovered ? 1.03 : 1,
-          rotateX: isHovered && !isFlipped ? 5 : 0,
-        }}
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 15 }}
         style={{ transformStyle: "preserve-3d" }}
       >
