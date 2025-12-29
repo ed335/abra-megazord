@@ -1,6 +1,5 @@
 'use client';
 
-import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import Link from 'next/link';
 import { ArrowLeft, Cookie, Settings, BarChart, Lock, Info } from 'lucide-react';
@@ -8,7 +7,7 @@ import { ArrowLeft, Cookie, Settings, BarChart, Lock, Info } from 'lucide-react'
 export default function PoliticaCookies() {
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Link 

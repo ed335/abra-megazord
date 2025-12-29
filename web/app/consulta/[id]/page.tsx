@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Loader2, ArrowLeft, Video, AlertCircle } from 'lucide-react';
-import Header from '@/components/shared/Header';
 import AgoraVideoCall from '@/components/video/AgoraVideoCall';
 import WaitingRoom from '@/components/video/WaitingRoom';
 import { getToken } from '@/lib/auth';
@@ -118,7 +117,7 @@ function ConsultaContent() {
   if (loading) {
     return (
       <main className="min-h-screen bg-white">
-        <Header />
+        
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 text-verde-claro animate-spin" />
         </div>
@@ -129,7 +128,7 @@ function ConsultaContent() {
   if (error) {
     return (
       <main className="min-h-screen bg-white">
-        <Header />
+        
         <div className="max-w-md mx-auto py-20 px-4 text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-xl font-semibold text-gray-800 mb-2">Erro</h1>
@@ -172,7 +171,7 @@ function ConsultaContent() {
 
   return (
     <main className="min-h-screen bg-white">
-      <Header />
+      
       <div className="max-w-2xl mx-auto py-12 px-4">
         <button
           onClick={() => router.push('/dashboard')}

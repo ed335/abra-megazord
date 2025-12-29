@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion"
 import { Heart, Users, Shield, Award, Leaf, Target } from "lucide-react"
-import Header from "@/components/shared/Header"
 import { FooterSection } from "@/components/ui/footer-section"
 
 const valores = [
@@ -38,7 +37,6 @@ const numeros = [
 export default function SobrePage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       
       <section className="pt-24 pb-16 px-4 bg-gradient-to-b from-[#1B4332] to-[#2D5A45]">
         <div className="max-w-4xl mx-auto text-center">

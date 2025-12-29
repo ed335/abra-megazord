@@ -17,7 +17,6 @@ import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import { InfiniteBenefitsCarousel } from "@/components/ui/infinite-benefits-carousel";
 import { FaqAccordion } from "@/components/ui/faq-chat-accordion";
-import Header from "@/components/shared/Header";
 import { FooterSection } from "@/components/ui/footer-section";
 import { StatsSection } from "@/components/ui/stats-section";
 
@@ -158,7 +157,6 @@ const services = [
 export default function Home() {
   return (
     <div className="relative min-h-screen w-full bg-white">
-      <Header />
 
       {/* Hero Section com Scroll Animation e Elementos Flutuantes */}
       <section id="inicio" className="relative w-full bg-gradient-to-b from-[#FAFBFC] to-white">

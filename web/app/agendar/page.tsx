@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/components/shared/Header';
 import { getToken } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -73,7 +72,7 @@ export default function AgendarPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-background">
-        <Header />
+        
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
           <Skeleton className="h-5 w-40 mb-6" />
           <Skeleton className="h-12 w-48 mb-4" />
@@ -89,7 +88,7 @@ export default function AgendarPage() {
   if (!assinatura) {
     return (
       <main className="min-h-screen bg-background">
-        <Header />
+        
         
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
           <Link 
@@ -161,7 +160,7 @@ export default function AgendarPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Header />
+      
       
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
         <Link 

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import Header from '@/components/shared/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -157,7 +156,7 @@ export default function PlanosPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-[#fafaf8]">
-        <Header />
+        
         <section className="bg-white py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-4">
             <Skeleton className="h-10 w-3/4 mx-auto" />
@@ -182,7 +181,7 @@ export default function PlanosPage() {
 
   return (
     <main className="min-h-screen bg-[#fafaf8]">
-      <Header />
+      
       
       <section className="bg-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">

@@ -3,7 +3,6 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/components/shared/Header';
 import { getToken, fetchWithAuth } from '@/lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -129,7 +128,7 @@ function CheckoutContent() {
   if (loading) {
     return (
       <main className="min-h-screen bg-background">
-        <Header />
+        
         <div className="max-w-md mx-auto px-4 py-8">
           <Skeleton className="h-5 w-32 mb-6" />
           <div className="text-center mb-8 space-y-2">
@@ -154,7 +153,7 @@ function CheckoutContent() {
     
     return (
       <main className="min-h-screen bg-background">
-        <Header />
+        
         <div className="max-w-lg mx-auto px-4 py-12">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative">
@@ -254,7 +253,7 @@ function CheckoutContent() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Header />
+      
       
       <div className="max-w-md mx-auto px-4 py-8">
         <Link 

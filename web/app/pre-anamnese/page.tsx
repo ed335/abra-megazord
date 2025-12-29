@@ -1,7 +1,6 @@
 'use client';
 
 import { Suspense } from 'react';
-import Header from '@/components/shared/Header';
 import PatientQuizWizard from '@/components/quiz/PatientQuizWizard';
 
 function LoadingFallback() {
@@ -15,7 +14,7 @@ function LoadingFallback() {
 export default function PreAnamnesePage() {
   return (
     <main className="min-h-screen bg-white">
-      <Header />
+      
 
       <div className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-6">

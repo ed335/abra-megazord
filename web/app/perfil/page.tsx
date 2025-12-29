@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getToken } from '@/lib/auth';
-import Header from '@/components/shared/Header';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -152,7 +151,7 @@ export default function PerfilPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-background">
-        <Header />
+        
         <div className="max-w-3xl mx-auto px-4 py-8">
           <div className="flex items-center gap-4 mb-8">
             <Skeleton className="h-10 w-10 rounded-lg" />
@@ -199,7 +198,7 @@ export default function PerfilPage() {
   if (!perfil) {
     return (
       <main className="min-h-screen bg-background">
-        <Header />
+        
         <div className="max-w-2xl mx-auto px-4 py-12">
           <Card className="border-destructive/50 bg-destructive/5">
             <CardContent className="pt-6 text-center text-destructive">
@@ -213,7 +212,7 @@ export default function PerfilPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Header />
+      
 
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
