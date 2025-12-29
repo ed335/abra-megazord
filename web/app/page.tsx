@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Hover3DCard } from "@/components/ui/hover-3d-card";
 import Header from "@/components/shared/Header";
 
 const fadeUpVariants = {
@@ -178,15 +179,17 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="border-0 shadow-none bg-[#fafaf8] h-full">
-                  <CardContent className="pt-8 pb-8 px-6 text-center">
-                    <div className="w-14 h-14 bg-[#6B7C59]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                      <item.icon className="h-7 w-7 text-[#6B7C59]" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">{item.title}</h3>
-                    <p className="text-[#86868b]">{item.description}</p>
-                  </CardContent>
-                </Card>
+                <Hover3DCard className="h-full">
+                  <Card className="border border-[#e5e5e5] shadow-sm bg-white h-full rounded-2xl">
+                    <CardContent className="pt-8 pb-8 px-6 text-center">
+                      <div className="w-14 h-14 bg-[#6B7C59]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <item.icon className="h-7 w-7 text-[#6B7C59]" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">{item.title}</h3>
+                      <p className="text-[#86868b]">{item.description}</p>
+                    </CardContent>
+                  </Card>
+                </Hover3DCard>
               </motion.div>
             ))}
           </div>
@@ -289,13 +292,16 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
-                className="flex items-start gap-4 p-6 rounded-2xl bg-white/10 backdrop-blur-sm"
               >
-                <CheckCircle className="h-6 w-6 text-[#A8C686] flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
-                  <p className="text-white/70 text-sm">{item.description}</p>
-                </div>
+                <Hover3DCard className="h-full" rotateIntensity={8}>
+                  <div className="flex items-start gap-4 p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 h-full">
+                    <CheckCircle className="h-6 w-6 text-[#A8C686] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+                      <p className="text-white/70 text-sm">{item.description}</p>
+                    </div>
+                  </div>
+                </Hover3DCard>
               </motion.div>
             ))}
           </div>
@@ -344,20 +350,22 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="border border-[#e5e5e5] shadow-none h-full">
-                  <CardContent className="pt-8 pb-8 px-6">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 text-[#D4A574] fill-current" />
-                      ))}
-                    </div>
-                    <p className="text-[#1d1d1f] mb-6 leading-relaxed">&quot;{item.quote}&quot;</p>
-                    <div>
-                      <p className="font-semibold text-[#1d1d1f]">{item.name}</p>
-                      <p className="text-sm text-[#6B7C59]">{item.condition}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Hover3DCard className="h-full">
+                  <Card className="border border-[#e5e5e5] shadow-sm h-full rounded-2xl bg-white">
+                    <CardContent className="pt-8 pb-8 px-6">
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 text-[#D4A574] fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-[#1d1d1f] mb-6 leading-relaxed">&quot;{item.quote}&quot;</p>
+                      <div>
+                        <p className="font-semibold text-[#1d1d1f]">{item.name}</p>
+                        <p className="text-sm text-[#6B7C59]">{item.condition}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Hover3DCard>
               </motion.div>
             ))}
           </div>
