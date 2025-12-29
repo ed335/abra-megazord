@@ -14,7 +14,7 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
 
   return (
     <div 
-      className={cn("perspective-1000 cursor-pointer w-full max-w-xs sm:max-w-sm", className)}
+      className={cn("perspective-1000 cursor-pointer w-full max-w-[320px] sm:max-w-[360px]", className)}
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <motion.div
@@ -23,116 +23,131 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
         transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 15 }}
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Frente do Cartão - ID Card Vertical */}
+        {/* Frente do Cartão */}
         <motion.div
-          className="absolute inset-0 rounded-3xl overflow-hidden backface-hidden bg-[#3FA174]"
+          className="absolute inset-0 rounded-[28px] overflow-hidden backface-hidden bg-white"
           style={{ 
             backfaceVisibility: "hidden",
-            boxShadow: "0 25px 60px -15px rgba(63, 161, 116, 0.4)"
+            boxShadow: "0 30px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05)"
           }}
         >
+          {/* Barra verde lateral */}
+          <div className="absolute left-0 top-0 bottom-0 w-3 bg-[#3FA174]" />
+
           {/* Header */}
-          <div className="flex items-center justify-between px-5 pt-5">
-            <div className="flex items-center gap-1 text-white/80">
+          <div className="flex items-center justify-between px-6 pt-5 pl-8">
+            <div className="flex items-center gap-1.5 text-slate-400">
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-xs font-medium uppercase tracking-wider">Minha Carteira</span>
+              <span className="text-[11px] font-semibold uppercase tracking-widest">Minha Carteira</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Leaf className="w-5 h-5 text-[#3FA174]" />
             </div>
           </div>
 
           {/* Foto do Associado */}
-          <div className="flex justify-center mt-4 mb-6">
-            <div className="w-32 h-40 sm:w-36 sm:h-44 bg-black/20 rounded-2xl overflow-hidden flex items-center justify-center border-4 border-white/20">
-              <User className="w-16 h-16 text-white/40" />
+          <div className="flex justify-center mt-5 mb-5 pl-3">
+            <div 
+              className="w-[120px] h-[150px] sm:w-[140px] sm:h-[175px] bg-slate-100 rounded-[20px] overflow-hidden flex items-center justify-center border-2 border-slate-200"
+              style={{ boxShadow: "0 12px 30px -8px rgba(0,0,0,0.15)" }}
+            >
+              <User className="w-14 h-14 text-slate-300" />
             </div>
           </div>
 
-          {/* Nome e Tipo */}
-          <div className="text-center px-5 mb-6">
-            <h2 className="text-white text-xl sm:text-2xl font-light tracking-tight">
-              SEU <span className="font-bold">NOME AQUI</span>
+          {/* Nome */}
+          <div className="text-center px-6 pl-8 mb-5">
+            <h2 className="text-slate-900 text-xl sm:text-2xl tracking-tight">
+              SEU <span className="font-black">NOME AQUI</span>
             </h2>
-            <p className="text-white/70 text-sm font-medium mt-1 uppercase tracking-widest">
-              Associado ABRACANM
+            <p className="text-[#3FA174] text-xs font-bold mt-1.5 uppercase tracking-[0.2em]">
+              Associado Verificado
             </p>
           </div>
 
-          {/* Dados e QR Code */}
-          <div className="px-5 flex gap-4">
+          {/* Dados e QR */}
+          <div className="px-6 pl-8 flex gap-5">
             {/* Dados */}
             <div className="flex-1 space-y-3">
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-widest">Registro</p>
-                <p className="text-white font-bold text-sm">ABR-2024-0001</p>
+                <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest">Registro</p>
+                <p className="text-slate-900 font-bold text-sm">ABR-2024-0001</p>
               </div>
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-widest">Plano</p>
-                <p className="text-white font-bold text-sm">Premium</p>
+                <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest">Plano</p>
+                <p className="text-slate-900 font-bold text-sm">Premium</p>
               </div>
               <div>
-                <p className="text-white/50 text-[10px] uppercase tracking-widest">Validade</p>
-                <p className="text-white font-bold text-sm">12 Dezembro 2025</p>
+                <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest">Validade</p>
+                <p className="text-slate-900 font-bold text-sm">12/12/2025</p>
               </div>
             </div>
 
             {/* QR Code */}
             <div className="flex-shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-xl p-2 flex items-center justify-center">
-                <div className="w-full h-full bg-[#3FA174] rounded-lg grid grid-cols-5 gap-0.5 p-1">
+              <div 
+                className="w-[88px] h-[88px] sm:w-[100px] sm:h-[100px] bg-[#3FA174] rounded-2xl p-2.5 flex items-center justify-center"
+                style={{ boxShadow: "0 12px 24px -6px rgba(63,161,116,0.35)" }}
+              >
+                <div className="w-full h-full bg-white rounded-xl grid grid-cols-5 gap-0.5 p-1.5">
                   {[...Array(25)].map((_, i) => (
                     <div 
                       key={i} 
                       className={`rounded-sm ${
                         [0,1,2,4,5,6,10,12,14,18,19,20,22,23,24].includes(i) 
-                          ? 'bg-white' 
+                          ? 'bg-[#3FA174]' 
                           : 'bg-transparent'
                       }`}
                     />
                   ))}
                 </div>
               </div>
+              <p className="text-center text-slate-400 text-[9px] font-medium mt-2 uppercase tracking-wider">
+                Validar
+              </p>
             </div>
           </div>
 
           {/* Assinatura */}
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
-            <div className="border-t border-white/20 pt-3">
-              <p className="text-white/40 text-[10px] uppercase tracking-widest mb-1">Assinatura</p>
-              <div className="h-8 flex items-end">
-                <span className="text-white font-script text-lg italic opacity-70">Seu Nome</span>
+          <div className="absolute bottom-0 left-0 right-0 px-6 pb-5 pl-8">
+            <div className="border-t border-slate-200 pt-3">
+              <p className="text-slate-400 text-[9px] font-semibold uppercase tracking-widest mb-1">Assinatura</p>
+              <div className="h-7 border-b border-dashed border-slate-200 flex items-end pb-1">
+                <span className="text-slate-600 text-lg italic font-light">Seu Nome</span>
               </div>
-            </div>
-          </div>
-
-          {/* Logo */}
-          <div className="absolute top-5 right-5">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-white" />
             </div>
           </div>
         </motion.div>
 
         {/* Verso do Cartão */}
         <motion.div
-          className="absolute inset-0 rounded-3xl overflow-hidden backface-hidden bg-[#2d8a62]"
+          className="absolute inset-0 rounded-[28px] overflow-hidden backface-hidden bg-[#3FA174]"
           style={{ 
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
-            boxShadow: "0 25px 60px -15px rgba(63, 161, 116, 0.4)"
+            boxShadow: "0 30px 60px -15px rgba(63, 161, 116, 0.4)"
           }}
         >
           {/* Header */}
-          <div className="flex items-center justify-center gap-2 pt-6 pb-4">
-            <Leaf className="w-6 h-6 text-white" />
-            <span className="text-white font-bold text-lg tracking-tight">ABRACANM</span>
+          <div className="flex items-center justify-center gap-2 pt-8 pb-4">
+            <Leaf className="w-7 h-7 text-white" />
+            <span className="text-white font-black text-xl tracking-tight">ABRACANM</span>
           </div>
 
+          <p className="text-center text-white/60 text-[10px] uppercase tracking-[0.2em] mb-6">
+            Associação Brasileira de Cannabis Medicinal
+          </p>
+
           {/* Tarja */}
-          <div className="h-10 bg-black/30 mb-6" />
+          <div className="h-12 bg-black/20 mb-8" />
 
           {/* QR Code Grande */}
           <div className="flex justify-center mb-6">
-            <div className="w-32 h-32 bg-white rounded-2xl p-3 flex items-center justify-center">
-              <div className="w-full h-full bg-[#2d8a62] rounded-lg grid grid-cols-7 gap-0.5 p-2">
+            <div 
+              className="w-36 h-36 bg-white rounded-2xl p-3 flex items-center justify-center"
+              style={{ boxShadow: "0 15px 30px -10px rgba(0,0,0,0.2)" }}
+            >
+              <div className="w-full h-full bg-[#3FA174] rounded-xl grid grid-cols-7 gap-0.5 p-2">
                 {[...Array(49)].map((_, i) => (
                   <div 
                     key={i} 
@@ -147,20 +162,19 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
             </div>
           </div>
 
-          {/* Texto Informativo */}
-          <div className="px-6 text-center space-y-3">
+          {/* Texto */}
+          <div className="px-8 text-center space-y-3">
             <p className="text-white/70 text-xs leading-relaxed">
-              Esta carteira é pessoal e intransferível. 
-              Apresente este QR Code para validar sua associação.
+              Apresente este QR Code para validar sua associação em estabelecimentos parceiros.
             </p>
-            <p className="text-white font-semibold text-sm">
+            <p className="text-white font-bold text-sm">
               abracanm.org.br
             </p>
           </div>
 
           {/* Footer */}
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 text-center">
-            <p className="text-white/30 text-[10px] uppercase tracking-widest">
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-6 text-center">
+            <p className="text-white/40 text-[10px] uppercase tracking-widest font-medium">
               Toque para virar
             </p>
           </div>
