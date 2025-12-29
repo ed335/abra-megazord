@@ -20,6 +20,7 @@ import { BenefitsCarousel } from "@/components/ui/benefits-carousel";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { FaqAccordion } from "@/components/ui/faq-chat-accordion";
 import Header from "@/components/shared/Header";
+import { FooterSection } from "@/components/ui/footer-section";
 
 const faqData = [
   {
@@ -597,45 +598,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 md:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="text-lg font-bold mb-4">ABRACANM</h3>
-              <p className="text-gray-400 text-sm">
-                Associação Brasileira de Cannabis Medicinal. Seu tratamento de forma legal, segura e acessível.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Links</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/sobre" className="hover:text-white transition-colors">Sobre nós</Link></li>
-                <li><Link href="/planos" className="hover:text-white transition-colors">Planos</Link></li>
-                <li><Link href="/educacao" className="hover:text-white transition-colors">Educação</Link></li>
-                <li><Link href="/contato" className="hover:text-white transition-colors">Contato</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/privacidade" className="hover:text-white transition-colors">Privacidade</Link></li>
-                <li><Link href="/termos" className="hover:text-white transition-colors">Termos de uso</Link></li>
-                <li><Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contato</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li>contato@abracanm.com.br</li>
-                <li>(11) 99999-9999</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-            © 2024 ABRACANM. Todos os direitos reservados.
-          </div>
-        </div>
-      </footer>
+      <FooterSection />
     </div>
   );
 }
