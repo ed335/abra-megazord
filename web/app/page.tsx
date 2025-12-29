@@ -16,7 +16,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
-import { BenefitsCarousel } from "@/components/ui/benefits-carousel";
+import { InfiniteBenefitsCarousel } from "@/components/ui/infinite-benefits-carousel";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { FaqAccordion } from "@/components/ui/faq-chat-accordion";
 import Header from "@/components/shared/Header";
@@ -155,14 +155,6 @@ const services = [
   },
 ];
 
-const benefits = [
-  { title: "Médicos especializados", description: "Profissionais experientes em cannabis medicinal" },
-  { title: "Suporte contínuo", description: "Acompanhamento via WhatsApp para dúvidas" },
-  { title: "Preços acessíveis", description: "Consultas com desconto exclusivo" },
-  { title: "Conteúdo educativo", description: "Material científico sobre cannabis" },
-  { title: "Orientação jurídica", description: "Apoio sobre legislação e importação" },
-  { title: "Comunidade ativa", description: "Troca de experiências com outros pacientes" },
-];
 
 export default function Home() {
   return (
@@ -479,26 +471,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Benefits Carousel */}
-      <section className="py-20 px-4 md:px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
+      {/* Benefits Carousel - Infinite 3D */}
+      <section className="py-20 bg-gray-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-8"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Por que escolher a ABRACANM?
             </h2>
-            <p className="text-gray-600 text-lg">
-              Benefícios exclusivos para nossos associados
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Mais de 14 benefícios exclusivos para nossos associados
             </p>
           </motion.div>
-
-          <BenefitsCarousel benefits={benefits} />
         </div>
+        
+        <InfiniteBenefitsCarousel />
       </section>
 
       {/* FAQ Section */}
