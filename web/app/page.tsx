@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import { BenefitsCarousel } from "@/components/ui/benefits-carousel";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -132,257 +133,96 @@ export default function Home() {
     <div className="relative min-h-screen w-full bg-white">
       <Header />
 
-      {/* Hero Section Unificada - Com curvas conectoras estilo Ezcard */}
-      <section id="inicio" className="relative w-full pt-24 pb-20 overflow-hidden bg-[#FAFBFC]">
-        {/* SVG Curved Lines - Connecting Elements like Ezcard */}
-        <svg 
-          className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block"
-          style={{ zIndex: 1 }}
-          viewBox="0 0 1440 800"
-          preserveAspectRatio="xMidYMid slice"
-        >
-          {/* Left side curves - from left edge to center */}
-          <path
-            d="M 0 280 Q 180 260, 320 320 Q 480 390, 580 360"
-            fill="none"
-            stroke="#E5E7EB"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 0 420 Q 120 400, 240 450 Q 380 510, 520 480"
-            fill="none"
-            stroke="#E5E7EB"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 0 560 Q 150 540, 280 580 Q 400 620, 500 590"
-            fill="none"
-            stroke="#E5E7EB"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          
-          {/* Right side curves - from right edge to center */}
-          <path
-            d="M 1440 300 Q 1260 280, 1120 340 Q 960 410, 860 380"
-            fill="none"
-            stroke="#E5E7EB"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 1440 460 Q 1320 440, 1180 500 Q 1040 560, 920 530"
-            fill="none"
-            stroke="#E5E7EB"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-        
-        {/* Background gradient */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Subtle purple/blue gradient on right */}
-          <div 
-            className="absolute -right-20 bottom-20 w-[400px] h-[200px] bg-gradient-to-l from-purple-100/30 to-transparent rounded-full blur-3xl"
-          />
-          {/* Bottom fade to white */}
-          <div 
-            className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          {/* Headline - Centered */}
-          <div className="text-center max-w-3xl mx-auto mb-10">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-gray-900 leading-[1.1]"
-            >
-              Simples. <span className="text-[#3FA174]">Seguro.</span>
-              <br />
-              Feito para Você.
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-gray-500 text-base lg:text-lg mb-8 max-w-xl mx-auto"
-            >
-              Conectamos você a médicos prescritores especializados.
-              Consultas por vídeo, receita digital válida em todo o Brasil.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex gap-3 justify-center"
-            >
-              <Button
-                asChild
-                className="bg-[#3FA174] hover:bg-[#359966] text-white px-6 py-5 text-sm font-medium rounded-full"
-              >
-                <Link href="/cadastro">
-                  Agendar consulta
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-5 text-sm font-medium rounded-full"
-              >
-                <Link href="/planos">
-                  Como funciona
-                </Link>
-              </Button>
-            </motion.div>
-          </div>
-
-          {/* Cards Section with Floating Elements */}
-          <div className="relative max-w-5xl mx-auto">
-            {/* Left Floating Elements - Hidden on mobile, visible on xl+ */}
-            <div className="absolute left-0 top-0 bottom-0 w-40 xl:w-48 hidden xl:flex flex-col justify-center gap-4 xl:gap-6 -translate-x-2 xl:-translate-x-4">
+      {/* Hero Section com Scroll Animation */}
+      <section id="inicio" className="relative w-full overflow-hidden bg-gradient-to-b from-[#FAFBFC] to-white">
+        <ContainerScroll
+          titleComponent={
+            <div className="flex flex-col items-center">
               <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <div className="bg-rose-100 text-rose-600 px-3 xl:px-4 py-1.5 xl:py-2 rounded-full text-xs xl:text-sm font-medium shadow-sm flex items-center gap-1.5 xl:gap-2 w-fit">
-                  <Zap className="w-3 h-3 xl:w-4 xl:h-4" />
-                  Atendimento Rápido
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-              >
-                <div className="bg-white rounded-xl xl:rounded-2xl shadow-lg p-3 xl:p-4 border border-gray-100 w-40 xl:w-48">
-                  <p className="text-[10px] xl:text-xs text-gray-400 mb-1">Limite de Consultas</p>
-                  <p className="text-base xl:text-lg font-bold text-gray-900">Ilimitado</p>
-                  <div className="mt-2 h-1.5 xl:h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full w-3/4 bg-blue-500 rounded-full" />
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
+                transition={{ duration: 0.5 }}
+                className="flex gap-2 mb-6"
               >
-                <div className="bg-blue-500 text-white rounded-xl xl:rounded-2xl shadow-lg p-3 xl:p-4 flex items-center gap-2 xl:gap-3 w-fit">
-                  <div className="w-8 h-8 xl:w-10 xl:h-10 bg-white/20 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-4 h-4 xl:w-5 xl:h-5" />
-                  </div>
-                  <span className="font-medium text-xs xl:text-sm">Consulta Realizada!</span>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Center Card - Main Mockup - Responsive padding */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex justify-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-0"
-            >
-              <HeroCarteirinha />
-            </motion.div>
-
-            {/* Right Floating Elements - Hidden on mobile, visible on xl+ */}
-            <div className="absolute right-0 top-0 bottom-0 w-40 xl:w-48 hidden xl:flex flex-col justify-center gap-4 xl:gap-6 translate-x-2 xl:translate-x-4 items-end">
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <div className="bg-[#3FA174] text-white px-3 xl:px-4 py-1.5 xl:py-2 rounded-full text-xs xl:text-sm font-medium shadow-sm">
+                <span className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                  <Zap className="w-3 h-3" />
+                  Atendimento Rápido
+                </span>
+                <span className="bg-[#3FA174] text-white px-3 py-1.5 rounded-full text-xs font-medium">
                   100% Legal
-                </div>
+                </span>
+                <span className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                  <CheckCircle className="w-3 h-3" />
+                  Consulta Realizada
+                </span>
               </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-              >
-                <div className="bg-white rounded-xl xl:rounded-2xl shadow-lg p-3 xl:p-4 border border-gray-100">
-                  <p className="text-[10px] xl:text-xs text-gray-400 mb-1">Satisfação</p>
-                  <div className="flex items-center gap-1.5 xl:gap-2">
-                    <span className="text-rose-500 text-sm">+</span>
-                    <p className="text-xl xl:text-2xl font-bold text-gray-900">98%</p>
-                  </div>
-                  <div className="flex gap-1 mt-1.5 xl:mt-2">
-                    <div className="w-6 h-6 xl:w-8 xl:h-8 bg-green-100 rounded-md xl:rounded-lg flex items-center justify-center text-[10px] xl:text-xs text-green-600">↓</div>
-                    <div className="w-6 h-6 xl:w-8 xl:h-8 bg-purple-100 rounded-md xl:rounded-lg flex items-center justify-center text-[10px] xl:text-xs text-purple-600">↑</div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Mobile Floating Badges - Visible only on smaller screens */}
-          <div className="flex xl:hidden justify-center gap-2 mt-6 flex-wrap px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
-            >
-              <Zap className="w-3 h-3" />
-              Atendimento Rápido
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="bg-[#3FA174] text-white px-3 py-1.5 rounded-full text-xs font-medium"
-            >
-              100% Legal
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
-            >
-              <CheckCircle className="w-3 h-3" />
-              Consulta Realizada
-            </motion.div>
-          </div>
-
-          {/* Stats - Integrated into Hero */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="max-w-4xl mx-auto mt-16"
-          >
-            <div className="flex items-center justify-center gap-8 md:gap-16 flex-wrap">
-              <div className="text-center">
-                <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">+5.000</span>
-                <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">pacientes atendidos</p>
-              </div>
-              <div className="hidden md:block w-px h-12 bg-gray-200" />
-              <div className="text-center">
-                <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">48h</span>
-                <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">atendimento rápido</p>
-              </div>
-              <div className="hidden md:block w-px h-12 bg-gray-200" />
-              <div className="text-center">
-                <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">100%</span>
-                <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">legal e seguro</p>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-gray-900 leading-[1.1]">
+                Simples. <span className="text-[#3FA174]">Seguro.</span>
+                <br />
+                Feito para Você.
+              </h1>
+              
+              <p className="text-gray-500 text-base lg:text-lg mb-8 max-w-xl mx-auto">
+                Conectamos você a médicos prescritores especializados.
+                Consultas por vídeo, receita digital válida em todo o Brasil.
+              </p>
+              
+              <div className="flex gap-3 justify-center mb-8">
+                <Button
+                  asChild
+                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-6 py-5 text-sm font-medium rounded-full"
+                >
+                  <Link href="/cadastro">
+                    Agendar consulta
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-5 text-sm font-medium rounded-full"
+                >
+                  <Link href="/planos">
+                    Como funciona
+                  </Link>
+                </Button>
               </div>
             </div>
-          </motion.div>
+          }
+        >
+          <div className="h-full w-full flex items-center justify-center p-4 md:p-8">
+            <HeroCarteirinha className="scale-90 md:scale-100" />
+          </div>
+        </ContainerScroll>
+
+        {/* Stats Section */}
+        <div className="relative -mt-32 md:-mt-48 pb-16">
+          <div className="max-w-4xl mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8"
+            >
+              <div className="flex items-center justify-center gap-8 md:gap-16 flex-wrap">
+                <div className="text-center">
+                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">+5.000</span>
+                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">pacientes atendidos</p>
+                </div>
+                <div className="hidden md:block w-px h-12 bg-gray-200" />
+                <div className="text-center">
+                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">48h</span>
+                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">atendimento rápido</p>
+                </div>
+                <div className="hidden md:block w-px h-12 bg-gray-200" />
+                <div className="text-center">
+                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">100%</span>
+                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">legal e seguro</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
