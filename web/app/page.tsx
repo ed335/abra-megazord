@@ -161,94 +161,8 @@ export default function Home() {
     <div className="relative min-h-screen w-full bg-white">
       <Header />
 
-      {/* Hero Section com Scroll Animation e Elementos Flutuantes */}
-      <section id="inicio" className="relative w-full bg-gradient-to-b from-[#FAFBFC] to-white">
-        {/* Floating Elements - Desktop - Positioned relative to section */}
-        <div className="hidden md:block">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="absolute left-2 md:left-4 lg:left-8 xl:left-16 top-[42%] md:top-[45%] z-20"
-          >
-            <div className="bg-rose-100 text-rose-600 px-3 md:px-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-medium shadow-lg flex items-center gap-1.5 md:gap-2">
-              <Zap className="w-3 h-3 md:w-4 md:h-4" />
-              Atendimento Rápido
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="absolute left-1 md:left-2 lg:left-6 xl:left-12 top-[54%] md:top-[56%] z-20"
-          >
-            <div className="bg-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-4 border border-gray-100">
-              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Limite de Consultas</p>
-              <p className="text-xs md:text-sm lg:text-base font-bold text-gray-900">Ilimitado</p>
-              <div className="mt-1.5 md:mt-2 h-1.5 md:h-2 bg-gray-100 rounded-full overflow-hidden w-20 md:w-24 lg:w-28">
-                <div className="h-full w-3/4 bg-blue-500 rounded-full" />
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1 }}
-            className="absolute left-2 md:left-6 lg:left-10 xl:left-20 top-[68%] md:top-[70%] z-20"
-          >
-            <div className="bg-blue-500 text-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-3.5 flex items-center gap-2 md:gap-2.5">
-              <div className="w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 bg-white/20 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
-              </div>
-              <span className="font-medium text-xs md:text-sm">Consulta Realizada!</span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="absolute right-2 md:right-4 lg:right-8 xl:right-16 top-[40%] md:top-[43%] z-20"
-          >
-            <div className="bg-[#3FA174] text-white px-3 md:px-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-medium shadow-lg">
-              100% Legal
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="absolute right-1 md:right-2 lg:right-6 xl:right-12 top-[52%] md:top-[54%] z-20"
-          >
-            <div className="bg-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-4 border border-gray-100">
-              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Satisfação</p>
-              <div className="flex items-center gap-1 md:gap-1.5">
-                <span className="text-rose-500 text-xs md:text-sm">+</span>
-                <p className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">98%</p>
-              </div>
-              <div className="flex gap-1 md:gap-1.5 mt-1.5 md:mt-2">
-                <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 bg-green-100 rounded flex items-center justify-center text-[10px] md:text-xs text-green-600">↓</div>
-                <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 bg-purple-100 rounded flex items-center justify-center text-[10px] md:text-xs text-purple-600">↑</div>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1 }}
-            className="absolute right-2 md:right-6 lg:right-10 xl:right-20 top-[68%] md:top-[70%] z-20"
-          >
-            <div className="bg-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-4 border border-gray-100">
-              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Pacientes Atendidos</p>
-              <p className="text-base md:text-lg lg:text-xl font-bold text-[#3FA174]">+5.000</p>
-            </div>
-          </motion.div>
-        </div>
-
+      {/* Hero Section com Scroll Animation e Elementos Flutuantes 3D */}
+      <section id="inicio" className="relative w-full bg-gradient-to-b from-[#FAFBFC] to-white overflow-visible">
         <ContainerScroll
           titleComponent={
             <div className="flex flex-col items-center">
@@ -285,52 +199,252 @@ export default function Home() {
             </div>
           }
         >
-          <div className="relative h-full w-full flex items-center justify-center p-4 md:p-8">
+          <div className="relative h-full w-full flex items-center justify-center p-4 md:p-8" style={{ perspective: "1500px" }}>
             <HeroCarteirinha className="scale-90 md:scale-100" />
+            
+            {/* Floating Elements 3D - Saindo do Tablet com Profundidade */}
+            <div className="hidden md:block">
+              {/* Esquerda - Elementos saindo com profundidade */}
+              <motion.div
+                initial={{ opacity: 0, x: 100, z: -100, rotateY: -30 }}
+                animate={{ opacity: 1, x: 0, z: 50, rotateY: 0 }}
+                transition={{ duration: 0.8, delay: 0.5, type: "spring", stiffness: 100 }}
+                className="absolute -left-8 lg:-left-20 xl:-left-32 top-4 z-30"
+                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ scale: 1.1, z: 80, rotateY: 5 }}
+              >
+                <div className="bg-rose-100 text-rose-600 px-4 py-2.5 rounded-full text-sm font-medium shadow-2xl flex items-center gap-2 backdrop-blur-sm border border-rose-200">
+                  <Zap className="w-4 h-4" />
+                  Atendimento Rápido
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 150, z: -150, rotateY: -45 }}
+                animate={{ opacity: 1, x: 0, z: 80, rotateY: -5 }}
+                transition={{ duration: 0.9, delay: 0.7, type: "spring", stiffness: 80 }}
+                className="absolute -left-12 lg:-left-28 xl:-left-44 top-1/3 z-30"
+                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ scale: 1.1, z: 120, rotateY: 0 }}
+              >
+                <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 backdrop-blur-sm">
+                  <p className="text-xs text-gray-400 mb-1">Limite de Consultas</p>
+                  <p className="text-base font-bold text-gray-900">Ilimitado</p>
+                  <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden w-28">
+                    <motion.div 
+                      className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: "75%" }}
+                      transition={{ duration: 1, delay: 1.2 }}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 100, y: 50, z: -100, rotateX: 20 }}
+                animate={{ opacity: 1, x: 0, y: 0, z: 60, rotateX: 0 }}
+                transition={{ duration: 0.8, delay: 0.9, type: "spring", stiffness: 90 }}
+                className="absolute -left-6 lg:-left-16 xl:-left-28 bottom-8 z-30"
+                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ scale: 1.1, z: 100, rotateX: -5 }}
+              >
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl shadow-2xl p-4 flex items-center gap-3">
+                  <motion.div 
+                    className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <CheckCircle className="w-5 h-5" />
+                  </motion.div>
+                  <span className="font-semibold text-sm">Consulta Realizada!</span>
+                </div>
+              </motion.div>
+
+              {/* Direita - Elementos saindo com profundidade */}
+              <motion.div
+                initial={{ opacity: 0, x: -100, z: -100, rotateY: 30 }}
+                animate={{ opacity: 1, x: 0, z: 50, rotateY: 0 }}
+                transition={{ duration: 0.8, delay: 0.6, type: "spring", stiffness: 100 }}
+                className="absolute -right-8 lg:-right-20 xl:-right-28 top-8 z-30"
+                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ scale: 1.1, z: 80, rotateY: -5 }}
+              >
+                <div className="bg-gradient-to-r from-[#3FA174] to-[#2D8B60] text-white px-4 py-2.5 rounded-full text-sm font-medium shadow-2xl">
+                  100% Legal
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -150, z: -150, rotateY: 45 }}
+                animate={{ opacity: 1, x: 0, z: 80, rotateY: 5 }}
+                transition={{ duration: 0.9, delay: 0.8, type: "spring", stiffness: 80 }}
+                className="absolute -right-12 lg:-right-28 xl:-right-44 top-1/2 z-30"
+                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ scale: 1.1, z: 120, rotateY: 0 }}
+              >
+                <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 backdrop-blur-sm">
+                  <p className="text-xs text-gray-400 mb-1">Satisfação</p>
+                  <div className="flex items-center gap-1.5">
+                    <motion.span 
+                      className="text-rose-500 text-sm"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >+</motion.span>
+                    <p className="text-2xl font-bold text-gray-900">98%</p>
+                  </div>
+                  <div className="flex gap-1.5 mt-2">
+                    <motion.div 
+                      className="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center text-xs text-green-600"
+                      animate={{ y: [0, -3, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+                    >↓</motion.div>
+                    <motion.div 
+                      className="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center text-xs text-purple-600"
+                      animate={{ y: [0, -3, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                    >↑</motion.div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -100, y: 50, z: -100, rotateX: 20 }}
+                animate={{ opacity: 1, x: 0, y: 0, z: 60, rotateX: 0 }}
+                transition={{ duration: 0.8, delay: 1, type: "spring", stiffness: 90 }}
+                className="absolute -right-6 lg:-right-16 xl:-right-28 bottom-12 z-30"
+                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ scale: 1.1, z: 100, rotateX: -5 }}
+              >
+                <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 backdrop-blur-sm">
+                  <p className="text-xs text-gray-400 mb-1">Pacientes Atendidos</p>
+                  <p className="text-xl font-bold text-[#3FA174]">+5.000</p>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </ContainerScroll>
 
         {/* Mobile Floating Badges */}
-        <div className="flex md:hidden justify-center gap-2 -mt-24 mb-8 flex-wrap px-4">
-          <span className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+        <div className="flex md:hidden justify-center gap-2 -mt-20 mb-8 flex-wrap px-4">
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg"
+          >
             <Zap className="w-3 h-3" />
             Atendimento Rápido
-          </span>
-          <span className="bg-[#3FA174] text-white px-3 py-1.5 rounded-full text-xs font-medium">
+          </motion.span>
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="bg-[#3FA174] text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg"
+          >
             100% Legal
-          </span>
-          <span className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+          </motion.span>
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 shadow-lg"
+          >
             <CheckCircle className="w-3 h-3" />
             Consulta Realizada
-          </span>
+          </motion.span>
         </div>
+      </section>
 
-        {/* Stats Section */}
-        <div className="relative -mt-16 md:-mt-32 pb-16">
-          <div className="max-w-4xl mx-auto px-4">
+      {/* Stats Section - Seção Exclusiva */}
+      <section className="py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              Números que <span className="text-[#3FA174]">inspiram confiança</span>
+            </h2>
+            <p className="text-gray-500">
+              Resultados reais de quem cuida de você
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8"
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center"
             >
-              <div className="flex items-center justify-center gap-8 md:gap-16 flex-wrap">
-                <div className="text-center">
-                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">+5.000</span>
-                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">pacientes atendidos</p>
-                </div>
-                <div className="hidden md:block w-px h-12 bg-gray-200" />
-                <div className="text-center">
-                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">48h</span>
-                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">atendimento rápido</p>
-                </div>
-                <div className="hidden md:block w-px h-12 bg-gray-200" />
-                <div className="text-center">
-                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">100%</span>
-                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">legal e seguro</p>
-                </div>
-              </div>
+              <motion.span 
+                className="text-4xl md:text-5xl font-bold text-[#3FA174] block"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+              >+5.000</motion.span>
+              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">Pacientes Atendidos</p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center"
+            >
+              <motion.span 
+                className="text-4xl md:text-5xl font-bold text-[#3FA174] block"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+              >48h</motion.span>
+              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">Atendimento Rápido</p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center"
+            >
+              <motion.span 
+                className="text-4xl md:text-5xl font-bold text-[#3FA174] block"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                viewport={{ once: true }}
+              >98%</motion.span>
+              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">Satisfação</p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center"
+            >
+              <motion.span 
+                className="text-4xl md:text-5xl font-bold text-[#3FA174] block"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                viewport={{ once: true }}
+              >100%</motion.span>
+              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">Legal e Seguro</p>
             </motion.div>
           </div>
         </div>
