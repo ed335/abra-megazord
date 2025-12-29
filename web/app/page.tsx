@@ -133,7 +133,7 @@ export default function Home() {
       <Header />
 
       {/* Hero Section - Pure White */}
-      <section id="inicio" className="relative min-h-[90vh] w-full bg-white pt-24 flex items-center">
+      <section id="inicio" className="relative w-full bg-white pt-24 pb-12 flex items-center">
         <div className="container mx-auto px-4 md:px-6 lg:px-12 xl:px-20 py-12 md:py-16">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 items-center max-w-7xl mx-auto">
             <div className="text-center lg:text-left">
