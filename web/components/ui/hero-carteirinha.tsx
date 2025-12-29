@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronLeft, CreditCard, Wifi, Home, History, UserCircle, Plus } from "lucide-react"
+import { ChevronLeft, Plus, User } from "lucide-react"
 import { cn } from '@/lib/utils'
 
 interface HeroCarteirinhaProps {
@@ -9,138 +9,136 @@ interface HeroCarteirinhaProps {
 
 export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
   return (
-    <div className={cn("w-full max-w-[320px]", className)}>
-      {/* iPhone Frame */}
+    <div className={cn("w-full max-w-[380px]", className)}>
+      {/* Container com fundo verde */}
       <div 
-        className="rounded-[44px] overflow-hidden"
+        className="rounded-[32px] overflow-hidden p-6 pb-8"
         style={{ 
-          background: "linear-gradient(180deg, #1B4332 0%, #2D6A4F 50%, #3FA174 100%)",
-          boxShadow: "0 50px 100px -20px rgba(0, 0, 0, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.2)"
+          background: "linear-gradient(180deg, #1B4332 0%, #2D6A4F 100%)",
+          boxShadow: "0 50px 100px -20px rgba(0, 0, 0, 0.3)"
         }}
       >
-        {/* Header Verde Escuro */}
-        <div className="pt-6 pb-4 px-5">
-          {/* Back + Title */}
-          <div className="flex items-center gap-4 mb-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
               <ChevronLeft className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-white text-xl font-bold">Sua Carteirinha</h1>
+            <h1 className="text-white text-lg font-bold">Sua Carteirinha</h1>
           </div>
-
-          {/* Message + Add Button */}
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-white/90 text-lg leading-snug">
-                Sua carteirinha foi
-              </p>
-              <p className="text-white/90 text-lg leading-snug">
-                adicionada com sucesso
-              </p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-amber-400 flex items-center justify-center shadow-lg">
-              <Plus className="w-6 h-6 text-white" />
-            </div>
+          <div className="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center">
+            <Plus className="w-5 h-5 text-white" />
           </div>
         </div>
 
-        {/* Cards Stack */}
-        <div className="relative px-5 pb-4">
-          {/* Back Card (Green) - just visual accent */}
+        {/* Message */}
+        <p className="text-white/80 text-base mb-6">
+          Sua carteirinha digital está pronta
+        </p>
+
+        {/* Cards Stack Effect */}
+        <div className="relative">
+          {/* Back Card (Green) - parcialmente visível */}
           <div 
-            className="absolute left-8 right-8 top-2 h-12 rounded-t-2xl"
-            style={{ background: "#4CAF50" }}
+            className="absolute left-3 right-3 -top-1 h-8 rounded-t-2xl"
+            style={{ background: "linear-gradient(180deg, #4CAF50 0%, #43A047 100%)" }}
           />
           
-          {/* Main Premium Card (Golden/Orange) - ABRACANM Member Card */}
+          {/* Main Card - Driver's License Style (Golden) */}
           <div 
-            className="relative rounded-2xl p-5 mt-4 overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #D4A574 0%, #C4956A 50%, #B8895E 100%)" }}
+            className="relative rounded-2xl overflow-hidden mt-3"
+            style={{ 
+              background: "linear-gradient(135deg, #E8B87D 0%, #D4A574 50%, #C4956A 100%)",
+              boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3)"
+            }}
           >
-            {/* Pattern decorativo */}
-            <div className="absolute top-0 right-0 opacity-30">
-              <div className="absolute top-6 right-6 w-16 h-16 border-[3px] border-white/50 rounded-full" />
-              <div className="absolute top-10 right-2 w-20 h-20 border-[3px] border-white/50 rounded-full" />
-            </div>
-
-            {/* Logo + Status */}
-            <div className="flex items-start justify-between mb-8">
-              <div>
-                <p className="text-white/70 text-xs uppercase tracking-wider mb-1">ABRACANM</p>
-                <p className="text-white text-2xl font-bold italic">Ativo</p>
-              </div>
-              <div className="flex -space-x-3">
-                <div className="w-9 h-9 rounded-full bg-white/40" />
-                <div className="w-9 h-9 rounded-full bg-white/60" />
+            {/* Header do cartão */}
+            <div className="bg-gradient-to-r from-amber-600/30 to-transparent p-4 pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-white/60 text-[10px] uppercase tracking-widest">Associação Brasileira</p>
+                  <p className="text-white text-sm font-bold tracking-wide">ABRACANM</p>
+                </div>
+                <div className="flex -space-x-2">
+                  <div className="w-7 h-7 rounded-full bg-white/40" />
+                  <div className="w-7 h-7 rounded-full bg-white/60" />
+                </div>
               </div>
             </div>
 
-            {/* Member Name */}
-            <p className="text-white/70 text-xs uppercase tracking-wider mb-1">Associado Premium</p>
-            <p className="text-white text-lg font-bold mb-6">SEU NOME AQUI</p>
-
-            {/* Card Number + Chip */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-7 bg-yellow-300/60 rounded-md flex items-center justify-center">
-                  <div className="grid grid-cols-3 gap-0.5">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="w-1.5 h-1 bg-yellow-700/50 rounded-sm" />
-                    ))}
+            {/* Corpo do cartão - Layout Driver's License */}
+            <div className="p-4 pt-2">
+              <div className="flex gap-4">
+                {/* Foto do associado */}
+                <div className="flex-shrink-0">
+                  <div 
+                    className="w-20 h-24 rounded-lg bg-white/20 border-2 border-white/30 flex items-center justify-center overflow-hidden"
+                    style={{ boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)" }}
+                  >
+                    <User className="w-10 h-10 text-white/50" />
                   </div>
                 </div>
-                <Wifi className="w-4 h-4 text-white/60 rotate-90" />
+
+                {/* Dados do associado */}
+                <div className="flex-1 min-w-0">
+                  <div className="mb-2">
+                    <p className="text-white/50 text-[9px] uppercase tracking-wider">Nome</p>
+                    <p className="text-white text-sm font-bold truncate">SEU NOME AQUI</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                    <div>
+                      <p className="text-white/50 text-[8px] uppercase tracking-wider">Nº Registro</p>
+                      <p className="text-white text-xs font-semibold">ABR-00001</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-[8px] uppercase tracking-wider">Categoria</p>
+                      <p className="text-white text-xs font-semibold">PREMIUM</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-[8px] uppercase tracking-wider">Nascimento</p>
+                      <p className="text-white text-xs font-semibold">01/01/1990</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-[8px] uppercase tracking-wider">Validade</p>
+                      <p className="text-white text-xs font-semibold">12/2025</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-white/80 font-mono text-sm tracking-wider">
-                **** 0001
-              </p>
+
+              {/* Status Badge */}
+              <div className="mt-3 flex items-center gap-2">
+                <div className="px-3 py-1 bg-[#3FA174] rounded-full">
+                  <span className="text-white text-[10px] font-bold uppercase tracking-wider">Ativo</span>
+                </div>
+                <span className="text-white/50 text-[10px]">Associado verificado</span>
+              </div>
             </div>
 
-            {/* Validity */}
-            <p className="text-white/50 text-xs text-right mt-2">Válido até 12/25</p>
-          </div>
-        </div>
+            {/* Footer do cartão - Chip e Número */}
+            <div className="px-4 pb-4 pt-2 flex items-center justify-between">
+              {/* Chip */}
+              <div 
+                className="w-12 h-9 rounded-md flex items-center justify-center"
+                style={{ background: "linear-gradient(135deg, #FFE082 0%, #FFD54F 50%, #FFCA28 100%)" }}
+              >
+                <div className="grid grid-cols-4 gap-0.5 p-1.5">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="w-1.5 h-1.5 bg-amber-700/40 rounded-[1px]" />
+                  ))}
+                </div>
+              </div>
 
-        {/* White Content Area */}
-        <div className="bg-white rounded-t-[32px] pt-6 px-6 pb-5">
-          {/* Informações */}
-          <h4 className="text-gray-900 text-lg font-bold mb-3">Informações</h4>
-          
-          <div className="space-y-3">
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-amber-600" />
+              {/* Número do cartão */}
+              <div className="flex items-center gap-2">
+                <span className="text-white/70 font-mono text-sm tracking-widest">
+                  ••••  ••••  ••••
+                </span>
+                <span className="text-white font-mono text-sm font-bold">
+                  0001
+                </span>
               </div>
-              <span className="text-gray-800 text-base font-medium">Plano Premium</span>
-            </div>
-            
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <Wifi className="w-5 h-5 text-green-600" />
-              </div>
-              <span className="text-gray-800 text-base font-medium">Teleconsulta Ativa</span>
-            </div>
-          </div>
-
-          {/* Bottom Nav */}
-          <div className="flex items-center justify-around pt-5 mt-5 border-t border-gray-100">
-            <div className="flex flex-col items-center gap-1">
-              <Home className="w-6 h-6 text-gray-400" />
-              <span className="text-xs text-gray-400">Home</span>
-            </div>
-            <div className="flex flex-col items-center gap-1 -mt-3">
-              <div className="w-12 h-12 rounded-full bg-[#3FA174] flex items-center justify-center shadow-lg">
-                <CreditCard className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xs text-[#3FA174] font-bold">Cards</span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <History className="w-6 h-6 text-gray-400" />
-              <span className="text-xs text-gray-400">History</span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <UserCircle className="w-6 h-6 text-gray-400" />
-              <span className="text-xs text-gray-400">Profile</span>
             </div>
           </div>
         </div>
