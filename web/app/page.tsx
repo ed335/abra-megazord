@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import { BenefitsCarousel } from "@/components/ui/benefits-carousel";
-import { FlipWords } from "@/components/ui/flip-words";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -132,76 +131,136 @@ export default function Home() {
     <div className="relative min-h-screen w-full bg-white">
       <Header />
 
-      {/* Hero Section - Pure White */}
-      <section id="inicio" className="relative w-full bg-white pt-24 pb-12 flex items-center">
-        <div className="container mx-auto px-4 md:px-6 lg:px-12 xl:px-20 py-12 md:py-16">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 items-center max-w-7xl mx-auto">
-            <div className="text-center lg:text-left">
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4 }}
-                className="text-[#3FA174] font-medium mb-6 tracking-widest text-xs sm:text-sm uppercase"
-              >
-                Cannabis Medicinal no Brasil
-              </motion.p>
+      {/* Hero Section - Ezcard Style */}
+      <section id="inicio" className="relative w-full bg-gradient-to-b from-gray-50 via-white to-white pt-24 pb-16 overflow-hidden">
+        {/* Background Decorative Curves */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-40 w-[600px] h-[600px] rounded-full border border-gray-200/50" />
+          <div className="absolute top-1/3 -left-20 w-[400px] h-[400px] rounded-full border border-gray-200/30" />
+          <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#3FA174]/5" />
+        </div>
 
+        <div className="container mx-auto px-4 md:px-6 lg:px-12 xl:px-20 py-12 md:py-20 relative z-10">
+          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 xl:gap-24 items-center max-w-7xl mx-auto">
+            {/* Left Column - Text Content */}
+            <div className="text-center lg:text-left">
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 tracking-tight text-gray-900 leading-[1.05]"
+                transition={{ duration: 0.5 }}
+                className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold mb-6 tracking-tight text-gray-900 leading-[1.1]"
               >
-                Acesse seu tratamento de forma{" "}
-                <span className="text-[#3FA174] inline-block">
-                  <FlipWords words={["legal", "humanizada", "segura", "acessível"]} />
-                </span>
+                Acesse seu tratamento{" "}
+                <br className="hidden sm:block" />
+                de forma <span className="text-[#3FA174]">simples.</span>{" "}
+                <span className="text-[#3FA174]">segura.</span>{" "}
+                <span className="text-[#3FA174]">legal.</span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg lg:text-xl text-gray-500 mb-10 leading-relaxed max-w-lg lg:max-w-xl"
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-base lg:text-lg text-gray-500 mb-8 leading-relaxed max-w-md lg:max-w-lg"
               >
-                Conectamos você a médicos prescritores especializados. 
-                Consultas por vídeo, receita digital válida em todo Brasil.
+                Conectamos você a médicos prescritores especializados.
+                Consultas por vídeo, receita digital válida em todo o Brasil.
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center"
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start items-center"
               >
                 <Button
                   asChild
                   size="lg"
-                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-10 py-7 text-lg font-medium rounded-xl shadow-lg shadow-[#3FA174]/20 hover:shadow-xl hover:shadow-[#3FA174]/30 transition-all"
+                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6 text-base font-medium rounded-full shadow-lg shadow-[#3FA174]/20 hover:shadow-xl hover:shadow-[#3FA174]/30 transition-all"
                 >
                   <Link href="/cadastro">
                     Agendar consulta
-                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Link 
-                  href="/planos"
-                  className="text-gray-600 hover:text-[#3FA174] font-medium text-lg flex items-center gap-2 transition-colors"
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-6 text-base font-medium rounded-full"
                 >
-                  Como funciona
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
+                  <Link href="/planos">
+                    Como funciona
+                  </Link>
+                </Button>
               </motion.div>
-
             </div>
 
+            {/* Right Column - Mockup with Floating Elements */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="hidden lg:flex justify-center items-center"
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="hidden lg:block relative"
             >
-              <HeroCarteirinha className="w-full max-w-lg xl:max-w-xl" />
+              {/* Floating Badges */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="absolute -left-8 top-16 z-20"
+              >
+                <div className="bg-rose-100 text-rose-600 px-4 py-2 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
+                  <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
+                  100% Legal
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="absolute -right-4 top-24 z-20"
+              >
+                <div className="bg-[#3FA174] text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                  Receita Digital
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="absolute -left-4 bottom-32 z-20"
+              >
+                <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl shadow-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Status</p>
+                      <p className="text-sm font-bold text-gray-900">Atendimento Rápido</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="absolute right-8 bottom-16 z-20"
+              >
+                <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl shadow-xl">
+                  <p className="text-xs text-gray-400 mb-1">Pacientes atendidos</p>
+                  <p className="text-2xl font-bold text-[#3FA174]">+5.000</p>
+                </div>
+              </motion.div>
+
+              {/* Main Mockup */}
+              <div className="flex justify-center items-center pl-8">
+                <HeroCarteirinha className="w-full max-w-md" />
+              </div>
             </motion.div>
           </div>
         </div>
