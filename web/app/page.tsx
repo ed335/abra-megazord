@@ -168,30 +168,97 @@ export default function Home() {
     <div className="relative min-h-screen w-full bg-white">
       <Header />
 
-      {/* Hero Section com Scroll Animation */}
-      <section id="inicio" className="relative w-full overflow-hidden bg-gradient-to-b from-[#FAFBFC] to-white">
+      {/* Hero Section com Scroll Animation e Elementos Flutuantes */}
+      <section id="inicio" className="relative w-full bg-gradient-to-b from-[#FAFBFC] to-white">
+        {/* Floating Elements - Desktop - Positioned relative to section */}
+        <div className="hidden md:block">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="absolute left-2 md:left-4 lg:left-8 xl:left-16 top-[42%] md:top-[45%] z-20"
+          >
+            <div className="bg-rose-100 text-rose-600 px-3 md:px-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-medium shadow-lg flex items-center gap-1.5 md:gap-2">
+              <Zap className="w-3 h-3 md:w-4 md:h-4" />
+              Atendimento Rápido
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+            className="absolute left-1 md:left-2 lg:left-6 xl:left-12 top-[54%] md:top-[56%] z-20"
+          >
+            <div className="bg-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-4 border border-gray-100">
+              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Limite de Consultas</p>
+              <p className="text-xs md:text-sm lg:text-base font-bold text-gray-900">Ilimitado</p>
+              <div className="mt-1.5 md:mt-2 h-1.5 md:h-2 bg-gray-100 rounded-full overflow-hidden w-20 md:w-24 lg:w-28">
+                <div className="h-full w-3/4 bg-blue-500 rounded-full" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            className="absolute left-2 md:left-6 lg:left-10 xl:left-20 top-[68%] md:top-[70%] z-20"
+          >
+            <div className="bg-blue-500 text-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-3.5 flex items-center gap-2 md:gap-2.5">
+              <div className="w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 bg-white/20 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
+              </div>
+              <span className="font-medium text-xs md:text-sm">Consulta Realizada!</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="absolute right-2 md:right-4 lg:right-8 xl:right-16 top-[40%] md:top-[43%] z-20"
+          >
+            <div className="bg-[#3FA174] text-white px-3 md:px-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-medium shadow-lg">
+              100% Legal
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+            className="absolute right-1 md:right-2 lg:right-6 xl:right-12 top-[52%] md:top-[54%] z-20"
+          >
+            <div className="bg-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-4 border border-gray-100">
+              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Satisfação</p>
+              <div className="flex items-center gap-1 md:gap-1.5">
+                <span className="text-rose-500 text-xs md:text-sm">+</span>
+                <p className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">98%</p>
+              </div>
+              <div className="flex gap-1 md:gap-1.5 mt-1.5 md:mt-2">
+                <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 bg-green-100 rounded flex items-center justify-center text-[10px] md:text-xs text-green-600">↓</div>
+                <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 bg-purple-100 rounded flex items-center justify-center text-[10px] md:text-xs text-purple-600">↑</div>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            className="absolute right-2 md:right-6 lg:right-10 xl:right-20 top-[68%] md:top-[70%] z-20"
+          >
+            <div className="bg-white rounded-xl shadow-lg p-2.5 md:p-3 lg:p-4 border border-gray-100">
+              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Pacientes Atendidos</p>
+              <p className="text-base md:text-lg lg:text-xl font-bold text-[#3FA174]">+5.000</p>
+            </div>
+          </motion.div>
+        </div>
+
         <ContainerScroll
           titleComponent={
             <div className="flex flex-col items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex gap-2 mb-6"
-              >
-                <span className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
-                  <Zap className="w-3 h-3" />
-                  Atendimento Rápido
-                </span>
-                <span className="bg-[#3FA174] text-white px-3 py-1.5 rounded-full text-xs font-medium">
-                  100% Legal
-                </span>
-                <span className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
-                  <CheckCircle className="w-3 h-3" />
-                  Consulta Realizada
-                </span>
-              </motion.div>
-              
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-gray-900 leading-[1.1]">
                 Simples. <span className="text-[#3FA174]">Seguro.</span>
                 <br />
@@ -225,13 +292,28 @@ export default function Home() {
             </div>
           }
         >
-          <div className="h-full w-full flex items-center justify-center p-4 md:p-8">
+          <div className="relative h-full w-full flex items-center justify-center p-4 md:p-8">
             <HeroCarteirinha className="scale-90 md:scale-100" />
           </div>
         </ContainerScroll>
 
+        {/* Mobile Floating Badges */}
+        <div className="flex md:hidden justify-center gap-2 -mt-24 mb-8 flex-wrap px-4">
+          <span className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+            <Zap className="w-3 h-3" />
+            Atendimento Rápido
+          </span>
+          <span className="bg-[#3FA174] text-white px-3 py-1.5 rounded-full text-xs font-medium">
+            100% Legal
+          </span>
+          <span className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+            <CheckCircle className="w-3 h-3" />
+            Consulta Realizada
+          </span>
+        </div>
+
         {/* Stats Section */}
-        <div className="relative -mt-32 md:-mt-48 pb-16">
+        <div className="relative -mt-16 md:-mt-32 pb-16">
           <div className="max-w-4xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
