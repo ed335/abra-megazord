@@ -3,26 +3,17 @@
 import { motion } from "framer-motion";
 import { 
   Leaf, 
-  Shield,
-  Clock,
   FileText,
   Video,
   CheckCircle,
   ArrowRight,
-  Users,
-  Heart,
-  BookOpen,
   Phone,
-  Mail,
-  MapPin,
-  Star,
   Calendar,
   MessageCircle
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
-import { RadialOrbitalTimeline } from "@/components/ui/radial-orbital-timeline";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import Header from "@/components/shared/Header";
 
@@ -100,13 +91,6 @@ const conditions = [
   "Ansiedade", "Dor Crônica", "Insônia", "Depressão", "Epilepsia",
   "Fibromialgia", "Autismo", "Parkinson", "Alzheimer", "TDAH",
   "Síndrome do Pânico", "Estresse Pós-Traumático"
-];
-
-const stats = [
-  { value: "+5.000", label: "Pacientes atendidos", icon: Users },
-  { value: "+250", label: "Médicos parceiros", icon: Star },
-  { value: "48h", label: "Tempo de atendimento", icon: Clock },
-  { value: "100%", label: "Legal e seguro", icon: Shield },
 ];
 
 const services = [
@@ -341,54 +325,83 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Mission Section - Minimal */}
-      <section id="sobre" className="py-24 px-4 md:px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Nossa missão
-              </h2>
-              <p className="text-gray-500 leading-relaxed mb-6">
-                Acolhemos pacientes que buscam qualidade de vida através da cannabis medicinal, 
-                quebrando barreiras e tabus com ciência, segurança e humanidade.
-              </p>
-              <Link 
-                href="/sobre"
-                className="text-[#3FA174] font-medium text-sm flex items-center gap-1 hover:gap-2 transition-all"
-              >
-                Conheça nossa história
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </motion.div>
+      {/* Mission Section */}
+      <section id="sobre" className="py-28 px-4 md:px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <p className="text-[#3FA174] font-medium text-sm uppercase tracking-wide mb-4">
+              Nossa missão
+            </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 max-w-3xl mx-auto leading-tight">
+              Quebrar barreiras e tabus com{" "}
+              <span className="text-[#3FA174]">ciência</span>,{" "}
+              <span className="text-[#3FA174]">segurança</span> e{" "}
+              <span className="text-[#3FA174]">humanidade</span>
+            </h2>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              {[
-                { title: "Cuidado humanizado", desc: "Apoio completo no acesso ao tratamento" },
-                { title: "Ciência e educação", desc: "Informação científica de qualidade" },
-                { title: "Comunidade ativa", desc: "Rede de apoio entre pacientes" },
-              ].map((item, index) => (
-                <div key={index} className="flex gap-4 items-start">
-                  <div className="w-2 h-2 rounded-full bg-[#3FA174] mt-2 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                    <p className="text-gray-500 text-sm">{item.desc}</p>
-                  </div>
+          <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+            {[
+              {
+                number: "01",
+                title: "Cuidado humanizado",
+                description: "Acolhemos cada paciente de forma única, oferecendo suporte completo no acesso ao tratamento para você e sua família.",
+              },
+              {
+                number: "02",
+                title: "Ciência e educação",
+                description: "Trabalhamos com base em evidências científicas, promovendo capacitação contínua e informação de qualidade.",
+              },
+              {
+                number: "03",
+                title: "Comunidade ativa",
+                description: "Construímos uma rede de apoio onde pacientes compartilham experiências e se fortalecem juntos.",
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="relative"
+              >
+                <span className="text-6xl font-bold text-gray-100 absolute -top-4 -left-2">
+                  {item.number}
+                </span>
+                <div className="relative pt-8">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-              ))}
-            </motion.div>
+              </motion.div>
+            ))}
           </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center mt-16"
+          >
+            <Link 
+              href="/sobre"
+              className="inline-flex items-center gap-2 text-[#3FA174] font-medium hover:gap-3 transition-all"
+            >
+              Conheça nossa história
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
