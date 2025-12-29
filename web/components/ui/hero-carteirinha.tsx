@@ -44,7 +44,7 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
             style={{ background: "linear-gradient(180deg, #4CAF50 0%, #43A047 100%)" }}
           />
           
-          {/* Main Card - Driver's License Style (WHITE) */}
+          {/* Main Card - WHITE with green text */}
           <div 
             className="relative rounded-2xl overflow-hidden mt-3 bg-white"
             style={{ 
@@ -65,7 +65,7 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
               </div>
             </div>
 
-            {/* Corpo do cartão - Layout Driver's License */}
+            {/* Corpo do cartão */}
             <div className="p-4">
               <div className="flex gap-4">
                 {/* Foto do associado */}
@@ -79,12 +79,12 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
 
                 {/* Dados do associado */}
                 <div className="flex-1 min-w-0">
-                  <div className="mb-2">
+                  <div className="mb-3">
                     <p className="text-gray-400 text-[9px] uppercase tracking-wider">Nome</p>
                     <p className="text-[#1B4332] text-sm font-bold truncate">SEU NOME AQUI</p>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                     <div>
                       <p className="text-gray-400 text-[8px] uppercase tracking-wider">Nº Registro</p>
                       <p className="text-[#1B4332] text-xs font-semibold">ABR-00001</p>
@@ -104,34 +104,6 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
                   </div>
                 </div>
               </div>
-
-              {/* Status Badge */}
-              <div className="mt-3 flex items-center gap-2">
-                <div className="px-3 py-1 bg-[#3FA174] rounded-full">
-                  <span className="text-white text-[10px] font-bold uppercase tracking-wider">Ativo</span>
-                </div>
-                <span className="text-gray-400 text-[10px]">Associado verificado</span>
-              </div>
-            </div>
-
-            {/* Footer - Código de Barras */}
-            <div className="px-4 pb-4 pt-2">
-              {/* Barcode */}
-              <div className="flex items-end justify-center gap-[2px] h-12">
-                {[3,1,2,1,3,2,1,1,2,3,1,2,1,1,3,2,1,2,1,3,1,1,2,1,3,2,1,1,2,3,1,2,1,1,3,2,1,2,1,3,1,1,2,1,3].map((h, i) => (
-                  <div 
-                    key={i} 
-                    className="bg-[#1B4332]" 
-                    style={{ 
-                      width: i % 3 === 0 ? '2px' : '1px',
-                      height: `${h * 12}px`
-                    }} 
-                  />
-                ))}
-              </div>
-              <p className="text-center text-[#1B4332] text-[10px] font-mono mt-1 tracking-widest">
-                ABR 0001 2024 00001
-              </p>
             </div>
           </div>
         </div>
