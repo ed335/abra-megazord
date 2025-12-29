@@ -46,80 +46,70 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
 
         {/* Cards Stack */}
         <div className="relative px-5 pb-4">
-          {/* Back Card (Green) */}
+          {/* Back Card (Green) - just visual accent */}
           <div 
-            className="absolute left-8 right-8 top-2 h-16 rounded-t-2xl"
+            className="absolute left-8 right-8 top-2 h-12 rounded-t-2xl"
             style={{ background: "#4CAF50" }}
           />
           
-          {/* Front Card (Golden/Orange) */}
+          {/* Main Premium Card (Golden/Orange) - ABRACANM Member Card */}
           <div 
-            className="relative rounded-2xl p-5 mt-6"
-            style={{ background: "linear-gradient(135deg, #F5A623 0%, #E8963A 100%)" }}
+            className="relative rounded-2xl p-5 mt-4 overflow-hidden"
+            style={{ background: "linear-gradient(135deg, #D4A574 0%, #C4956A 50%, #B8895E 100%)" }}
           >
-            {/* Balance */}
-            <div className="flex items-start justify-between mb-6">
+            {/* Pattern decorativo */}
+            <div className="absolute top-0 right-0 opacity-30">
+              <div className="absolute top-6 right-6 w-16 h-16 border-[3px] border-white/50 rounded-full" />
+              <div className="absolute top-10 right-2 w-20 h-20 border-[3px] border-white/50 rounded-full" />
+            </div>
+
+            {/* Logo + Status */}
+            <div className="flex items-start justify-between mb-8">
               <div>
-                <p className="text-white/70 text-sm mb-1">Status</p>
-                <p className="text-white text-3xl font-bold italic">Ativo</p>
+                <p className="text-white/70 text-xs uppercase tracking-wider mb-1">ABRACANM</p>
+                <p className="text-white text-2xl font-bold italic">Ativo</p>
               </div>
-              <div className="flex -space-x-2">
-                <div className="w-10 h-10 rounded-full bg-white/30" />
-                <div className="w-10 h-10 rounded-full bg-white/50" />
+              <div className="flex -space-x-3">
+                <div className="w-9 h-9 rounded-full bg-white/40" />
+                <div className="w-9 h-9 rounded-full bg-white/60" />
               </div>
             </div>
 
-            {/* Card Number */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-9 bg-yellow-200/50 rounded-md flex items-center justify-center">
-                <div className="grid grid-cols-3 gap-0.5">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="w-1.5 h-1 bg-yellow-700/40 rounded-sm" />
-                  ))}
+            {/* Member Name */}
+            <p className="text-white/70 text-xs uppercase tracking-wider mb-1">Associado Premium</p>
+            <p className="text-white text-lg font-bold mb-6">SEU NOME AQUI</p>
+
+            {/* Card Number + Chip */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-7 bg-yellow-300/60 rounded-md flex items-center justify-center">
+                  <div className="grid grid-cols-3 gap-0.5">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="w-1.5 h-1 bg-yellow-700/50 rounded-sm" />
+                    ))}
+                  </div>
                 </div>
+                <Wifi className="w-4 h-4 text-white/60 rotate-90" />
               </div>
-              <p className="text-white font-mono text-lg tracking-widest">
-                ••••  ••••  ••••  0001
+              <p className="text-white/80 font-mono text-sm tracking-wider">
+                **** 0001
               </p>
             </div>
+
+            {/* Validity */}
+            <p className="text-white/50 text-xs text-right mt-2">Válido até 12/25</p>
           </div>
         </div>
 
         {/* White Content Area */}
-        <div className="bg-white rounded-t-[32px] pt-6 px-6 pb-5 -mt-2">
-          {/* Green Card Preview */}
-          <div 
-            className="relative rounded-2xl p-5 mb-5 overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #3FA174 0%, #2D7A5A 100%)" }}
-          >
-            {/* Card Pattern */}
-            <div className="absolute top-4 right-4 opacity-20">
-              <div className="w-20 h-20 border-[3px] border-white rounded-full" />
-              <div className="w-28 h-28 border-[3px] border-white rounded-full -mt-14 ml-6" />
-            </div>
-
-            {/* Chip + Wifi */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-8 bg-yellow-400 rounded-md" />
-              <Wifi className="w-5 h-5 text-white/70 rotate-90" />
-            </div>
-
-            {/* Card Name */}
-            <p className="text-white/70 text-xs uppercase tracking-wider mb-1">Nome do Associado</p>
-            <p className="text-white text-xl font-bold mb-4">SEU NOME AQUI</p>
-
-            {/* Card Number */}
-            <p className="text-white font-mono text-base tracking-widest">**** **** **** 0001</p>
-            <p className="text-white/50 text-sm text-right mt-1">12/25</p>
-          </div>
-
+        <div className="bg-white rounded-t-[32px] pt-6 px-6 pb-5">
           {/* Informações */}
           <h4 className="text-gray-900 text-lg font-bold mb-3">Informações</h4>
           
           <div className="space-y-3">
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-amber-600" />
               </div>
               <span className="text-gray-800 text-base font-medium">Plano Premium</span>
             </div>
