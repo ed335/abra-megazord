@@ -190,29 +190,6 @@ export default function Home() {
                 </Link>
               </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="mt-14 pt-8 border-t border-gray-100"
-              >
-                <div className="flex items-center justify-center lg:justify-start gap-8 text-sm">
-                  <div>
-                    <span className="text-2xl font-bold text-gray-900">+5.000</span>
-                    <p className="text-gray-400 mt-0.5">pacientes</p>
-                  </div>
-                  <div className="w-px h-10 bg-gray-200" />
-                  <div>
-                    <span className="text-2xl font-bold text-gray-900">48h</span>
-                    <p className="text-gray-400 mt-0.5">atendimento</p>
-                  </div>
-                  <div className="w-px h-10 bg-gray-200" />
-                  <div>
-                    <span className="text-2xl font-bold text-gray-900">100%</span>
-                    <p className="text-gray-400 mt-0.5">legal</p>
-                  </div>
-                </div>
-              </motion.div>
             </div>
 
             <motion.div
@@ -224,6 +201,34 @@ export default function Home() {
               <HeroCarteirinha />
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Stats Section - Centered */}
+      <section className="py-12 px-4 md:px-6 bg-white border-b border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="flex items-center justify-center gap-12 md:gap-20"
+          >
+            <div className="text-center">
+              <span className="text-4xl md:text-5xl font-bold text-[#3FA174]">+5.000</span>
+              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">pacientes atendidos</p>
+            </div>
+            <div className="w-px h-16 bg-gray-200" />
+            <div className="text-center">
+              <span className="text-4xl md:text-5xl font-bold text-[#3FA174]">48h</span>
+              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">atendimento rápido</p>
+            </div>
+            <div className="w-px h-16 bg-gray-200" />
+            <div className="text-center">
+              <span className="text-4xl md:text-5xl font-bold text-[#3FA174]">100%</span>
+              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">legal e seguro</p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
