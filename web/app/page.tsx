@@ -451,7 +451,7 @@ export default function Home() {
       {/* Benefits Section - Clickable Carousel */}
       <section id="beneficios" className="py-24 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-start">
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
