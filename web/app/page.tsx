@@ -7,7 +7,6 @@ import {
   Video,
   CheckCircle,
   ArrowRight,
-  Phone,
   Calendar,
   MessageCircle,
   Zap
@@ -519,48 +518,6 @@ export default function Home() {
           </motion.div>
 
           <AnimatedTestimonials testimonials={testimonials} />
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 md:px-6 bg-[#1B4332]">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Pronto para começar seu tratamento?
-            </h2>
-            <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
-              Agende sua consulta agora e dê o primeiro passo para uma vida com mais qualidade
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="bg-white text-[#1B4332] hover:bg-gray-100 px-8 py-6 text-lg font-medium rounded-xl"
-              >
-                <Link href="/cadastro">
-                  Agendar consulta
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg font-medium rounded-xl"
-              >
-                <Link href="https://wa.me/5511999999999" target="_blank">
-                  <Phone className="mr-2 h-5 w-5" />
-                  Falar no WhatsApp
-                </Link>
-              </Button>
-            </div>
-          </motion.div>
         </div>
       </section>
 
