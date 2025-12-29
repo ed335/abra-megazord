@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Pill,
   FileText,
-  Activity
+  Activity,
+  Wallet
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -149,7 +150,7 @@ export default function DashboardPage() {
           <p className="text-sm text-muted-foreground">O que você precisa hoje?</p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <QuickAction 
             href="/pre-anamnese" 
             icon={ClipboardList} 
@@ -170,6 +171,11 @@ export default function DashboardPage() {
             href="/perfil" 
             icon={User} 
             label="Perfil"
+          />
+          <QuickAction 
+            href="/carteirinha" 
+            icon={Wallet} 
+            label="Carteirinha"
           />
         </div>
 
