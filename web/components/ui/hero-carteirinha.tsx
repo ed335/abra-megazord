@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { User, CheckCircle2, Shield, QrCode } from "lucide-react"
+import { User, ChevronRight, CreditCard, Wifi, Home, History, UserCircle } from "lucide-react"
 import { motion } from "framer-motion"
 import { cn } from '@/lib/utils'
 
@@ -14,206 +14,259 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
 
   return (
     <div 
-      className={cn("perspective-1000 cursor-pointer w-full max-w-[280px]", className)}
+      className={cn("perspective-1000 cursor-pointer w-full max-w-[300px]", className)}
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <motion.div
-        className="relative w-full aspect-[9/16] preserve-3d"
+        className="relative w-full aspect-[9/18] preserve-3d"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 15 }}
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Frente - iPhone Mockup Compacto */}
+        {/* Frente - Cards Screen */}
         <motion.div
-          className="absolute inset-0 rounded-[36px] overflow-hidden backface-hidden bg-white"
+          className="absolute inset-0 rounded-[40px] overflow-hidden backface-hidden bg-gray-100"
           style={{ 
             backfaceVisibility: "hidden",
-            boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.25), 0 20px 40px -20px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0,0,0,0.08)"
+            boxShadow: "0 50px 100px -20px rgba(0, 0, 0, 0.3), 0 30px 60px -30px rgba(0, 0, 0, 0.25)"
           }}
         >
-          {/* Dynamic Island */}
-          <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-10" />
-          
-          {/* Status Bar */}
-          <div className="flex items-center justify-between px-5 pt-3 pb-1">
-            <span className="text-[11px] font-semibold text-black">11:35</span>
-            <div className="w-20" />
-            <div className="flex items-center gap-0.5">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
-              </svg>
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="2" y="7" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <rect x="20" y="10" width="2" height="4" rx="1" fill="currentColor"/>
-                <rect x="4" y="9" width="13" height="6" rx="1" fill="currentColor"/>
-              </svg>
+          {/* Header Verde */}
+          <div 
+            className="pt-8 pb-6 px-5"
+            style={{ background: "linear-gradient(180deg, #1B4332 0%, #2D6A4F 100%)" }}
+          >
+            {/* Status Bar */}
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-white text-xs font-medium">9:41</span>
+              <div className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+                </svg>
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="2" y="7" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                  <rect x="20" y="10" width="2" height="4" rx="1" fill="currentColor"/>
+                  <rect x="4" y="9" width="14" height="6" rx="1" fill="currentColor"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Greeting */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <ChevronRight className="w-5 h-5 text-white rotate-180" />
+                <span className="text-white text-base font-medium">Olá, Associado</span>
+                <span className="text-[10px] bg-[#3FA174] text-white px-2 py-0.5 rounded-full font-bold">PLUS</span>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
+            </div>
+
+            {/* Balance */}
+            <div>
+              <p className="text-white text-3xl font-bold">Ativo ✓</p>
+              <p className="text-white/60 text-xs">Seu status</p>
             </div>
           </div>
 
-          {/* Header Compacto */}
-          <div className="flex items-center justify-between px-4 py-1.5">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#3FA174]" />
-              <span className="text-sm font-bold text-black">ABRACANM</span>
+          {/* White Content Area */}
+          <div className="bg-white rounded-t-[28px] -mt-4 pt-5 px-5 pb-4 h-full">
+            {/* Cards Label */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-gray-900 text-lg font-bold">Carteirinha</h3>
             </div>
-            <span className="text-[9px] text-gray-400">ID Digital</span>
-          </div>
 
-          {/* Banner Verde Compacto */}
-          <div className="mx-3 mt-1.5 rounded-xl overflow-hidden" style={{ background: "linear-gradient(135deg, #3FA174 0%, #2D7A5A 100%)" }}>
-            <div className="p-3 flex items-center justify-between">
-              <div>
-                <p className="text-white/70 text-[9px] font-medium uppercase tracking-wider">Associado</p>
-                <p className="text-white text-sm font-bold">Verificado ✓</p>
+            {/* Green Card */}
+            <div 
+              className="relative rounded-2xl p-5 mb-5 overflow-hidden"
+              style={{ background: "linear-gradient(135deg, #3FA174 0%, #2D7A5A 100%)" }}
+            >
+              {/* Card Pattern */}
+              <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
+                <div className="absolute top-4 right-4 w-20 h-20 border-4 border-white rounded-full" />
+                <div className="absolute top-8 right-8 w-24 h-24 border-4 border-white rounded-full" />
               </div>
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                <CheckCircle2 className="w-5 h-5 text-white" />
+
+              {/* Chip + Wifi */}
+              <div className="flex items-center gap-2 mb-8">
+                <div className="w-10 h-7 bg-yellow-400/80 rounded-md" />
+                <Wifi className="w-5 h-5 text-white/80 rotate-90" />
               </div>
+
+              {/* Card Name */}
+              <p className="text-white/80 text-xs uppercase tracking-wider mb-1">Nome do Associado</p>
+              <p className="text-white text-lg font-bold mb-4">SEU NOME AQUI</p>
+
+              {/* Card Number */}
+              <div className="flex items-center justify-between">
+                <p className="text-white font-mono text-sm tracking-widest">**** **** **** 0001</p>
+                <ChevronRight className="w-6 h-6 text-white" />
+              </div>
+
+              {/* Expiry */}
+              <p className="text-white/60 text-xs text-right mt-1">12/25</p>
             </div>
-          </div>
 
-          {/* Card Principal Compacto */}
-          <div className="mx-3 mt-2.5 bg-white rounded-xl p-3 border border-gray-100" style={{ boxShadow: "0 2px 12px -2px rgba(0,0,0,0.08)" }}>
-            {/* Foto + Info */}
-            <div className="flex gap-3 mb-3">
-              <div className="w-14 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden flex items-center justify-center border border-gray-200 flex-shrink-0">
-                <User className="w-7 h-7 text-gray-300" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-gray-900 truncate">Seu Nome Completo</p>
-                <p className="text-[10px] text-gray-500 mb-1">Plano Premium</p>
-                <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-green-50 rounded">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#3FA174]" />
-                  <span className="text-[8px] font-bold text-[#3FA174] uppercase">Ativo</span>
+            {/* Card Info */}
+            <div className="mb-4">
+              <h4 className="text-gray-900 font-bold mb-3">Informações</h4>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <CreditCard className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-gray-700 text-sm">Plano Premium</span>
+                </div>
+                
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                    <Wifi className="w-4 h-4 text-green-600" />
+                  </div>
+                  <span className="text-gray-700 text-sm">Teleconsulta Ativa</span>
                 </div>
               </div>
             </div>
 
-            {/* Grid de Dados */}
-            <div className="grid grid-cols-2 gap-2 p-2 bg-gray-50 rounded-lg mb-3">
-              <div>
-                <p className="text-[8px] text-gray-400 uppercase">Nº Associado</p>
-                <p className="text-[11px] font-bold text-gray-900">ABR-00001</p>
+            {/* Bottom Nav */}
+            <div className="flex items-center justify-around pt-3 border-t border-gray-100">
+              <div className="flex flex-col items-center gap-1">
+                <Home className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] text-gray-400">Home</span>
               </div>
-              <div>
-                <p className="text-[8px] text-gray-400 uppercase">Validade</p>
-                <p className="text-[11px] font-bold text-[#3FA174]">12/2025</p>
-              </div>
-              <div>
-                <p className="text-[8px] text-gray-400 uppercase">CPF</p>
-                <p className="text-[11px] font-bold text-gray-900">***.***-00</p>
-              </div>
-              <div>
-                <p className="text-[8px] text-gray-400 uppercase">Nascimento</p>
-                <p className="text-[11px] font-bold text-gray-900">01/01/1990</p>
-              </div>
-            </div>
-
-            {/* QR Code Compacto */}
-            <div className="flex justify-center">
-              <div className="p-2 bg-white border border-gray-200 rounded-lg">
-                <div className="w-16 h-16 grid grid-cols-7 gap-px">
-                  {[...Array(49)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={`rounded-[1px] ${
-                        [0,1,2,4,5,6,7,13,14,20,21,27,28,34,35,36,42,43,44,46,47,48,
-                         9,10,11,16,17,18,22,24,26,30,31,32,38,40].includes(i) 
-                          ? 'bg-gray-900' 
-                          : 'bg-white'
-                      }`}
-                    />
-                  ))}
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-10 h-10 rounded-full bg-[#3FA174] flex items-center justify-center -mt-4">
+                  <CreditCard className="w-5 h-5 text-white" />
                 </div>
+                <span className="text-[10px] text-[#3FA174] font-bold">Cards</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <History className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] text-gray-400">History</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <UserCircle className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] text-gray-400">Profile</span>
               </div>
             </div>
-          </div>
-
-          {/* Bottom Text */}
-          <div className="mx-3 mt-2 text-center">
-            <p className="text-[9px] text-gray-400">Toque para ver benefícios</p>
-          </div>
-
-          {/* Home Indicator */}
-          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2">
-            <div className="w-24 h-1 bg-black rounded-full" />
           </div>
         </motion.div>
 
-        {/* Verso */}
+        {/* Verso - History Screen */}
         <motion.div
-          className="absolute inset-0 rounded-[36px] overflow-hidden backface-hidden bg-white"
+          className="absolute inset-0 rounded-[40px] overflow-hidden backface-hidden bg-gray-100"
           style={{ 
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
-            boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.25), 0 20px 40px -20px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0,0,0,0.08)"
+            boxShadow: "0 50px 100px -20px rgba(0, 0, 0, 0.3), 0 30px 60px -30px rgba(0, 0, 0, 0.25)"
           }}
         >
-          {/* Dynamic Island */}
-          <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-10" />
-          
-          {/* Status Bar */}
-          <div className="flex items-center justify-between px-5 pt-3 pb-1">
-            <span className="text-[11px] font-semibold text-black">11:35</span>
-            <div className="w-20" />
-            <div className="flex items-center gap-0.5">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
-              </svg>
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="2" y="7" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <rect x="20" y="10" width="2" height="4" rx="1" fill="currentColor"/>
-                <rect x="4" y="9" width="13" height="6" rx="1" fill="currentColor"/>
-              </svg>
+          {/* Header Verde */}
+          <div 
+            className="pt-8 pb-6 px-5"
+            style={{ background: "linear-gradient(180deg, #1B4332 0%, #2D6A4F 100%)" }}
+          >
+            {/* Status Bar */}
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-white text-xs font-medium">9:41</span>
+              <div className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+                </svg>
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="2" y="7" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                  <rect x="20" y="10" width="2" height="4" rx="1" fill="currentColor"/>
+                  <rect x="4" y="9" width="14" height="6" rx="1" fill="currentColor"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Greeting */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ChevronRight className="w-5 h-5 text-white rotate-180" />
+                <span className="text-white text-base font-medium">Olá, Associado</span>
+                <span className="text-[10px] bg-[#3FA174] text-white px-2 py-0.5 rounded-full font-bold">PLUS</span>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
             </div>
           </div>
 
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-1.5">
-            <span className="text-sm font-bold text-black">Benefícios</span>
-            <QrCode className="w-4 h-4 text-gray-400" />
-          </div>
+          {/* White Content Area */}
+          <div className="bg-white rounded-t-[28px] -mt-4 pt-5 px-5 pb-4 h-full">
+            {/* Transactions Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-gray-900 text-lg font-bold">Consultas</h3>
+              <span className="text-xs text-gray-400">Ordenar por <span className="text-gray-900 font-medium">Data</span></span>
+            </div>
 
-          {/* Benefícios Card */}
-          <div className="mx-3 mt-1.5 p-3 rounded-xl" style={{ background: "linear-gradient(135deg, #3FA174 0%, #2D7A5A 100%)" }}>
-            <p className="text-white/70 text-[9px] font-medium uppercase tracking-wider mb-2">Inclusos no seu plano</p>
-            <div className="space-y-1.5">
-              {["Consultas telemedicina", "Prescrições digitais", "Suporte 24h", "Descontos parceiros"].map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-white flex-shrink-0" />
-                  <span className="text-white text-[11px]">{item}</span>
+            {/* Today */}
+            <p className="text-gray-400 text-xs mb-2">Hoje</p>
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                <div>
+                  <p className="text-gray-900 text-sm font-medium">Dr. Maria Silva</p>
+                  <p className="text-gray-400 text-xs">Teleconsulta</p>
                 </div>
-              ))}
+                <span className="text-[#3FA174] text-sm font-bold">Confirmada</span>
+              </div>
             </div>
-          </div>
 
-          {/* Info Card */}
-          <div className="mx-3 mt-2.5 p-3 rounded-xl bg-white border border-gray-100" style={{ boxShadow: "0 2px 12px -2px rgba(0,0,0,0.08)" }}>
+            {/* December */}
+            <p className="text-gray-400 text-xs mb-2">20 Dez 2024</p>
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                <div>
+                  <p className="text-gray-900 text-sm font-medium">Prescrição</p>
+                  <p className="text-gray-400 text-xs">Receita digital</p>
+                </div>
+                <span className="text-blue-500 text-sm font-bold">Emitida</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                <div>
+                  <p className="text-gray-900 text-sm font-medium">Dr. João Santos</p>
+                  <p className="text-gray-400 text-xs">Teleconsulta</p>
+                </div>
+                <span className="text-gray-500 text-sm font-bold">Concluída</span>
+              </div>
+            </div>
+
+            {/* November */}
+            <p className="text-gray-400 text-xs mb-2">19 Nov 2024</p>
             <div className="space-y-2">
-              {[
-                ["Nome", "Seu Nome Aqui"],
-                ["E-mail", "seu@email.com"],
-                ["Telefone", "(11) 99999-9999"],
-                ["Membro desde", "Jan 2024"]
-              ].map(([label, value], i) => (
-                <div key={i} className="flex justify-between items-center py-1 border-b border-gray-50 last:border-0">
-                  <span className="text-[10px] text-gray-400">{label}</span>
-                  <span className="text-[11px] font-semibold text-gray-900">{value}</span>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                <div>
+                  <p className="text-gray-900 text-sm font-medium">Pagamento</p>
+                  <p className="text-gray-400 text-xs">Plano Premium</p>
                 </div>
-              ))}
+                <span className="text-[#3FA174] text-sm font-bold">+R$149,00</span>
+              </div>
             </div>
-          </div>
 
-          {/* CTA Button */}
-          <div className="mx-3 mt-2.5">
-            <button className="w-full py-2.5 rounded-lg bg-[#3FA174] text-white font-semibold text-xs hover:bg-[#2D7A5A] transition-colors">
-              Agendar Consulta
-            </button>
-          </div>
-
-          {/* Home Indicator */}
-          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2">
-            <div className="w-24 h-1 bg-black rounded-full" />
+            {/* Bottom Nav */}
+            <div className="flex items-center justify-around pt-4 mt-4 border-t border-gray-100">
+              <div className="flex flex-col items-center gap-1">
+                <Home className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] text-gray-400">Home</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <CreditCard className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] text-gray-400">Cards</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-10 h-10 rounded-full bg-[#3FA174] flex items-center justify-center -mt-4">
+                  <History className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-[10px] text-[#3FA174] font-bold">History</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <UserCircle className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] text-gray-400">Profile</span>
+              </div>
+            </div>
           </div>
         </motion.div>
       </motion.div>
