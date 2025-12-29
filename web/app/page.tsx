@@ -129,27 +129,55 @@ const benefits = [
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen w-full bg-[#FAFBFC]">
+    <div className="relative min-h-screen w-full bg-white">
       <Header />
 
-      {/* Hero Section - Ezcard Style EXATO */}
-      <section id="inicio" className="relative w-full pt-24 pb-8 overflow-hidden">
-        {/* Background Decorative Elements */}
+      {/* Hero Section Unificada - Com círculos decorativos "World Sensation" */}
+      <section id="inicio" className="relative w-full pt-24 pb-20 overflow-hidden bg-[#FAFBFC]">
+        {/* Background Decorative Circles - World Sensation */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-20 left-10 w-[500px] h-[500px] rounded-full border border-gray-200/40" />
-          <div className="absolute top-40 left-20 w-[300px] h-[300px] rounded-full border border-gray-200/30" />
-          <div className="absolute -bottom-20 right-0 w-[400px] h-[200px] bg-gradient-to-l from-purple-100/30 to-transparent" />
+          {/* Large circle - left side */}
+          <div 
+            className="absolute -left-32 top-1/4 w-[600px] h-[600px] rounded-full border border-gray-200/50"
+            style={{ transform: 'translateY(-50%)' }}
+          />
+          <div 
+            className="absolute -left-20 top-1/4 w-[450px] h-[450px] rounded-full border border-gray-200/40"
+            style={{ transform: 'translateY(-50%)' }}
+          />
+          <div 
+            className="absolute left-0 top-1/4 w-[300px] h-[300px] rounded-full border border-gray-200/30"
+            style={{ transform: 'translateY(-50%)' }}
+          />
+          
+          {/* Circles - right side */}
+          <div 
+            className="absolute -right-40 top-1/3 w-[500px] h-[500px] rounded-full border border-gray-200/40"
+          />
+          <div 
+            className="absolute -right-20 top-1/2 w-[350px] h-[350px] rounded-full border border-gray-200/30"
+          />
+          
+          {/* Bottom decorative curve */}
+          <div 
+            className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"
+          />
+          
+          {/* Subtle purple/blue gradient on right */}
+          <div 
+            className="absolute -right-20 bottom-20 w-[400px] h-[200px] bg-gradient-to-l from-purple-100/20 to-transparent rounded-full blur-3xl"
+          />
         </div>
 
         {/* Content */}
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          {/* Headline - Centered like Ezcard */}
-          <div className="text-center max-w-3xl mx-auto mb-8">
+          {/* Headline - Centered */}
+          <div className="text-center max-w-3xl mx-auto mb-10">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 tracking-tight text-gray-900 leading-[1.1]"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-gray-900 leading-[1.1]"
             >
               Simples. <span className="text-[#3FA174]">Seguro.</span>
               <br />
@@ -160,7 +188,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-gray-500 text-base lg:text-lg mb-6 max-w-xl mx-auto"
+              className="text-gray-500 text-base lg:text-lg mb-8 max-w-xl mx-auto"
             >
               Conectamos você a médicos prescritores especializados.
               Consultas por vídeo, receita digital válida em todo o Brasil.
@@ -192,127 +220,113 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Cards Section - Like Ezcard */}
-          <div className="relative max-w-5xl mx-auto mt-8">
-            {/* Left Floating Elements */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute left-0 top-20 hidden lg:block z-10"
-            >
-              <div className="bg-rose-100 text-rose-600 px-4 py-2 rounded-full text-sm font-medium shadow-sm flex items-center gap-2">
-                <Zap className="w-4 h-4" />
-                Atendimento Rápido
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="absolute left-0 top-52 hidden lg:block z-10"
-            >
-              <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                <p className="text-xs text-gray-400 mb-1">Limite de Consultas</p>
-                <p className="text-lg font-bold text-gray-900">Ilimitado</p>
-                <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full w-3/4 bg-blue-500 rounded-full" />
+          {/* Cards Section with Floating Elements */}
+          <div className="relative max-w-5xl mx-auto">
+            {/* Left Floating Elements - Positioned to not overlap */}
+            <div className="absolute left-0 top-0 bottom-0 w-48 hidden lg:flex flex-col justify-center gap-6 -translate-x-4">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <div className="bg-rose-100 text-rose-600 px-4 py-2 rounded-full text-sm font-medium shadow-sm flex items-center gap-2 w-fit">
+                  <Zap className="w-4 h-4" />
+                  Atendimento Rápido
                 </div>
-                <p className="text-xs text-gray-400 mt-1 text-right">Premium</p>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="absolute left-8 bottom-8 hidden lg:block z-10"
-            >
-              <div className="bg-blue-500 text-white rounded-2xl shadow-lg p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5" />
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+              >
+                <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100 w-48">
+                  <p className="text-xs text-gray-400 mb-1">Limite de Consultas</p>
+                  <p className="text-lg font-bold text-gray-900">Ilimitado</p>
+                  <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full w-3/4 bg-blue-500 rounded-full" />
+                  </div>
                 </div>
-                <span className="font-medium">Consulta Realizada!</span>
-              </div>
-            </motion.div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <div className="bg-blue-500 text-white rounded-2xl shadow-lg p-4 flex items-center gap-3 w-fit">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5" />
+                  </div>
+                  <span className="font-medium text-sm">Consulta Realizada!</span>
+                </div>
+              </motion.div>
+            </div>
 
             {/* Center Card - Main Mockup */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex justify-center"
+              className="flex justify-center px-52 lg:px-0"
             >
               <HeroCarteirinha />
             </motion.div>
 
-            {/* Right Floating Elements */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute right-0 top-16 hidden lg:block z-10"
-            >
-              <div className="bg-[#3FA174] text-white px-4 py-2 rounded-full text-sm font-medium shadow-sm">
-                100% Legal
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="absolute right-0 top-40 hidden lg:block z-10"
-            >
-              <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                <p className="text-xs text-gray-400 mb-1">Pacientes Atendidos</p>
-                <p className="text-2xl font-bold text-[#3FA174]">+5.000</p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="absolute right-4 bottom-20 hidden lg:block z-10"
-            >
-              <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                <p className="text-xs text-gray-400 mb-1">Satisfação</p>
-                <p className="text-2xl font-bold text-gray-900">98%</p>
-                <div className="flex gap-1 mt-1">
-                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-xs text-green-600">↓</div>
-                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-xs text-purple-600">↑</div>
+            {/* Right Floating Elements - Positioned to not overlap */}
+            <div className="absolute right-0 top-0 bottom-0 w-48 hidden lg:flex flex-col justify-center gap-6 translate-x-4 items-end">
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <div className="bg-[#3FA174] text-white px-4 py-2 rounded-full text-sm font-medium shadow-sm">
+                  100% Legal
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+              </motion.div>
 
-      {/* Stats Section - Centered */}
-      <section className="py-12 px-4 md:px-6 bg-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+              >
+                <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                  <p className="text-xs text-gray-400 mb-1">Satisfação</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-rose-500">+</span>
+                    <p className="text-2xl font-bold text-gray-900">98%</p>
+                  </div>
+                  <div className="flex gap-1 mt-2">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-xs text-green-600">↓</div>
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-xs text-purple-600">↑</div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Stats - Integrated into Hero */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="flex items-center justify-center gap-12 md:gap-20"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="max-w-4xl mx-auto mt-16"
           >
-            <div className="text-center">
-              <span className="text-4xl md:text-5xl font-bold text-[#3FA174]">+5.000</span>
-              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">pacientes atendidos</p>
-            </div>
-            <div className="w-px h-16 bg-gray-200" />
-            <div className="text-center">
-              <span className="text-4xl md:text-5xl font-bold text-[#3FA174]">48h</span>
-              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">atendimento rápido</p>
-            </div>
-            <div className="w-px h-16 bg-gray-200" />
-            <div className="text-center">
-              <span className="text-4xl md:text-5xl font-bold text-[#3FA174]">100%</span>
-              <p className="text-gray-500 mt-2 text-sm uppercase tracking-wide">legal e seguro</p>
+            <div className="flex items-center justify-center gap-8 md:gap-16 flex-wrap">
+              <div className="text-center">
+                <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">+5.000</span>
+                <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">pacientes atendidos</p>
+              </div>
+              <div className="hidden md:block w-px h-12 bg-gray-200" />
+              <div className="text-center">
+                <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">48h</span>
+                <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">atendimento rápido</p>
+              </div>
+              <div className="hidden md:block w-px h-12 bg-gray-200" />
+              <div className="text-center">
+                <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">100%</span>
+                <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">legal e seguro</p>
+              </div>
             </div>
           </motion.div>
         </div>
