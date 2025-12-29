@@ -24,7 +24,7 @@ import { Hover3DCard } from "@/components/ui/hover-3d-card";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { RadialOrbitalTimeline } from "@/components/ui/radial-orbital-timeline";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
-import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
+import { PatientFlow } from "@/components/ui/patient-flow";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -343,29 +343,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="flex justify-center"
-          >
-            <DatabaseWithRestApi
-              title="Jornada completa do paciente ABRACANM"
-              circleText="CBD"
-              badgeTexts={{
-                first: "Cadastro",
-                second: "Consulta",
-                third: "Receita",
-                fourth: "Tratamento",
-              }}
-              buttonTexts={{
-                first: "ABRACANM",
-                second: "Saúde",
-              }}
-              lightColor="#A8C686"
-            />
-          </motion.div>
+          <PatientFlow />
         </div>
       </section>
 
