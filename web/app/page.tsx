@@ -246,15 +246,15 @@ export default function Home() {
 
           {/* Cards Section with Floating Elements */}
           <div className="relative max-w-5xl mx-auto">
-            {/* Left Floating Elements - Positioned to not overlap */}
-            <div className="absolute left-0 top-0 bottom-0 w-48 hidden lg:flex flex-col justify-center gap-6 -translate-x-4">
+            {/* Left Floating Elements - Hidden on mobile, visible on xl+ */}
+            <div className="absolute left-0 top-0 bottom-0 w-40 xl:w-48 hidden xl:flex flex-col justify-center gap-4 xl:gap-6 -translate-x-2 xl:-translate-x-4">
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                <div className="bg-rose-100 text-rose-600 px-4 py-2 rounded-full text-sm font-medium shadow-sm flex items-center gap-2 w-fit">
-                  <Zap className="w-4 h-4" />
+                <div className="bg-rose-100 text-rose-600 px-3 xl:px-4 py-1.5 xl:py-2 rounded-full text-xs xl:text-sm font-medium shadow-sm flex items-center gap-1.5 xl:gap-2 w-fit">
+                  <Zap className="w-3 h-3 xl:w-4 xl:h-4" />
                   Atendimento Rápido
                 </div>
               </motion.div>
@@ -264,10 +264,10 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
-                <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100 w-48">
-                  <p className="text-xs text-gray-400 mb-1">Limite de Consultas</p>
-                  <p className="text-lg font-bold text-gray-900">Ilimitado</p>
-                  <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="bg-white rounded-xl xl:rounded-2xl shadow-lg p-3 xl:p-4 border border-gray-100 w-40 xl:w-48">
+                  <p className="text-[10px] xl:text-xs text-gray-400 mb-1">Limite de Consultas</p>
+                  <p className="text-base xl:text-lg font-bold text-gray-900">Ilimitado</p>
+                  <div className="mt-2 h-1.5 xl:h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div className="h-full w-3/4 bg-blue-500 rounded-full" />
                   </div>
                 </div>
@@ -278,33 +278,33 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
-                <div className="bg-blue-500 text-white rounded-2xl shadow-lg p-4 flex items-center gap-3 w-fit">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5" />
+                <div className="bg-blue-500 text-white rounded-xl xl:rounded-2xl shadow-lg p-3 xl:p-4 flex items-center gap-2 xl:gap-3 w-fit">
+                  <div className="w-8 h-8 xl:w-10 xl:h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-4 h-4 xl:w-5 xl:h-5" />
                   </div>
-                  <span className="font-medium text-sm">Consulta Realizada!</span>
+                  <span className="font-medium text-xs xl:text-sm">Consulta Realizada!</span>
                 </div>
               </motion.div>
             </div>
 
-            {/* Center Card - Main Mockup */}
+            {/* Center Card - Main Mockup - Responsive padding */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex justify-center px-52 lg:px-0"
+              className="flex justify-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-0"
             >
               <HeroCarteirinha />
             </motion.div>
 
-            {/* Right Floating Elements - Positioned to not overlap */}
-            <div className="absolute right-0 top-0 bottom-0 w-48 hidden lg:flex flex-col justify-center gap-6 translate-x-4 items-end">
+            {/* Right Floating Elements - Hidden on mobile, visible on xl+ */}
+            <div className="absolute right-0 top-0 bottom-0 w-40 xl:w-48 hidden xl:flex flex-col justify-center gap-4 xl:gap-6 translate-x-2 xl:translate-x-4 items-end">
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                <div className="bg-[#3FA174] text-white px-4 py-2 rounded-full text-sm font-medium shadow-sm">
+                <div className="bg-[#3FA174] text-white px-3 xl:px-4 py-1.5 xl:py-2 rounded-full text-xs xl:text-sm font-medium shadow-sm">
                   100% Legal
                 </div>
               </motion.div>
@@ -314,19 +314,49 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
-                <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                  <p className="text-xs text-gray-400 mb-1">Satisfação</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-rose-500">+</span>
-                    <p className="text-2xl font-bold text-gray-900">98%</p>
+                <div className="bg-white rounded-xl xl:rounded-2xl shadow-lg p-3 xl:p-4 border border-gray-100">
+                  <p className="text-[10px] xl:text-xs text-gray-400 mb-1">Satisfação</p>
+                  <div className="flex items-center gap-1.5 xl:gap-2">
+                    <span className="text-rose-500 text-sm">+</span>
+                    <p className="text-xl xl:text-2xl font-bold text-gray-900">98%</p>
                   </div>
-                  <div className="flex gap-1 mt-2">
-                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-xs text-green-600">↓</div>
-                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-xs text-purple-600">↑</div>
+                  <div className="flex gap-1 mt-1.5 xl:mt-2">
+                    <div className="w-6 h-6 xl:w-8 xl:h-8 bg-green-100 rounded-md xl:rounded-lg flex items-center justify-center text-[10px] xl:text-xs text-green-600">↓</div>
+                    <div className="w-6 h-6 xl:w-8 xl:h-8 bg-purple-100 rounded-md xl:rounded-lg flex items-center justify-center text-[10px] xl:text-xs text-purple-600">↑</div>
                   </div>
                 </div>
               </motion.div>
             </div>
+          </div>
+
+          {/* Mobile Floating Badges - Visible only on smaller screens */}
+          <div className="flex xl:hidden justify-center gap-2 mt-6 flex-wrap px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
+            >
+              <Zap className="w-3 h-3" />
+              Atendimento Rápido
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="bg-[#3FA174] text-white px-3 py-1.5 rounded-full text-xs font-medium"
+            >
+              100% Legal
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
+            >
+              <CheckCircle className="w-3 h-3" />
+              Consulta Realizada
+            </motion.div>
           </div>
 
           {/* Stats - Integrated into Hero */}
