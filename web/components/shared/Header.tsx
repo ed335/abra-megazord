@@ -90,18 +90,12 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             <Link href="/" className="flex items-center gap-3">
-              <div className={cn(
-                "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                scrolled ? "bg-verde-oliva" : "bg-white/20 backdrop-blur"
-              )}>
-                <Heart className={cn(
-                  "w-5 h-5",
-                  scrolled ? "text-white" : "text-[#A8C686]"
-                )} />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors bg-[#6B7C59]">
+                <Heart className="w-5 h-5 text-white" />
               </div>
               <span className={cn(
                 "text-xl font-bold transition-colors",
-                scrolled ? "text-cinza-escuro" : "text-[#f5f5f0]"
+                "text-[#1d1d1f]"
               )}>
                 ABRACANM
               </span>
@@ -114,13 +108,9 @@ export default function Header() {
                   href={link.href}
                   className={cn(
                     "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                    scrolled
-                      ? pathname === link.href
-                        ? "text-verde-oliva bg-verde-oliva/10"
-                        : "text-cinza-medio hover:text-cinza-escuro hover:bg-off-white"
-                      : pathname === link.href
-                        ? "text-[#A8C686] bg-white/10"
-                        : "text-[#d4d4c4] hover:text-[#f5f5f0] hover:bg-white/10"
+                    pathname === link.href
+                      ? "text-[#6B7C59] bg-[#6B7C59]/10"
+                      : "text-[#86868b] hover:text-[#1d1d1f] hover:bg-[#f5f5f5]"
                   )}
                 >
                   {link.label}
@@ -133,48 +123,34 @@ export default function Header() {
                 <>
                   {isAdmin && (
                     <Link href="/admin">
-                      <Button variant="outline" size="sm" className="hidden sm:flex gap-1.5 border-dourado text-dourado hover:bg-dourado/10">
+                      <Button variant="outline" size="sm" className="hidden sm:flex gap-1.5 border-[#D4A574] text-[#D4A574] hover:bg-[#D4A574]/10">
                         <Shield size={14} />
                         Admin
                       </Button>
                     </Link>
                   )}
                   <Link href="/dashboard">
-                    <Button variant="outline" size="sm" className={cn(
-                      "hidden sm:flex",
-                      !scrolled && "border-white/30 text-[#f5f5f0] hover:bg-white/10"
-                    )}>
+                    <Button variant="outline" size="sm" className="hidden sm:flex">
                       Minha Área
                     </Button>
                   </Link>
                   <Link href="/perfil" className="hidden sm:flex">
-                    <div className={cn(
-                      "w-9 h-9 rounded-full flex items-center justify-center transition-colors",
-                      scrolled 
-                        ? "bg-verde-oliva/10 hover:bg-verde-oliva/20" 
-                        : "bg-white/10 hover:bg-white/20"
-                    )}>
-                      <User size={18} className={scrolled ? "text-verde-oliva" : "text-[#f5f5f0]"} />
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center transition-colors bg-[#6B7C59]/10 hover:bg-[#6B7C59]/20">
+                      <User size={18} className="text-[#6B7C59]" />
                     </div>
                   </Link>
-                  <Button variant="ghost" size="sm" onClick={handleLogout} className={cn(
-                    "hidden sm:flex",
-                    !scrolled && "text-[#d4d4c4] hover:text-[#f5f5f0] hover:bg-white/10"
-                  )}>
+                  <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:flex text-[#86868b] hover:text-[#1d1d1f]">
                     Sair
                   </Button>
                 </>
               ) : (
                 <>
                   <Link href="/login">
-                    <Button variant="ghost" size="sm" className={cn(
-                      "hidden sm:flex",
-                      !scrolled && "text-[#d4d4c4] hover:text-[#f5f5f0] hover:bg-white/10"
-                    )}>
+                    <Button variant="ghost" size="sm" className="hidden sm:flex text-[#86868b] hover:text-[#1d1d1f]">
                       Entrar
                     </Button>
                   </Link>
-                  <Button size="sm" onClick={() => router.push('/cadastro')} className="hidden sm:flex">
+                  <Button size="sm" onClick={() => router.push('/cadastro')} className="hidden sm:flex bg-[#6B7C59] hover:bg-[#5a6a4a]">
                     Associe-se
                   </Button>
                 </>
@@ -184,10 +160,7 @@ export default function Header() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={cn(
-                  "lg:hidden",
-                  !scrolled && "text-[#f5f5f0] hover:bg-white/10"
-                )}
+                className="lg:hidden text-[#1d1d1f]"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
