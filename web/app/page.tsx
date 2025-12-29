@@ -16,8 +16,6 @@ import {
   CheckCircle,
   ArrowRight,
   ChevronRight,
-  Stethoscope,
-  Pill,
   Calendar,
   MessageCircle
 } from "lucide-react";
@@ -29,6 +27,7 @@ import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { RadialOrbitalTimeline } from "@/components/ui/radial-orbital-timeline";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
+import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -296,67 +295,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Serviços Section - Glass Cards */}
-      <section id="servicos" className="py-24 px-4 md:px-6 bg-white">
+      {/* Serviços Section - Database REST API Style */}
+      <section id="servicos" className="py-24 px-4 md:px-6 bg-[#1d1d1f]">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
+            <h2 className="text-4xl sm:text-5xl font-semibold text-white mb-4 tracking-tight">
               Nossos serviços
             </h2>
-            <p className="text-xl text-[#86868b] max-w-2xl mx-auto">
+            <p className="text-xl text-white/60 max-w-2xl mx-auto">
               Tudo o que você precisa para iniciar seu tratamento com cannabis medicinal.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Stethoscope className="size-4 text-white" />,
-                title: "Teleconsulta",
-                description: "Consulte com médicos especializados",
-                date: "Agendamento fácil",
-              },
-              {
-                icon: <FileText className="size-4 text-white" />,
-                title: "Receita Digital",
-                description: "Prescrição válida em todo Brasil",
-                date: "Emissão imediata",
-              },
-              {
-                icon: <Pill className="size-4 text-white" />,
-                title: "Tratamento",
-                description: "Acompanhamento personalizado",
-                date: "Suporte contínuo",
-              },
-            ].map((service, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30, rotate: -8 }}
-                whileInView={{ opacity: 1, y: 0, rotate: -8 }}
-                whileHover={{ y: -10, rotate: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="flex justify-center"
-              >
-                <div className="relative flex h-40 w-full max-w-[20rem] select-none flex-col justify-between rounded-xl border-2 border-[#e5e5e5] bg-white/70 backdrop-blur-sm px-5 py-4 transition-all duration-500 hover:border-[#6B7C59]/40 hover:bg-white hover:shadow-xl">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center justify-center rounded-full bg-[#6B7C59] p-2">
-                      {service.icon}
-                    </span>
-                    <p className="text-lg font-semibold text-[#6B7C59]">{service.title}</p>
-                  </div>
-                  <p className="text-base text-[#1d1d1f]">{service.description}</p>
-                  <p className="text-sm text-[#86868b]">{service.date}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="flex justify-center"
+          >
+            <DatabaseWithRestApi
+              title="Jornada completa do paciente ABRACANM"
+              circleText="CBD"
+              badgeTexts={{
+                first: "Cadastro",
+                second: "Consulta",
+                third: "Receita",
+                fourth: "Tratamento",
+              }}
+              buttonTexts={{
+                first: "ABRACANM",
+                second: "Saúde",
+              }}
+              lightColor="#A8C686"
+            />
+          </motion.div>
         </div>
       </section>
 
