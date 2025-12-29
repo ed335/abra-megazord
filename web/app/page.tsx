@@ -15,6 +15,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
+import { BenefitsCarousel } from "@/components/ui/benefits-carousel";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -447,16 +448,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Benefits Section - Infinite Carousel */}
-      <section id="beneficios" className="py-24 bg-gray-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+      {/* Benefits Section - Clickable Carousel */}
+      <section id="beneficios" className="py-24 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-start">
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="px-4 md:px-6"
             >
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Por que a ABRACANM?
@@ -475,22 +475,14 @@ export default function Home() {
               </Button>
             </motion.div>
 
-            <div className="relative">
-              <div className="flex gap-4 animate-scroll">
-                {[...benefits, ...benefits].map((benefit, index) => (
-                  <div
-                    key={index}
-                    className="flex-shrink-0 w-64 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-[#3FA174]/10 flex items-center justify-center mb-4">
-                      <CheckCircle className="h-5 w-5 text-[#3FA174]" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">{benefit.title}</h3>
-                    <p className="text-gray-500 text-sm">{benefit.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <BenefitsCarousel benefits={benefits} />
+            </motion.div>
           </div>
         </div>
       </section>
