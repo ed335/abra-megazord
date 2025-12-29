@@ -3,12 +3,6 @@
 import { motion } from "framer-motion";
 import { 
   Leaf, 
-  Heart, 
-  Users, 
-  BookOpen, 
-  Phone, 
-  Mail, 
-  MapPin,
   Shield,
   Clock,
   FileText,
@@ -16,18 +10,19 @@ import {
   CheckCircle,
   ArrowRight,
   ChevronRight,
-  Calendar,
-  MessageCircle
+  Users
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Hover3DCard } from "@/components/ui/hover-3d-card";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
-import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { RadialOrbitalTimeline } from "@/components/ui/radial-orbital-timeline";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
+import { AnimatedMissionCards } from "@/components/ui/animated-mission-cards";
+import { InteractiveFeatureShowcase } from "@/components/ui/interactive-feature-showcase";
+import { HexagonBenefitsGrid } from "@/components/ui/hexagon-benefits-grid";
+import { ContactPulseCard } from "@/components/ui/contact-pulse-card";
+import { CallToActionBeacon } from "@/components/ui/call-to-action-beacon";
 import Header from "@/components/shared/Header";
 
 const testimonials = [
@@ -69,7 +64,6 @@ const testimonials = [
   },
 ];
 
-
 const journeyItems = [
   {
     id: 1,
@@ -98,74 +92,6 @@ const journeyItems = [
     description: "Receba sua receita e inicie o tratamento",
     date: "Passo 4",
     icon: <Leaf className="size-4" />,
-  },
-];
-
-const bentoFeatures = [
-  {
-    Icon: Calendar,
-    name: "Agendamento Fácil",
-    description: "Escolha o melhor horário para sua consulta em poucos cliques.",
-    href: "/cadastro",
-    cta: "Agendar agora",
-    background: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <Calendar className="h-32 w-32 text-[#6B7C59]" />
-      </div>
-    ),
-    className: "lg:row-start-1 lg:row-end-3 lg:col-start-2 lg:col-end-3",
-  },
-  {
-    Icon: Video,
-    name: "Teleconsulta Segura",
-    description: "Consulte com médicos prescritores de qualquer lugar, com total privacidade.",
-    href: "/cadastro",
-    cta: "Saiba mais",
-    background: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <Video className="h-24 w-24 text-[#6B7C59]" />
-      </div>
-    ),
-    className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2",
-  },
-  {
-    Icon: FileText,
-    name: "Receita Digital",
-    description: "Prescrição emitida digitalmente, válida em todo território nacional.",
-    href: "/planos",
-    cta: "Ver planos",
-    background: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <FileText className="h-24 w-24 text-[#6B7C59]" />
-      </div>
-    ),
-    className: "lg:col-start-1 lg:col-end-2 lg:row-start-2 lg:row-end-3",
-  },
-  {
-    Icon: MessageCircle,
-    name: "Suporte Contínuo",
-    description: "Tire dúvidas via WhatsApp com nossa equipe especializada.",
-    href: "/contato",
-    cta: "Falar conosco",
-    background: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <MessageCircle className="h-24 w-24 text-[#6B7C59]" />
-      </div>
-    ),
-    className: "lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2",
-  },
-  {
-    Icon: Shield,
-    name: "100% Legal e Seguro",
-    description: "Todo o processo segue a legislação brasileira vigente para cannabis medicinal.",
-    href: "/educacao",
-    cta: "Entenda a lei",
-    background: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <Shield className="h-24 w-24 text-[#6B7C59]" />
-      </div>
-    ),
-    className: "lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-3",
   },
 ];
 
@@ -339,101 +265,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Mission Section */}
-      <section id="sobre" className="py-24 px-4 md:px-6 bg-[#fafaf8]">
+      {/* Mission Section - Animated Cards with SVG Lines */}
+      <section id="sobre" className="py-24 px-4 md:px-6 bg-[#1d1d1f]">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-              Nossa missão
-            </h2>
-            <p className="text-xl text-[#86868b] max-w-2xl mx-auto">
-              Acolhemos pacientes que buscam qualidade de vida através da cannabis medicinal.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Heart,
-                title: "Cuidado humanizado",
-                description: "Apoio completo aos pacientes e familiares no acesso ao tratamento",
-              },
-              {
-                icon: BookOpen,
-                title: "Ciência e educação",
-                description: "Informação científica de qualidade e capacitação contínua",
-              },
-              {
-                icon: Users,
-                title: "Comunidade",
-                description: "Rede de apoio e compartilhamento de experiências",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Hover3DCard className="h-full">
-                  <Card className="border border-[#e5e5e5] shadow-sm bg-white h-full rounded-2xl">
-                    <CardContent className="pt-8 pb-8 px-6 text-center">
-                      <div className="w-14 h-14 bg-[#6B7C59]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                        <item.icon className="h-7 w-7 text-[#6B7C59]" />
-                      </div>
-                      <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">{item.title}</h3>
-                      <p className="text-[#86868b]">{item.description}</p>
-                    </CardContent>
-                  </Card>
-                </Hover3DCard>
-              </motion.div>
-            ))}
-          </div>
+          <AnimatedMissionCards />
         </div>
       </section>
 
-      {/* Bento Grid - Como Funciona */}
-      <section id="como-funciona" className="py-24 px-4 md:px-6 bg-[#fafaf8]">
+      {/* Como Funciona - Interactive Feature Showcase */}
+      <section id="como-funciona" className="py-24 px-4 md:px-6 bg-[#1d1d1f]">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-              Como funciona
-            </h2>
-            <p className="text-xl text-[#86868b] max-w-2xl mx-auto">
-              Tudo o que você precisa para iniciar seu tratamento de forma simples e segura.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <BentoGrid className="lg:grid-rows-2 md:grid-cols-2 lg:grid-cols-3">
-              {bentoFeatures.map((feature) => (
-                <BentoCard key={feature.name} {...feature} />
-              ))}
-            </BentoGrid>
-          </motion.div>
+          <InteractiveFeatureShowcase />
         </div>
       </section>
 
       {/* Radial Orbital Timeline - Jornada do Paciente */}
-      <section id="jornada" className="py-24 px-4 md:px-6 bg-white">
+      <section id="jornada" className="py-24 px-4 md:px-6 bg-[#fafaf8]">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -465,56 +312,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="beneficios" className="py-24 px-4 md:px-6 bg-[#6B7C59]">
+      {/* Benefits Section - Hexagon Grid */}
+      <section id="beneficios" className="py-24 px-4 md:px-6 bg-[#1d1d1f]">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl sm:text-5xl font-semibold text-white mb-4 tracking-tight">
-              Por que escolher a ABRACANM?
-            </h2>
-            <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              Benefícios exclusivos para nossos associados.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { title: "Médicos especializados", description: "Profissionais experientes em cannabis medicinal" },
-              { title: "Suporte contínuo", description: "Acompanhamento via WhatsApp para dúvidas" },
-              { title: "Preços acessíveis", description: "Consultas com desconto exclusivo" },
-              { title: "Conteúdo educativo", description: "Material científico sobre cannabis" },
-              { title: "Orientação jurídica", description: "Apoio sobre legislação e importação" },
-              { title: "Comunidade ativa", description: "Troca de experiências com outros pacientes" },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                viewport={{ once: true }}
-              >
-                <Hover3DCard className="h-full" rotateIntensity={8}>
-                  <div className="flex items-start gap-4 p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 h-full">
-                    <CheckCircle className="h-6 w-6 text-[#A8C686] flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
-                      <p className="text-white/70 text-sm">{item.description}</p>
-                    </div>
-                  </div>
-                </Hover3DCard>
-              </motion.div>
-            ))}
-          </div>
+          <HexagonBenefitsGrid />
         </div>
       </section>
 
-      {/* Testimonials Section - Already using AnimatedTestimonials */}
+      {/* Testimonials Section */}
       <section id="depoimentos">
         <AnimatedTestimonials
           testimonials={testimonials}
@@ -525,101 +330,17 @@ export default function Home() {
         />
       </section>
 
-      {/* Contact Section */}
-      <section id="contato" className="py-24 px-4 md:px-6 bg-[#fafaf8]">
+      {/* Contact Section - Pulse Card */}
+      <section id="contato" className="py-24 px-4 md:px-6 bg-[#1d1d1f]">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-              Entre em contato
-            </h2>
-            <p className="text-xl text-[#86868b]">
-              Estamos aqui para ajudar você.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Card className="border border-[#e5e5e5] shadow-none">
-              <CardContent className="py-10 px-8">
-                <div className="grid md:grid-cols-3 gap-8 text-center">
-                  <div>
-                    <div className="w-12 h-12 bg-[#6B7C59]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Phone className="h-6 w-6 text-[#6B7C59]" />
-                    </div>
-                    <h3 className="font-semibold text-[#1d1d1f] mb-1">WhatsApp</h3>
-                    <p className="text-[#86868b]">(11) 99999-9999</p>
-                  </div>
-                  <div>
-                    <div className="w-12 h-12 bg-[#6B7C59]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Mail className="h-6 w-6 text-[#6B7C59]" />
-                    </div>
-                    <h3 className="font-semibold text-[#1d1d1f] mb-1">Email</h3>
-                    <p className="text-[#86868b]">contato@abracanm.org.br</p>
-                  </div>
-                  <div>
-                    <div className="w-12 h-12 bg-[#6B7C59]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <MapPin className="h-6 w-6 text-[#6B7C59]" />
-                    </div>
-                    <h3 className="font-semibold text-[#1d1d1f] mb-1">Localização</h3>
-                    <p className="text-[#86868b]">São Paulo, SP</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <ContactPulseCard />
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section id="cta" className="py-24 px-4 md:px-6 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Leaf className="h-16 w-16 text-[#6B7C59] mx-auto mb-8" />
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-              Comece sua jornada hoje
-            </h2>
-            <p className="text-xl text-[#86868b] mb-10 max-w-2xl mx-auto">
-              Associe-se à ABRACANM e tenha acesso a médicos especializados, 
-              suporte contínuo e preços acessíveis.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="bg-[#6B7C59] hover:bg-[#5a6a4a] text-white px-10 py-6 text-lg rounded-full"
-              >
-                <Link href="/cadastro">
-                  Associar-se agora
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-[#1d1d1f]/20 text-[#1d1d1f] hover:bg-[#1d1d1f]/5 px-10 py-6 text-lg rounded-full"
-              >
-                <Link href="/planos">
-                  Conhecer planos
-                </Link>
-              </Button>
-            </div>
-          </motion.div>
+      {/* CTA Section - Beacon */}
+      <section id="cta" className="py-24 px-4 md:px-6 bg-[#1d1d1f]">
+        <div className="max-w-4xl mx-auto">
+          <CallToActionBeacon />
         </div>
       </section>
 
