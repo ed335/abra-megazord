@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { Leaf, Shield, CreditCard, QrCode } from "lucide-react"
+import { Leaf, Wifi } from "lucide-react"
 import { motion } from "framer-motion"
 import { cn } from '@/lib/utils'
 
@@ -23,109 +23,125 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
         transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 15 }}
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Frente do Cartão */}
+        {/* Frente do Cartão - Estilo Apple Pay */}
         <motion.div
-          className="absolute inset-0 rounded-2xl p-5 sm:p-6 overflow-hidden backface-hidden shadow-2xl"
+          className="absolute inset-0 rounded-3xl overflow-hidden backface-hidden"
           style={{ 
             backfaceVisibility: "hidden",
-            background: "linear-gradient(135deg, #6B7C59 0%, #4A5A3A 50%, #3d4a30 100%)"
+            background: "linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05)"
           }}
         >
-          {/* Padrão decorativo */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-4 right-4 w-24 sm:w-32 h-24 sm:h-32 rounded-full border-2 border-white/30" />
-            <div className="absolute top-8 right-8 w-16 sm:w-24 h-16 sm:h-24 rounded-full border border-white/20" />
-            <div className="absolute -bottom-8 -left-8 w-32 sm:w-40 h-32 sm:h-40 rounded-full border-2 border-white/20" />
-          </div>
+          {/* Brilho sutil no topo */}
+          <div 
+            className="absolute inset-0 opacity-40"
+            style={{
+              background: "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 40%)"
+            }}
+          />
 
-          <div className="relative z-10 h-full flex flex-col justify-between">
+          <div className="relative z-10 h-full p-6 sm:p-8 flex flex-col justify-between">
+            {/* Header */}
             <div className="flex justify-between items-start">
-              <div className="flex items-center gap-2">
-                <Leaf className="w-6 sm:w-8 h-6 sm:h-8 text-white" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#3FA174] flex items-center justify-center">
+                  <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
                 <div>
-                  <div className="text-white font-bold text-sm sm:text-lg tracking-wide">ABRACANM</div>
-                  <div className="text-white/70 text-[8px] sm:text-[10px] tracking-wider hidden sm:block">
-                    ASSOCIAÇÃO BRASILEIRA DE CANNABIS MEDICINAL
+                  <div className="text-white font-semibold text-base sm:text-lg tracking-tight">ABRACANM</div>
+                  <div className="text-white/40 text-[10px] sm:text-xs tracking-wide">
+                    Associado Verificado
                   </div>
                 </div>
               </div>
-              <div className="px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-medium bg-white/20 text-white">
-                ASSOCIADO
+              <div className="flex items-center gap-2">
+                <Wifi className="w-5 h-5 text-white/60 rotate-90" />
               </div>
             </div>
 
-            <div className="space-y-0.5">
-              <div className="text-white/70 text-[10px] sm:text-xs uppercase tracking-wider">Nome do Associado</div>
-              <div className="text-white font-semibold text-base sm:text-lg tracking-wide">
-                SEU NOME AQUI
+            {/* Nome do Associado */}
+            <div className="space-y-1">
+              <div className="text-white font-medium text-xl sm:text-2xl tracking-tight">
+                Seu Nome Aqui
+              </div>
+              <div className="text-white/40 text-xs sm:text-sm font-mono tracking-wider">
+                ABR-2024-000000
               </div>
             </div>
 
+            {/* Footer */}
             <div className="flex justify-between items-end">
               <div>
-                <div className="text-white/70 text-[8px] sm:text-[10px] uppercase tracking-wider">Matrícula</div>
-                <div className="text-white font-mono text-sm sm:text-base tracking-widest">
-                  ABR-000000
-                </div>
+                <div className="text-white/30 text-[10px] uppercase tracking-widest mb-1">Válido até</div>
+                <div className="text-white/80 text-sm sm:text-base font-medium">12/2025</div>
               </div>
-              <div>
-                <div className="text-white/70 text-[8px] sm:text-[10px] uppercase tracking-wider">Validade</div>
-                <div className="text-white font-mono text-sm sm:text-base">
-                  12/2025
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <div className="text-white/30 text-[10px] uppercase tracking-widest mb-1">Plano</div>
+                  <div className="text-[#3FA174] text-sm sm:text-base font-semibold">Premium</div>
                 </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <Shield className="w-4 sm:w-5 h-4 sm:h-5 text-[#A8C686]" />
-                <CreditCard className="w-4 sm:w-5 h-4 sm:h-5 text-[#A8C686]" />
               </div>
             </div>
+          </div>
+
+          {/* Chip NFC */}
+          <div className="absolute bottom-6 sm:bottom-8 right-6 sm:right-8">
+            <div className="w-10 h-8 rounded-md bg-gradient-to-br from-[#D4AF37] to-[#B8860B] opacity-90" />
           </div>
         </motion.div>
 
         {/* Verso do Cartão */}
         <motion.div
-          className="absolute inset-0 rounded-2xl p-5 sm:p-6 overflow-hidden backface-hidden shadow-2xl"
+          className="absolute inset-0 rounded-3xl overflow-hidden backface-hidden"
           style={{ 
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
-            background: "linear-gradient(135deg, #4A5A3A 0%, #3d4a30 50%, #2d3924 100%)"
+            background: "linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05)"
           }}
         >
           {/* Tarja magnética */}
-          <div className="absolute top-6 sm:top-8 left-0 right-0 h-8 sm:h-10 bg-[#1d1d1f]" />
+          <div className="absolute top-8 left-0 right-0 h-12 bg-[#2a2a2a]" />
           
-          <div className="relative z-10 h-full flex flex-col justify-between pt-12 sm:pt-14">
-            <div className="bg-white/90 p-2 sm:p-3 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-[8px] sm:text-[10px] text-[#86868b] uppercase">Plano</div>
-                  <div className="text-xs sm:text-sm font-semibold text-[#1d1d1f]">Plano Essencial</div>
-                </div>
-                <div className="w-12 sm:w-16 h-12 sm:h-16 bg-[#1d1d1f] rounded-lg flex items-center justify-center">
-                  <QrCode className="w-8 sm:w-12 h-8 sm:h-12 text-white" />
+          <div className="relative z-10 h-full p-6 sm:p-8 flex flex-col justify-between pt-24">
+            {/* QR Code Area */}
+            <div className="bg-white rounded-2xl p-4 self-center">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 bg-[#0d0d0d] rounded-xl flex items-center justify-center">
+                <div className="grid grid-cols-5 gap-1">
+                  {[...Array(25)].map((_, i) => (
+                    <div 
+                      key={i} 
+                      className={`w-3 h-3 sm:w-4 sm:h-4 rounded-sm ${
+                        [0,1,2,4,5,6,10,12,14,18,19,20,22,23,24].includes(i) 
+                          ? 'bg-white' 
+                          : 'bg-transparent'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
 
-            <div className="text-center space-y-1 sm:space-y-2">
-              <p className="text-white/70 text-[8px] sm:text-[10px] leading-relaxed px-2">
-                Esta carteira é pessoal e intransferível. O uso indevido 
-                está sujeito às penalidades previstas em lei.
+            {/* Info */}
+            <div className="text-center space-y-2">
+              <p className="text-white/50 text-xs leading-relaxed">
+                Carteira digital de associado ABRACANM
               </p>
-              <p className="text-white/50 text-[7px] sm:text-[9px]">
-                www.abracanm.org.br
+              <p className="text-[#3FA174] text-sm font-medium">
+                abracanm.org.br
               </p>
             </div>
 
+            {/* Footer */}
             <div className="flex justify-center">
-              <div className="text-white/40 text-[7px] sm:text-[8px] tracking-wider">
-                TOQUE PARA VIRAR
+              <div className="text-white/30 text-[10px] tracking-widest uppercase">
+                Toque para virar
               </div>
             </div>
           </div>
         </motion.div>
       </motion.div>
-      <p className="text-center text-[#86868b] text-xs mt-3">
+      <p className="text-center text-gray-400 text-sm mt-4 font-medium">
         Clique no cartão para ver o verso
       </p>
     </div>
