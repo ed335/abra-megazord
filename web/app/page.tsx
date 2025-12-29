@@ -447,15 +447,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Benefits Section - Minimal List */}
-      <section id="beneficios" className="py-24 px-4 md:px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16">
+      {/* Benefits Section - Infinite Carousel */}
+      <section id="beneficios" className="py-24 bg-gray-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
+              className="px-4 md:px-6"
             >
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Por que a ABRACANM?
@@ -474,20 +475,22 @@ export default function Home() {
               </Button>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-2 gap-x-8 gap-y-6"
-            >
-              {benefits.map((benefit, index) => (
-                <div key={index}>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">{benefit.title}</h3>
-                  <p className="text-gray-400 text-xs">{benefit.description}</p>
-                </div>
-              ))}
-            </motion.div>
+            <div className="relative">
+              <div className="flex gap-4 animate-scroll">
+                {[...benefits, ...benefits].map((benefit, index) => (
+                  <div
+                    key={index}
+                    className="flex-shrink-0 w-64 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-[#3FA174]/10 flex items-center justify-center mb-4">
+                      <CheckCircle className="h-5 w-5 text-[#3FA174]" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2">{benefit.title}</h3>
+                    <p className="text-gray-500 text-sm">{benefit.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
