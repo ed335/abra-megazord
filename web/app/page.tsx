@@ -15,13 +15,16 @@ import {
   Video,
   CheckCircle,
   ArrowRight,
-  ChevronRight
+  ChevronRight,
+  Calendar,
+  MessageCircle
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Hover3DCard } from "@/components/ui/hover-3d-card";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { RadialOrbitalTimeline } from "@/components/ui/radial-orbital-timeline";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
@@ -98,6 +101,73 @@ const journeyItems = [
   },
 ];
 
+const bentoFeatures = [
+  {
+    Icon: Calendar,
+    name: "Agendamento Fácil",
+    description: "Escolha o melhor horário para sua consulta em poucos cliques.",
+    href: "/cadastro",
+    cta: "Agendar agora",
+    background: (
+      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <Calendar className="h-32 w-32 text-[#6B7C59]" />
+      </div>
+    ),
+    className: "lg:row-start-1 lg:row-end-3 lg:col-start-2 lg:col-end-3",
+  },
+  {
+    Icon: Video,
+    name: "Teleconsulta Segura",
+    description: "Consulte com médicos prescritores de qualquer lugar, com total privacidade.",
+    href: "/cadastro",
+    cta: "Saiba mais",
+    background: (
+      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <Video className="h-24 w-24 text-[#6B7C59]" />
+      </div>
+    ),
+    className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2",
+  },
+  {
+    Icon: FileText,
+    name: "Receita Digital",
+    description: "Prescrição emitida digitalmente, válida em todo território nacional.",
+    href: "/planos",
+    cta: "Ver planos",
+    background: (
+      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <FileText className="h-24 w-24 text-[#6B7C59]" />
+      </div>
+    ),
+    className: "lg:col-start-1 lg:col-end-2 lg:row-start-2 lg:row-end-3",
+  },
+  {
+    Icon: MessageCircle,
+    name: "Suporte Contínuo",
+    description: "Tire dúvidas via WhatsApp com nossa equipe especializada.",
+    href: "/contato",
+    cta: "Falar conosco",
+    background: (
+      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <MessageCircle className="h-24 w-24 text-[#6B7C59]" />
+      </div>
+    ),
+    className: "lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2",
+  },
+  {
+    Icon: Shield,
+    name: "100% Legal e Seguro",
+    description: "Todo o processo segue a legislação brasileira vigente para cannabis medicinal.",
+    href: "/educacao",
+    cta: "Entenda a lei",
+    background: (
+      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <Shield className="h-24 w-24 text-[#6B7C59]" />
+      </div>
+    ),
+    className: "lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-3",
+  },
+];
 
 const fadeUpVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -225,8 +295,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Serviços Section - Simple */}
-      <section id="servicos" className="py-24 px-4 md:px-6 bg-white">
+      {/* Serviços Section - Database REST API Style */}
+      <section id="servicos" className="py-24 px-4 md:px-6 bg-[#1d1d1f]">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -235,33 +305,37 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
+            <h2 className="text-4xl sm:text-5xl font-semibold text-white mb-4 tracking-tight">
               Nossos serviços
             </h2>
-            <p className="text-xl text-[#86868b] max-w-2xl mx-auto">
+            <p className="text-xl text-white/60 max-w-2xl mx-auto">
               Tudo o que você precisa para iniciar seu tratamento com cannabis medicinal.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { title: "Teleconsulta", description: "Consulte com médicos especializados em cannabis medicinal" },
-              { title: "Receita Digital", description: "Prescrição válida em todo território nacional" },
-              { title: "Acompanhamento", description: "Suporte contínuo durante todo o tratamento" },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center p-8 rounded-2xl border border-[#e5e5e5] bg-[#fafaf8] hover:shadow-lg hover:border-[#6B7C59]/30 transition-all"
-              >
-                <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">{item.title}</h3>
-                <p className="text-[#86868b]">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="flex justify-center"
+          >
+            <DatabaseWithRestApi
+              title="Jornada completa do paciente ABRACANM"
+              circleText="CBD"
+              badgeTexts={{
+                first: "Cadastro",
+                second: "Consulta",
+                third: "Receita",
+                fourth: "Tratamento",
+              }}
+              buttonTexts={{
+                first: "ABRACANM",
+                second: "Saúde",
+              }}
+              lightColor="#A8C686"
+            />
+          </motion.div>
         </div>
       </section>
 
@@ -348,23 +422,12 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
-            className="flex justify-center"
           >
-            <DatabaseWithRestApi
-              title="Jornada completa do paciente ABRACANM"
-              circleText="CBD"
-              badgeTexts={{
-                first: "Cadastro",
-                second: "Consulta",
-                third: "Receita",
-                fourth: "Tratamento",
-              }}
-              buttonTexts={{
-                first: "ABRACANM",
-                second: "Saúde",
-              }}
-              lightColor="#A8C686"
-            />
+            <BentoGrid className="lg:grid-rows-2 md:grid-cols-2 lg:grid-cols-3">
+              {bentoFeatures.map((feature) => (
+                <BentoCard key={feature.name} {...feature} />
+              ))}
+            </BentoGrid>
           </motion.div>
         </div>
       </section>
