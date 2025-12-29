@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const siteUrl = new URL("https://abracanm.com");
@@ -110,6 +111,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
         />
         {children}
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
