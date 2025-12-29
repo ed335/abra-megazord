@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Hover3DCard } from "@/components/ui/hover-3d-card";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
-import DisplayCards from "@/components/ui/display-cards";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { RadialOrbitalTimeline } from "@/components/ui/radial-orbital-timeline";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
@@ -71,29 +70,6 @@ const testimonials = [
   },
 ];
 
-const displayCardsData = [
-  {
-    icon: <Stethoscope className="size-4 text-white" />,
-    title: "Teleconsulta",
-    description: "Consulte com médicos especializados",
-    date: "Agendamento fácil",
-    className: "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-white/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration:700 hover:grayscale-0 before:left-0 before:top-0",
-  },
-  {
-    icon: <FileText className="size-4 text-white" />,
-    title: "Receita Digital",
-    description: "Prescrição válida em todo Brasil",
-    date: "Emissão imediata",
-    className: "[grid-area:stack] translate-x-16 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-white/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration:700 hover:grayscale-0 before:left-0 before:top-0",
-  },
-  {
-    icon: <Pill className="size-4 text-white" />,
-    title: "Tratamento",
-    description: "Acompanhamento personalizado",
-    date: "Suporte contínuo",
-    className: "[grid-area:stack] translate-x-32 translate-y-20 hover:translate-y-10",
-  },
-];
 
 const journeyItems = [
   {
@@ -320,7 +296,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Serviços Section - Display Cards */}
+      {/* Serviços Section - Cards Grid */}
       <section id="servicos" className="py-24 px-4 md:px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -338,15 +314,69 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="flex justify-center"
-          >
-            <DisplayCards cards={displayCardsData} />
-          </motion.div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Stethoscope,
+                title: "Teleconsulta",
+                description: "Consulte com médicos especializados em cannabis medicinal por vídeo, do conforto da sua casa.",
+                badge: "Agendamento fácil",
+                color: "from-[#6B7C59] to-[#4A5A3A]",
+              },
+              {
+                icon: FileText,
+                title: "Receita Digital",
+                description: "Prescrição médica digital válida em todo território nacional, com assinatura eletrônica.",
+                badge: "Emissão imediata",
+                color: "from-[#A8C686] to-[#6B7C59]",
+              },
+              {
+                icon: Pill,
+                title: "Tratamento",
+                description: "Acompanhamento personalizado do seu tratamento com suporte contínuo via WhatsApp.",
+                badge: "Suporte 24h",
+                color: "from-[#D4A574] to-[#B8956A]",
+              },
+            ].map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="group"
+              >
+                <div className="relative h-full bg-white rounded-2xl border border-[#e5e5e5] p-6 hover:border-[#6B7C59]/40 hover:shadow-xl transition-all duration-300 overflow-hidden">
+                  {/* Background gradient on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+                  
+                  {/* Icon */}
+                  <div className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <service.icon className="w-7 h-7 text-white" />
+                  </div>
+
+                  {/* Badge */}
+                  <span className="inline-block text-xs font-medium text-[#6B7C59] bg-[#6B7C59]/10 px-3 py-1 rounded-full mb-3">
+                    {service.badge}
+                  </span>
+
+                  {/* Content */}
+                  <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2 group-hover:text-[#6B7C59] transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="text-[#86868b] leading-relaxed">
+                    {service.description}
+                  </p>
+
+                  {/* Arrow indicator */}
+                  <div className="mt-4 flex items-center text-[#6B7C59] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-sm font-medium">Saiba mais</span>
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
