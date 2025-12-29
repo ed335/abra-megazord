@@ -162,7 +162,144 @@ export default function Home() {
       <Header />
 
       {/* Hero Section com Scroll Animation e Elementos Flutuantes 3D */}
-      <section id="inicio" className="relative w-full bg-gradient-to-b from-[#FAFBFC] to-white overflow-visible">
+      <section id="inicio" className="relative w-full bg-gradient-to-b from-[#FAFBFC] to-white overflow-visible" style={{ perspective: "2000px" }}>
+        {/* Floating Elements 3D - Nas laterais do viewport, alinhados com o tablet */}
+        <div className="hidden md:block">
+          {/* Esquerda - Badge Rosa */}
+          <motion.div
+            initial={{ opacity: 0, x: 50, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.8, type: "spring" }}
+            className="absolute left-2 md:left-4 lg:left-8 xl:left-12 top-[55%] z-50"
+            style={{ transform: "perspective(1000px) rotateY(8deg) translateZ(40px)" }}
+          >
+            <motion.div 
+              whileHover={{ scale: 1.08, rotateY: 0 }}
+              className="bg-rose-100 text-rose-600 px-4 md:px-5 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-semibold shadow-[0_15px_40px_rgba(244,63,94,0.25)] flex items-center gap-2 border border-rose-200/60"
+            >
+              <Zap className="w-3 h-3 md:w-4 md:h-4" />
+              Atendimento Rápido
+            </motion.div>
+          </motion.div>
+
+          {/* Esquerda - Card Limite */}
+          <motion.div
+            initial={{ opacity: 0, x: 60, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.9, delay: 1, type: "spring" }}
+            className="absolute left-1 md:left-2 lg:left-4 xl:left-8 top-[62%] z-50"
+            style={{ transform: "perspective(1000px) rotateY(10deg) translateZ(60px)" }}
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05, rotateY: 3 }}
+              className="bg-white rounded-xl md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12)] p-3 md:p-5 border border-gray-100"
+            >
+              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Limite de Consultas</p>
+              <p className="text-sm md:text-lg font-bold text-gray-900">Ilimitado</p>
+              <div className="mt-2 md:mt-3 h-1.5 md:h-2 bg-gray-100 rounded-full overflow-hidden w-20 md:w-28">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: "80%" }}
+                  transition={{ duration: 1.2, delay: 1.5 }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Esquerda - Card Azul Consulta */}
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 1.2, type: "spring" }}
+            className="absolute left-4 md:left-6 lg:left-12 xl:left-20 top-[72%] z-50"
+            style={{ transform: "perspective(1000px) rotateY(6deg) translateZ(50px)" }}
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05, rotateY: 0 }}
+              className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl md:rounded-2xl shadow-[0_20px_50px_rgba(59,130,246,0.35)] p-3 md:p-4 flex items-center gap-2 md:gap-3"
+            >
+              <motion.div 
+                className="w-8 h-8 md:w-10 md:h-10 bg-white/20 rounded-full flex items-center justify-center"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
+              </motion.div>
+              <span className="font-semibold text-xs md:text-sm">Consulta Realizada!</span>
+            </motion.div>
+          </motion.div>
+
+          {/* Direita - Badge Verde */}
+          <motion.div
+            initial={{ opacity: 0, x: -50, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.9, type: "spring" }}
+            className="absolute right-2 md:right-4 lg:right-8 xl:right-12 top-[54%] z-50"
+            style={{ transform: "perspective(1000px) rotateY(-8deg) translateZ(40px)" }}
+          >
+            <motion.div 
+              whileHover={{ scale: 1.08, rotateY: 0 }}
+              className="bg-gradient-to-r from-[#3FA174] to-[#2D8B60] text-white px-4 md:px-5 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-semibold shadow-[0_15px_40px_rgba(63,161,116,0.35)]"
+            >
+              100% Legal
+            </motion.div>
+          </motion.div>
+
+          {/* Direita - Card Satisfação */}
+          <motion.div
+            initial={{ opacity: 0, x: -60, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.9, delay: 1.1, type: "spring" }}
+            className="absolute right-1 md:right-2 lg:right-4 xl:right-8 top-[61%] z-50"
+            style={{ transform: "perspective(1000px) rotateY(-10deg) translateZ(60px)" }}
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05, rotateY: -3 }}
+              className="bg-white rounded-xl md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12)] p-3 md:p-5 border border-gray-100"
+            >
+              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Satisfação</p>
+              <div className="flex items-center gap-1">
+                <motion.span 
+                  className="text-rose-500 text-sm md:text-base font-bold"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >+</motion.span>
+                <p className="text-xl md:text-2xl font-bold text-gray-900">98%</p>
+              </div>
+              <div className="flex gap-1.5 mt-2">
+                <motion.div 
+                  className="w-6 h-6 md:w-7 md:h-7 bg-green-100 rounded-lg flex items-center justify-center text-[10px] md:text-xs text-green-600 font-medium"
+                  animate={{ y: [0, -3, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+                >↓</motion.div>
+                <motion.div 
+                  className="w-6 h-6 md:w-7 md:h-7 bg-purple-100 rounded-lg flex items-center justify-center text-[10px] md:text-xs text-purple-600 font-medium"
+                  animate={{ y: [0, -3, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                >↑</motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Direita - Card Pacientes */}
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 1.3, type: "spring" }}
+            className="absolute right-4 md:right-6 lg:right-12 xl:right-20 top-[71%] z-50"
+            style={{ transform: "perspective(1000px) rotateY(-6deg) translateZ(50px)" }}
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05, rotateY: 0 }}
+              className="bg-white rounded-xl md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12)] p-3 md:p-5 border border-gray-100"
+            >
+              <p className="text-[10px] md:text-xs text-gray-400 mb-1">Pacientes Atendidos</p>
+              <p className="text-lg md:text-xl font-bold text-[#3FA174]">+5.000</p>
+            </motion.div>
+          </motion.div>
+        </div>
+
         <ContainerScroll
           titleComponent={
             <div className="flex flex-col items-center">
@@ -199,129 +336,8 @@ export default function Home() {
             </div>
           }
         >
-          <div className="relative h-full w-full flex items-center justify-center p-4 md:p-8" style={{ perspective: "1500px" }}>
+          <div className="relative h-full w-full flex items-center justify-center p-4 md:p-8">
             <HeroCarteirinha className="scale-90 md:scale-100" />
-            
-            {/* Floating Elements 3D - Saindo do Tablet com Profundidade */}
-            <div className="hidden md:block">
-              {/* Esquerda - Elementos saindo com profundidade */}
-              <motion.div
-                initial={{ opacity: 0, x: 100, z: -100, rotateY: -30 }}
-                animate={{ opacity: 1, x: 0, z: 50, rotateY: 0 }}
-                transition={{ duration: 0.8, delay: 0.5, type: "spring", stiffness: 100 }}
-                className="absolute -left-8 lg:-left-20 xl:-left-32 top-4 z-30"
-                style={{ transformStyle: "preserve-3d" }}
-                whileHover={{ scale: 1.1, z: 80, rotateY: 5 }}
-              >
-                <div className="bg-rose-100 text-rose-600 px-4 py-2.5 rounded-full text-sm font-medium shadow-2xl flex items-center gap-2 backdrop-blur-sm border border-rose-200">
-                  <Zap className="w-4 h-4" />
-                  Atendimento Rápido
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 150, z: -150, rotateY: -45 }}
-                animate={{ opacity: 1, x: 0, z: 80, rotateY: -5 }}
-                transition={{ duration: 0.9, delay: 0.7, type: "spring", stiffness: 80 }}
-                className="absolute -left-12 lg:-left-28 xl:-left-44 top-1/3 z-30"
-                style={{ transformStyle: "preserve-3d" }}
-                whileHover={{ scale: 1.1, z: 120, rotateY: 0 }}
-              >
-                <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 backdrop-blur-sm">
-                  <p className="text-xs text-gray-400 mb-1">Limite de Consultas</p>
-                  <p className="text-base font-bold text-gray-900">Ilimitado</p>
-                  <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden w-28">
-                    <motion.div 
-                      className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: "75%" }}
-                      transition={{ duration: 1, delay: 1.2 }}
-                    />
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 100, y: 50, z: -100, rotateX: 20 }}
-                animate={{ opacity: 1, x: 0, y: 0, z: 60, rotateX: 0 }}
-                transition={{ duration: 0.8, delay: 0.9, type: "spring", stiffness: 90 }}
-                className="absolute -left-6 lg:-left-16 xl:-left-28 bottom-8 z-30"
-                style={{ transformStyle: "preserve-3d" }}
-                whileHover={{ scale: 1.1, z: 100, rotateX: -5 }}
-              >
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl shadow-2xl p-4 flex items-center gap-3">
-                  <motion.div 
-                    className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                  </motion.div>
-                  <span className="font-semibold text-sm">Consulta Realizada!</span>
-                </div>
-              </motion.div>
-
-              {/* Direita - Elementos saindo com profundidade */}
-              <motion.div
-                initial={{ opacity: 0, x: -100, z: -100, rotateY: 30 }}
-                animate={{ opacity: 1, x: 0, z: 50, rotateY: 0 }}
-                transition={{ duration: 0.8, delay: 0.6, type: "spring", stiffness: 100 }}
-                className="absolute -right-8 lg:-right-20 xl:-right-28 top-8 z-30"
-                style={{ transformStyle: "preserve-3d" }}
-                whileHover={{ scale: 1.1, z: 80, rotateY: -5 }}
-              >
-                <div className="bg-gradient-to-r from-[#3FA174] to-[#2D8B60] text-white px-4 py-2.5 rounded-full text-sm font-medium shadow-2xl">
-                  100% Legal
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: -150, z: -150, rotateY: 45 }}
-                animate={{ opacity: 1, x: 0, z: 80, rotateY: 5 }}
-                transition={{ duration: 0.9, delay: 0.8, type: "spring", stiffness: 80 }}
-                className="absolute -right-12 lg:-right-28 xl:-right-44 top-1/2 z-30"
-                style={{ transformStyle: "preserve-3d" }}
-                whileHover={{ scale: 1.1, z: 120, rotateY: 0 }}
-              >
-                <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 backdrop-blur-sm">
-                  <p className="text-xs text-gray-400 mb-1">Satisfação</p>
-                  <div className="flex items-center gap-1.5">
-                    <motion.span 
-                      className="text-rose-500 text-sm"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    >+</motion.span>
-                    <p className="text-2xl font-bold text-gray-900">98%</p>
-                  </div>
-                  <div className="flex gap-1.5 mt-2">
-                    <motion.div 
-                      className="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center text-xs text-green-600"
-                      animate={{ y: [0, -3, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
-                    >↓</motion.div>
-                    <motion.div 
-                      className="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center text-xs text-purple-600"
-                      animate={{ y: [0, -3, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                    >↑</motion.div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: -100, y: 50, z: -100, rotateX: 20 }}
-                animate={{ opacity: 1, x: 0, y: 0, z: 60, rotateX: 0 }}
-                transition={{ duration: 0.8, delay: 1, type: "spring", stiffness: 90 }}
-                className="absolute -right-6 lg:-right-16 xl:-right-28 bottom-12 z-30"
-                style={{ transformStyle: "preserve-3d" }}
-                whileHover={{ scale: 1.1, z: 100, rotateX: -5 }}
-              >
-                <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 backdrop-blur-sm">
-                  <p className="text-xs text-gray-400 mb-1">Pacientes Atendidos</p>
-                  <p className="text-xl font-bold text-[#3FA174]">+5.000</p>
-                </div>
-              </motion.div>
-            </div>
           </div>
         </ContainerScroll>
 
