@@ -133,15 +133,15 @@ export default function Home() {
       <Header />
 
       {/* Hero Section - Pure White */}
-      <section id="inicio" className="relative min-h-[85vh] w-full bg-white pt-24">
-        <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="text-center lg:text-left max-w-xl">
+      <section id="inicio" className="relative min-h-[90vh] w-full bg-white pt-24 flex items-center">
+        <div className="container mx-auto px-4 md:px-6 lg:px-12 xl:px-20 py-12 md:py-16">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 items-center max-w-7xl mx-auto">
+            <div className="text-center lg:text-left">
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
-                className="text-[#3FA174] font-medium mb-4 tracking-wide text-sm uppercase"
+                className="text-[#3FA174] font-medium mb-6 tracking-widest text-xs sm:text-sm uppercase"
               >
                 Cannabis Medicinal no Brasil
               </motion.p>
@@ -150,7 +150,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-4xl sm:text-5xl md:text-[3.5rem] font-bold mb-6 tracking-tight text-gray-900 leading-[1.1]"
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 tracking-tight text-gray-900 leading-[1.05]"
               >
                 Acesse seu tratamento de forma{" "}
                 <span className="text-[#3FA174] inline-block">
@@ -162,7 +162,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg text-gray-500 mb-10 leading-relaxed"
+                className="text-lg lg:text-xl text-gray-500 mb-10 leading-relaxed max-w-lg lg:max-w-xl"
               >
                 Conectamos você a médicos prescritores especializados. 
                 Consultas por vídeo, receita digital válida em todo Brasil.
@@ -177,31 +177,31 @@ export default function Home() {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6 text-base font-medium"
+                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-10 py-7 text-lg font-medium rounded-xl shadow-lg shadow-[#3FA174]/20 hover:shadow-xl hover:shadow-[#3FA174]/30 transition-all"
                 >
                   <Link href="/cadastro">
                     Agendar consulta
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 <Link 
                   href="/planos"
-                  className="text-gray-600 hover:text-[#3FA174] font-medium text-base flex items-center gap-1 transition-colors"
+                  className="text-gray-600 hover:text-[#3FA174] font-medium text-lg flex items-center gap-2 transition-colors"
                 >
                   Como funciona
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5" />
                 </Link>
               </motion.div>
 
             </div>
 
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               className="hidden lg:flex justify-center items-center"
             >
-              <HeroCarteirinha />
+              <HeroCarteirinha className="w-full max-w-lg xl:max-w-xl" />
             </motion.div>
           </div>
         </div>
