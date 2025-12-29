@@ -132,40 +132,64 @@ export default function Home() {
     <div className="relative min-h-screen w-full bg-white">
       <Header />
 
-      {/* Hero Section Unificada - Com círculos decorativos "World Sensation" */}
+      {/* Hero Section Unificada - Com curvas conectoras estilo Ezcard */}
       <section id="inicio" className="relative w-full pt-24 pb-20 overflow-hidden bg-[#FAFBFC]">
-        {/* Background Decorative Circles - World Sensation */}
+        {/* SVG Curved Lines - Connecting Elements like Ezcard */}
+        <svg 
+          className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block"
+          style={{ zIndex: 1 }}
+          viewBox="0 0 1440 800"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          {/* Left side curves - from left edge to center */}
+          <path
+            d="M 0 280 Q 180 260, 320 320 Q 480 390, 580 360"
+            fill="none"
+            stroke="#E5E7EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 0 420 Q 120 400, 240 450 Q 380 510, 520 480"
+            fill="none"
+            stroke="#E5E7EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 0 560 Q 150 540, 280 580 Q 400 620, 500 590"
+            fill="none"
+            stroke="#E5E7EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          
+          {/* Right side curves - from right edge to center */}
+          <path
+            d="M 1440 300 Q 1260 280, 1120 340 Q 960 410, 860 380"
+            fill="none"
+            stroke="#E5E7EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 1440 460 Q 1320 440, 1180 500 Q 1040 560, 920 530"
+            fill="none"
+            stroke="#E5E7EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+        
+        {/* Background gradient */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Large circle - left side */}
-          <div 
-            className="absolute -left-32 top-1/4 w-[600px] h-[600px] rounded-full border border-gray-200/50"
-            style={{ transform: 'translateY(-50%)' }}
-          />
-          <div 
-            className="absolute -left-20 top-1/4 w-[450px] h-[450px] rounded-full border border-gray-200/40"
-            style={{ transform: 'translateY(-50%)' }}
-          />
-          <div 
-            className="absolute left-0 top-1/4 w-[300px] h-[300px] rounded-full border border-gray-200/30"
-            style={{ transform: 'translateY(-50%)' }}
-          />
-          
-          {/* Circles - right side */}
-          <div 
-            className="absolute -right-40 top-1/3 w-[500px] h-[500px] rounded-full border border-gray-200/40"
-          />
-          <div 
-            className="absolute -right-20 top-1/2 w-[350px] h-[350px] rounded-full border border-gray-200/30"
-          />
-          
-          {/* Bottom decorative curve */}
-          <div 
-            className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"
-          />
-          
           {/* Subtle purple/blue gradient on right */}
           <div 
-            className="absolute -right-20 bottom-20 w-[400px] h-[200px] bg-gradient-to-l from-purple-100/20 to-transparent rounded-full blur-3xl"
+            className="absolute -right-20 bottom-20 w-[400px] h-[200px] bg-gradient-to-l from-purple-100/30 to-transparent rounded-full blur-3xl"
+          />
+          {/* Bottom fade to white */}
+          <div 
+            className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"
           />
         </div>
 
