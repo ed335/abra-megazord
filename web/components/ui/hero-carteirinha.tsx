@@ -74,7 +74,7 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
                 <div className="flex-1 min-w-0">
                   <div className="mb-3">
                     <p className="text-gray-400 text-[8px] md:text-[9px] uppercase tracking-wider">Nome Completo</p>
-                    <p className="text-[#1B4332] text-sm md:text-base font-bold truncate">SEU NOME AQUI</p>
+                    <p className="text-[#1B4332] text-sm md:text-base font-bold truncate">Maria Silva Santos</p>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-x-3 gap-y-2">
