@@ -4,29 +4,28 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import { API_URL, setToken } from '@/lib/auth';
-import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const roles = [
   { value: 'PACIENTE', label: 'Paciente' },
   { value: 'PRESCRITOR', label: 'Prescritor' },
-  { value: 'ADMIN', label: 'Admin (demo)' },
 ] as const;
 
 export default function CadastroClient() {
-  const [role, setRole] = useState<'PACIENTE' | 'PRESCRITOR' | 'ADMIN'>('PACIENTE');
+  const [role, setRole] = useState<'PACIENTE' | 'PRESCRITOR'>('PACIENTE');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatus('loading');
-    setMessage('');
+    setLoading(true);
 
     try {
       const response = await fetch(`${API_URL}/auth/register`, {
@@ -43,55 +42,47 @@ export default function CadastroClient() {
       const data = await response.json();
       if (data.accessToken) {
         setToken(data.accessToken);
-        setStatus('success');
-        setMessage('Cadastro realizado. Redirecionando para o dashboard...');
-        setTimeout(() => router.push('/dashboard'), 800);
+        toast.success('Cadastro realizado com sucesso!');
+        setTimeout(() => router.push('/dashboard'), 500);
         return;
       }
 
-      setStatus('success');
-      setMessage('Cadastro realizado com sucesso.');
+      toast.success('Cadastro realizado com sucesso!');
+      setTimeout(() => router.push('/login'), 500);
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Erro ao cadastrar';
-      setStatus('error');
-      setMessage(msg);
+      toast.error(msg);
+      setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-off-white px-4 sm:px-6 lg:px-8 py-16">
-      <Card className="max-w-3xl mx-auto">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-verde-oliva font-medium mb-2">ABRACANM</p>
-              <CardTitle className="text-2xl sm:text-3xl">Crie sua conta</CardTitle>
-              <CardDescription>
-                Cadastre-se como paciente ou prescritor para acessar a plataforma.
-              </CardDescription>
-            </div>
-            <Link href="/" className="text-sm text-verde-oliva hover:underline">
-              Voltar
-            </Link>
-          </div>
+    <main className="min-h-screen bg-background px-4 py-16">
+      <Card className="max-w-md mx-auto">
+        <CardHeader className="text-center">
+          <Link href="/" className="text-sm text-primary font-medium mb-2 inline-block">
+            ABRACANM
+          </Link>
+          <CardTitle className="text-2xl">Criar conta</CardTitle>
+          <CardDescription>
+            Cadastre-se para acessar a plataforma
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-cinza-escuro">
-                Tipo de conta
-              </label>
-              <div className="flex flex-wrap gap-3">
+              <Label>Tipo de conta</Label>
+              <div className="flex gap-2">
                 {roles.map((r) => (
                   <button
                     key={r.value}
                     type="button"
                     onClick={() => setRole(r.value)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                    className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all border ${
                       role === r.value
-                        ? 'bg-verde-oliva text-white'
-                        : 'bg-off-white border border-cinza-claro text-cinza-escuro hover:border-verde-oliva'
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-background border-input text-foreground hover:bg-accent'
                     }`}
                   >
                     {r.label}
@@ -101,70 +92,55 @@ export default function CadastroClient() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-cinza-escuro">
-                E-mail
-              </label>
-              <input
+              <Label htmlFor="email">E-mail</Label>
+              <Input
+                id="email"
                 type="email"
                 name="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
                 placeholder="voce@email.com"
+                autoComplete="email"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-cinza-escuro">
-                Senha
-              </label>
-              <input
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
                 type="password"
                 name="password"
                 required
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
                 placeholder="Mínimo 8 caracteres"
+                autoComplete="new-password"
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <p className="text-sm text-cinza-medio">
-                Já tem uma conta?{' '}
-                <Link href="/login" className="text-verde-oliva hover:underline font-medium">
-                  Entrar
-                </Link>
-              </p>
-              <Button
-                type="submit"
-                disabled={status === 'loading'}
-              >
-                {status === 'loading' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Cadastrando...
-                  </>
-                ) : (
-                  'Criar conta'
-                )}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Cadastrando...
+                </>
+              ) : (
+                'Criar conta'
+              )}
+            </Button>
 
-            {status === 'success' && (
-              <Alert variant="success">
-                <CheckCircle2 className="h-4 w-4" />
-                <AlertDescription>{message}</AlertDescription>
-              </Alert>
-            )}
-            {status === 'error' && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{message}</AlertDescription>
-              </Alert>
-            )}
+            <p className="text-sm text-center text-muted-foreground">
+              Já tem uma conta?{' '}
+              <Link href="/login" className="text-primary hover:underline font-medium">
+                Entrar
+              </Link>
+            </p>
           </form>
         </CardContent>
       </Card>

@@ -5,21 +5,21 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { setToken } from '@/lib/auth';
-import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function LoginClient() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatus('loading');
-    setMessage('');
+    setLoading(true);
 
     try {
       const response = await fetch('/api/auth/login', {
@@ -36,30 +36,29 @@ export default function LoginClient() {
       const data = await response.json();
       if (data.access_token) {
         setToken(data.access_token);
-        setStatus('success');
-        setMessage('Login realizado com sucesso. Redirecionando...');
+        toast.success('Login realizado com sucesso!');
         
         const redirectPath = data.user?.role === 'ADMIN' 
           ? '/admin' 
           : '/dashboard';
         
-        setTimeout(() => router.push(redirectPath), 800);
+        setTimeout(() => router.push(redirectPath), 500);
       } else {
-        setStatus('error');
-        setMessage('Erro ao obter token de acesso');
+        toast.error('Erro ao obter token de acesso');
+        setLoading(false);
       }
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Erro ao entrar';
-      setStatus('error');
-      setMessage(msg);
+      toast.error(msg);
+      setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-off-white px-4 sm:px-6 lg:px-8 py-16 flex items-center justify-center">
+    <main className="min-h-screen bg-background px-4 py-16 flex items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <Link href="/" className="text-sm text-verde-oliva font-medium mb-2 inline-block">
+          <Link href="/" className="text-sm text-primary font-medium mb-2 inline-block">
             ABRACANM
           </Link>
           <CardTitle className="text-2xl">Entrar</CardTitle>
@@ -70,40 +69,42 @@ export default function LoginClient() {
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-cinza-escuro">E-mail</label>
-              <input
+              <Label htmlFor="email">E-mail</Label>
+              <Input
+                id="email"
                 type="email"
                 name="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
                 placeholder="voce@email.com"
+                autoComplete="email"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-cinza-escuro">Senha</label>
-              <input
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
                 type="password"
                 name="password"
                 required
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
                 placeholder="Sua senha"
+                autoComplete="current-password"
               />
             </div>
 
             <Button
               type="submit"
               className="w-full"
-              disabled={status === 'loading'}
+              disabled={loading}
             >
-              {status === 'loading' ? (
+              {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
                   Entrando...
                 </>
               ) : (
@@ -111,25 +112,12 @@ export default function LoginClient() {
               )}
             </Button>
 
-            <p className="text-sm text-center text-cinza-medio">
+            <p className="text-sm text-center text-muted-foreground">
               Ainda não tem conta?{' '}
-              <Link href="/cadastro" className="text-verde-oliva hover:underline font-medium">
+              <Link href="/cadastro" className="text-primary hover:underline font-medium">
                 Cadastre-se
               </Link>
             </p>
-
-            {status === 'success' && (
-              <Alert variant="success">
-                <CheckCircle2 className="h-4 w-4" />
-                <AlertDescription>{message}</AlertDescription>
-              </Alert>
-            )}
-            {status === 'error' && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{message}</AlertDescription>
-              </Alert>
-            )}
           </form>
         </CardContent>
       </Card>

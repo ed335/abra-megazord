@@ -3,7 +3,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  AlertCircle,
   ArrowLeft,
   ArrowRight,
   Brain,
@@ -22,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchWithAuth } from '@/lib/auth';
+import { toast } from 'sonner';
 
 type PerfilIntake = 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';
 
@@ -112,7 +112,6 @@ export default function PatientQuizWizard({ onComplete }: Props) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<PreAnamneseForm>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [diagnostico, setDiagnostico] = useState<DiagnosticoResult | null>(null);
   const [showConsentError, setShowConsentError] = useState(false);
 
@@ -162,7 +161,6 @@ export default function PatientQuizWizard({ onComplete }: Props) {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    setFeedback(null);
     try {
       const result = await fetchWithAuth<{ success: boolean; diagnostico: DiagnosticoResult }>('/api/pre-anamnese', {
         method: 'POST',
@@ -170,9 +168,8 @@ export default function PatientQuizWizard({ onComplete }: Props) {
       });
 
       setDiagnostico(result.diagnostico);
-      setFeedback({
-        type: 'success',
-        message: 'Recebemos suas respostas! Seu diagnóstico ABRACANM está pronto.',
+      toast.success('Pré-anamnese concluída!', {
+        description: 'Seu diagnóstico ABRACANM está pronto.',
       });
 
       if (onComplete) {
@@ -183,9 +180,8 @@ export default function PatientQuizWizard({ onComplete }: Props) {
         router.push('/dashboard');
       }, 2000);
     } catch (error) {
-      setFeedback({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Não conseguimos enviar agora. Tente novamente.',
+      toast.error('Erro ao enviar', {
+        description: error instanceof Error ? error.message : 'Não conseguimos enviar agora. Tente novamente.',
       });
     } finally {
       setIsSubmitting(false);
@@ -553,19 +549,6 @@ export default function PatientQuizWizard({ onComplete }: Props) {
       </div>
 
       <div className="space-y-4">{renderStep()}</div>
-
-      {feedback && (
-        <div
-          className={`flex items-center gap-2 rounded-xl border px-4 py-3 ${
-            feedback.type === 'success'
-              ? 'border-verde-oliva/50 bg-verde-claro/10 text-verde-oliva'
-              : 'border-erro/40 bg-red-50 text-erro'
-          }`}
-        >
-          <AlertCircle className="w-4 h-4" />
-          <p className="text-sm">{feedback.message}</p>
-        </div>
-      )}
 
       <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3">
         <Button
