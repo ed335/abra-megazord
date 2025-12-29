@@ -9,7 +9,8 @@ import {
   ArrowRight,
   Phone,
   Calendar,
-  MessageCircle
+  MessageCircle,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -128,138 +129,161 @@ const benefits = [
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen w-full bg-white">
+    <div className="relative min-h-screen w-full bg-[#FAFBFC]">
       <Header />
 
-      {/* Hero Section - Ezcard Style */}
-      <section id="inicio" className="relative w-full bg-gradient-to-b from-gray-50 via-white to-white pt-24 pb-16 overflow-hidden">
-        {/* Background Decorative Curves */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-40 w-[600px] h-[600px] rounded-full border border-gray-200/50" />
-          <div className="absolute top-1/3 -left-20 w-[400px] h-[400px] rounded-full border border-gray-200/30" />
-          <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#3FA174]/5" />
+      {/* Hero Section - Ezcard Style EXATO */}
+      <section id="inicio" className="relative w-full pt-24 pb-8 overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-20 left-10 w-[500px] h-[500px] rounded-full border border-gray-200/40" />
+          <div className="absolute top-40 left-20 w-[300px] h-[300px] rounded-full border border-gray-200/30" />
+          <div className="absolute -bottom-20 right-0 w-[400px] h-[200px] bg-gradient-to-l from-purple-100/30 to-transparent" />
         </div>
 
-        <div className="container mx-auto px-4 md:px-6 lg:px-12 xl:px-20 py-12 md:py-20 relative z-10">
-          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 xl:gap-24 items-center max-w-7xl mx-auto">
-            {/* Left Column - Text Content */}
-            <div className="text-center lg:text-left">
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold mb-6 tracking-tight text-gray-900 leading-[1.1]"
-              >
-                Acesse seu tratamento{" "}
-                <br className="hidden sm:block" />
-                de forma <span className="text-[#3FA174]">simples.</span>{" "}
-                <span className="text-[#3FA174]">segura.</span>{" "}
-                <span className="text-[#3FA174]">legal.</span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-base lg:text-lg text-gray-500 mb-8 leading-relaxed max-w-md lg:max-w-lg"
-              >
-                Conectamos você a médicos prescritores especializados.
-                Consultas por vídeo, receita digital válida em todo o Brasil.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start items-center"
-              >
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6 text-base font-medium rounded-full shadow-lg shadow-[#3FA174]/20 hover:shadow-xl hover:shadow-[#3FA174]/30 transition-all"
-                >
-                  <Link href="/cadastro">
-                    Agendar consulta
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-6 text-base font-medium rounded-full"
-                >
-                  <Link href="/planos">
-                    Como funciona
-                  </Link>
-                </Button>
-              </motion.div>
-            </div>
-
-            {/* Right Column - Mockup with Floating Elements */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="hidden lg:block relative"
+        {/* Content */}
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          {/* Headline - Centered like Ezcard */}
+          <div className="text-center max-w-3xl mx-auto mb-8">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 tracking-tight text-gray-900 leading-[1.1]"
             >
-              {/* Floating Badges */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="absolute -left-8 top-16 z-20"
-              >
-                <div className="bg-rose-100 text-rose-600 px-4 py-2 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
-                  <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
-                  100% Legal
-                </div>
-              </motion.div>
+              Simples. <span className="text-[#3FA174]">Seguro.</span>
+              <br />
+              Feito para Você.
+            </motion.h1>
 
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="absolute -right-4 top-24 z-20"
-              >
-                <div className="bg-[#3FA174] text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                  Receita Digital
-                </div>
-              </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-gray-500 text-base lg:text-lg mb-6 max-w-xl mx-auto"
+            >
+              Conectamos você a médicos prescritores especializados.
+              Consultas por vídeo, receita digital válida em todo o Brasil.
+            </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="absolute -left-4 bottom-32 z-20"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex gap-3 justify-center"
+            >
+              <Button
+                asChild
+                className="bg-[#3FA174] hover:bg-[#359966] text-white px-6 py-5 text-sm font-medium rounded-full"
               >
-                <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl shadow-xl">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Status</p>
-                      <p className="text-sm font-bold text-gray-900">Atendimento Rápido</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="absolute right-8 bottom-16 z-20"
+                <Link href="/cadastro">
+                  Agendar consulta
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-5 text-sm font-medium rounded-full"
               >
-                <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl shadow-xl">
-                  <p className="text-xs text-gray-400 mb-1">Pacientes atendidos</p>
-                  <p className="text-2xl font-bold text-[#3FA174]">+5.000</p>
-                </div>
-              </motion.div>
+                <Link href="/planos">
+                  Como funciona
+                </Link>
+              </Button>
+            </motion.div>
+          </div>
 
-              {/* Main Mockup */}
-              <div className="flex justify-center items-center pl-8">
-                <HeroCarteirinha className="w-full max-w-md" />
+          {/* Cards Section - Like Ezcard */}
+          <div className="relative max-w-5xl mx-auto mt-8">
+            {/* Left Floating Elements */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="absolute left-0 top-20 hidden lg:block z-10"
+            >
+              <div className="bg-rose-100 text-rose-600 px-4 py-2 rounded-full text-sm font-medium shadow-sm flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                Atendimento Rápido
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="absolute left-0 top-52 hidden lg:block z-10"
+            >
+              <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                <p className="text-xs text-gray-400 mb-1">Limite de Consultas</p>
+                <p className="text-lg font-bold text-gray-900">Ilimitado</p>
+                <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full w-3/4 bg-blue-500 rounded-full" />
+                </div>
+                <p className="text-xs text-gray-400 mt-1 text-right">Premium</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="absolute left-8 bottom-8 hidden lg:block z-10"
+            >
+              <div className="bg-blue-500 text-white rounded-2xl shadow-lg p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <span className="font-medium">Consulta Realizada!</span>
+              </div>
+            </motion.div>
+
+            {/* Center Card - Main Mockup */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex justify-center"
+            >
+              <HeroCarteirinha />
+            </motion.div>
+
+            {/* Right Floating Elements */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="absolute right-0 top-16 hidden lg:block z-10"
+            >
+              <div className="bg-[#3FA174] text-white px-4 py-2 rounded-full text-sm font-medium shadow-sm">
+                100% Legal
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="absolute right-0 top-40 hidden lg:block z-10"
+            >
+              <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                <p className="text-xs text-gray-400 mb-1">Pacientes Atendidos</p>
+                <p className="text-2xl font-bold text-[#3FA174]">+5.000</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="absolute right-4 bottom-20 hidden lg:block z-10"
+            >
+              <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                <p className="text-xs text-gray-400 mb-1">Satisfação</p>
+                <p className="text-2xl font-bold text-gray-900">98%</p>
+                <div className="flex gap-1 mt-1">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-xs text-green-600">↓</div>
+                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-xs text-purple-600">↑</div>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -319,11 +343,11 @@ export default function Home() {
             viewport={{ once: true }}
             className="flex flex-wrap justify-center gap-3"
           >
-            {conditions.map((condition, index) => (
+            {conditions.map((condition) => (
               <Link
-                key={index}
-                href="/cadastro"
-                className="px-5 py-2.5 bg-gray-50 hover:bg-[#3FA174]/10 border border-gray-200 hover:border-[#3FA174]/30 rounded-full text-gray-700 hover:text-[#3FA174] transition-all duration-200 text-sm font-medium"
+                key={condition}
+                href={`/cadastro?condicao=${encodeURIComponent(condition)}`}
+                className="px-5 py-2.5 rounded-full bg-gray-100 text-gray-700 hover:bg-[#3FA174] hover:text-white transition-all duration-200 text-sm font-medium"
               >
                 {condition}
               </Link>
@@ -332,162 +356,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Statement Section */}
-      <section id="destaque" className="py-24 px-4 md:px-6 bg-white border-y border-gray-100">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-xl md:text-2xl text-gray-600 leading-relaxed"
-          >
-            Democratizamos o acesso a tratamentos com cannabis medicinal no Brasil, 
-            conectando pacientes a médicos prescritores especializados de forma
-            <span className="text-gray-900 font-semibold"> 100% legal e segura</span>.
-          </motion.p>
-        </div>
-      </section>
-
-      {/* Services Section - Minimal */}
-      <section id="servicos" className="py-24 px-4 md:px-6 bg-white">
+      {/* How it Works - Timeline */}
+      <section id="como-funciona" className="py-20 px-4 md:px-6 bg-gray-50">
         <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="mb-16"
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Como funciona
             </h2>
-            <p className="text-gray-500 max-w-lg">
-              Processo simples e seguro para iniciar seu tratamento.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">
-            {services.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  viewport={{ once: true }}
-                  className="flex gap-4"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-[#3FA174]" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-900 mb-1">{service.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">{service.description}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Mission Section */}
-      <section id="sobre" className="py-28 px-4 md:px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <p className="text-[#3FA174] font-medium text-sm uppercase tracking-wide mb-4">
-              Nossa missão
-            </p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 max-w-3xl mx-auto leading-tight">
-              Quebrar barreiras e tabus com{" "}
-              <span className="text-[#3FA174]">ciência</span>,{" "}
-              <span className="text-[#3FA174]">segurança</span> e{" "}
-              <span className="text-[#3FA174]">humanidade</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-12 md:gap-8">
-            {[
-              {
-                number: "01",
-                title: "Cuidado humanizado",
-                description: "Acolhemos cada paciente de forma única, oferecendo suporte completo no acesso ao tratamento para você e sua família.",
-              },
-              {
-                number: "02",
-                title: "Ciência e educação",
-                description: "Trabalhamos com base em evidências científicas, promovendo capacitação contínua e informação de qualidade.",
-              },
-              {
-                number: "03",
-                title: "Comunidade ativa",
-                description: "Construímos uma rede de apoio onde pacientes compartilham experiências e se fortalecem juntos.",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative"
-              >
-                <span className="text-6xl font-bold text-gray-100 absolute -top-4 -left-2">
-                  {item.number}
-                </span>
-                <div className="relative pt-8">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="text-center mt-16"
-          >
-            <Link 
-              href="/sobre"
-              className="inline-flex items-center gap-2 text-[#3FA174] font-medium hover:gap-3 transition-all"
-            >
-              Conheça nossa história
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Journey Timeline */}
-      <section id="jornada" className="py-24 px-4 md:px-6 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              Sua jornada
-            </h2>
-            <p className="text-gray-500">
-              4 passos simples para iniciar seu tratamento.
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Em poucos passos, você inicia seu tratamento com cannabis medicinal
             </p>
           </motion.div>
 
@@ -495,165 +378,160 @@ export default function Home() {
             {journeyItems.map((item, index) => (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="relative"
+                className="text-center"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[#3FA174] font-bold text-sm">{String(index + 1).padStart(2, '0')}</span>
-                  {index < journeyItems.length - 1 && (
-                    <div className="hidden md:block flex-1 h-px bg-gray-200" />
-                  )}
+                <div className="w-16 h-16 rounded-2xl bg-[#3FA174] text-white flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                  {item.id}
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                <p className="text-gray-500 text-sm">{item.description}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-600 text-sm">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
+          >
+            <Button
+              asChild
+              size="lg"
+              className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6 text-lg font-medium rounded-xl"
+            >
+              <Link href="/cadastro">
+                Começar agora
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Services Grid */}
+      <section id="servicos" className="py-20 px-4 md:px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Nossos serviços
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Tudo que você precisa para seu tratamento em um só lugar
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service, index) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-gray-50 rounded-2xl p-6 hover:shadow-lg transition-shadow"
+              >
+                <div className="w-12 h-12 rounded-xl bg-[#3FA174]/10 text-[#3FA174] flex items-center justify-center mb-4">
+                  <service.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{service.title}</h3>
+                <p className="text-gray-600 text-sm">{service.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits Section - Clickable Carousel */}
-      <section id="beneficios" className="py-24 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Por que a ABRACANM?
-              </h2>
-              <p className="text-gray-500 mb-8">
-                Benefícios exclusivos para nossos associados.
-              </p>
-              <Button
-                asChild
-                className="bg-[#3FA174] hover:bg-[#359966] text-white"
-              >
-                <Link href="/planos">
-                  Ver planos
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </motion.div>
+      {/* Benefits Carousel */}
+      <section className="py-20 px-4 md:px-6 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Por que escolher a ABRACANM?
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Benefícios exclusivos para nossos associados
+            </p>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <BenefitsCarousel benefits={benefits} />
-            </motion.div>
-          </div>
+          <BenefitsCarousel benefits={benefits} />
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="depoimentos" className="bg-gray-50">
-        <AnimatedTestimonials
-          testimonials={testimonials}
-          title="O que dizem nossos pacientes"
-          subtitle="Histórias reais de transformação através da cannabis medicinal."
-          badgeText="Depoimentos reais"
-          autoRotateInterval={6000}
-        />
-      </section>
-
-      {/* Contact Section - Minimal */}
-      <section id="contato" className="py-24 px-4 md:px-6 bg-white border-t border-gray-100">
+      {/* Testimonials */}
+      <section id="depoimentos" className="py-20 px-4 md:px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Fale conosco
-              </h2>
-              <p className="text-gray-500 mb-8">
-                Tire suas dúvidas sobre cannabis medicinal e tratamentos.
-              </p>
-              <a
-                href="https://wa.me/5511999999999"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#3FA174] hover:bg-[#359966] text-white px-6 py-3 rounded-lg font-medium transition-colors"
-              >
-                <Phone className="h-4 w-4" />
-                Falar no WhatsApp
-              </a>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              O que nossos pacientes dizem
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Histórias reais de quem transformou sua qualidade de vida
+            </p>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              <div>
-                <p className="text-gray-400 text-sm mb-1">Email</p>
-                <a href="mailto:contato@abracanm.org.br" className="text-gray-900 hover:text-[#3FA174] transition-colors">
-                  contato@abracanm.org.br
-                </a>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm mb-1">Telefone</p>
-                <a href="tel:+5511999999999" className="text-gray-900 hover:text-[#3FA174] transition-colors">
-                  (11) 99999-9999
-                </a>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm mb-1">Localização</p>
-                <p className="text-gray-900">São Paulo, SP</p>
-              </div>
-            </motion.div>
-          </div>
+          <AnimatedTestimonials testimonials={testimonials} />
         </div>
       </section>
 
       {/* CTA Section */}
-      <section id="cta" className="py-24 px-4 md:px-6 bg-gray-50">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="py-20 px-4 md:px-6 bg-[#1B4332]">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Pronto para começar?
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Pronto para começar seu tratamento?
             </h2>
-            <p className="text-gray-500 mb-10">
-              Associe-se e tenha acesso a médicos especializados em cannabis medicinal.
+            <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+              Agende sua consulta agora e dê o primeiro passo para uma vida com mais qualidade
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 asChild
                 size="lg"
-                className="bg-[#3FA174] hover:bg-[#359966] text-white px-8 py-6"
+                className="bg-white text-[#1B4332] hover:bg-gray-100 px-8 py-6 text-lg font-medium rounded-xl"
               >
                 <Link href="/cadastro">
                   Agendar consulta
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-gray-300 text-gray-600 hover:bg-white px-8 py-6"
+                className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg font-medium rounded-xl"
               >
-                <Link href="/planos">
-                  Ver planos
+                <Link href="https://wa.me/5511999999999" target="_blank">
+                  <Phone className="mr-2 h-5 w-5" />
+                  Falar no WhatsApp
                 </Link>
               </Button>
             </div>
@@ -662,47 +540,42 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-16 px-4 md:px-6 bg-gray-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-10 mb-12">
+      <footer className="bg-gray-900 text-white py-12 px-4 md:px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Leaf className="h-6 w-6 text-[#3FA174]" />
-                <span className="text-xl font-bold text-white">ABRACANM</span>
-              </div>
+              <h3 className="text-lg font-bold mb-4">ABRACANM</h3>
               <p className="text-gray-400 text-sm">
-                Associação Brasileira de Cannabis Medicinal
+                Associação Brasileira de Cannabis Medicinal. Seu tratamento de forma legal, segura e acessível.
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-white mb-4">Links</h4>
-              <ul className="space-y-3 text-sm">
-                <li><Link href="/planos" className="text-gray-400 hover:text-white transition-colors">Planos</Link></li>
-                <li><Link href="/cadastro" className="text-gray-400 hover:text-white transition-colors">Cadastro</Link></li>
-                <li><Link href="/login" className="text-gray-400 hover:text-white transition-colors">Entrar</Link></li>
+              <h4 className="font-semibold mb-4">Links</h4>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li><Link href="/sobre" className="hover:text-white transition-colors">Sobre nós</Link></li>
+                <li><Link href="/planos" className="hover:text-white transition-colors">Planos</Link></li>
+                <li><Link href="/educacao" className="hover:text-white transition-colors">Educação</Link></li>
+                <li><Link href="/contato" className="hover:text-white transition-colors">Contato</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-white mb-4">Legal</h4>
-              <ul className="space-y-3 text-sm">
-                <li><Link href="/privacidade" className="text-gray-400 hover:text-white transition-colors">Privacidade</Link></li>
-                <li><Link href="/termos" className="text-gray-400 hover:text-white transition-colors">Termos de Uso</Link></li>
-                <li><Link href="/cookies" className="text-gray-400 hover:text-white transition-colors">Cookies</Link></li>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li><Link href="/privacidade" className="hover:text-white transition-colors">Privacidade</Link></li>
+                <li><Link href="/termos" className="hover:text-white transition-colors">Termos de uso</Link></li>
+                <li><Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-white mb-4">Contato</h4>
-              <ul className="space-y-3 text-sm text-gray-400">
-                <li>contato@abracanm.org.br</li>
+              <h4 className="font-semibold mb-4">Contato</h4>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li>contato@abracanm.com.br</li>
                 <li>(11) 99999-9999</li>
-                <li>São Paulo, SP</li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center">
-            <p className="text-gray-500 text-sm">
-              © 2025 ABRACANM. Todos os direitos reservados.
-            </p>
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+            © 2024 ABRACANM. Todos os direitos reservados.
           </div>
         </div>
       </footer>
