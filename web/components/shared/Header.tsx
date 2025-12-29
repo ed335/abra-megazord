@@ -96,12 +96,12 @@ export default function Header() {
               )}>
                 <Heart className={cn(
                   "w-5 h-5",
-                  scrolled ? "text-white" : "text-verde-oliva"
+                  scrolled ? "text-white" : "text-[#A8C686]"
                 )} />
               </div>
               <span className={cn(
                 "text-xl font-bold transition-colors",
-                scrolled ? "text-cinza-escuro" : "text-cinza-escuro"
+                scrolled ? "text-cinza-escuro" : "text-[#f5f5f0]"
               )}>
                 ABRACANM
               </span>
@@ -114,9 +114,13 @@ export default function Header() {
                   href={link.href}
                   className={cn(
                     "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname === link.href
-                      ? "text-verde-oliva bg-verde-oliva/10"
-                      : "text-cinza-medio hover:text-cinza-escuro hover:bg-off-white"
+                    scrolled
+                      ? pathname === link.href
+                        ? "text-verde-oliva bg-verde-oliva/10"
+                        : "text-cinza-medio hover:text-cinza-escuro hover:bg-off-white"
+                      : pathname === link.href
+                        ? "text-[#A8C686] bg-white/10"
+                        : "text-[#d4d4c4] hover:text-[#f5f5f0] hover:bg-white/10"
                   )}
                 >
                   {link.label}
@@ -136,23 +140,37 @@ export default function Header() {
                     </Link>
                   )}
                   <Link href="/dashboard">
-                    <Button variant="outline" size="sm" className="hidden sm:flex">
+                    <Button variant="outline" size="sm" className={cn(
+                      "hidden sm:flex",
+                      !scrolled && "border-white/30 text-[#f5f5f0] hover:bg-white/10"
+                    )}>
                       Minha Área
                     </Button>
                   </Link>
                   <Link href="/perfil" className="hidden sm:flex">
-                    <div className="w-9 h-9 bg-verde-oliva/10 rounded-full flex items-center justify-center hover:bg-verde-oliva/20 transition-colors">
-                      <User size={18} className="text-verde-oliva" />
+                    <div className={cn(
+                      "w-9 h-9 rounded-full flex items-center justify-center transition-colors",
+                      scrolled 
+                        ? "bg-verde-oliva/10 hover:bg-verde-oliva/20" 
+                        : "bg-white/10 hover:bg-white/20"
+                    )}>
+                      <User size={18} className={scrolled ? "text-verde-oliva" : "text-[#f5f5f0]"} />
                     </div>
                   </Link>
-                  <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:flex">
+                  <Button variant="ghost" size="sm" onClick={handleLogout} className={cn(
+                    "hidden sm:flex",
+                    !scrolled && "text-[#d4d4c4] hover:text-[#f5f5f0] hover:bg-white/10"
+                  )}>
                     Sair
                   </Button>
                 </>
               ) : (
                 <>
                   <Link href="/login">
-                    <Button variant="ghost" size="sm" className="hidden sm:flex">
+                    <Button variant="ghost" size="sm" className={cn(
+                      "hidden sm:flex",
+                      !scrolled && "text-[#d4d4c4] hover:text-[#f5f5f0] hover:bg-white/10"
+                    )}>
                       Entrar
                     </Button>
                   </Link>
@@ -166,7 +184,10 @@ export default function Header() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden"
+                className={cn(
+                  "lg:hidden",
+                  !scrolled && "text-[#f5f5f0] hover:bg-white/10"
+                )}
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
