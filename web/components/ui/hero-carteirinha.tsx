@@ -42,20 +42,21 @@ export function HeroCarteirinha({ className }: HeroCarteirinhaProps) {
           >
             <div className="absolute -top-1 left-3 right-3 h-6 md:h-8 rounded-t-xl md:rounded-t-2xl bg-gradient-to-b from-[#4CAF50] to-[#43A047] -z-10" />
             
-            <div className="bg-gradient-to-r from-amber-400 to-amber-500 p-3 md:p-4">
+            <div className="bg-gradient-to-r from-[#3FA174] to-[#2D8B5F] p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-amber-900/60 text-[9px] md:text-[11px] uppercase tracking-widest font-medium">Associação Brasileira</p>
-                  <p className="text-amber-900 text-sm md:text-base font-bold tracking-wide">ABRACANM</p>
+                  <p className="text-white/70 text-[9px] md:text-[11px] uppercase tracking-widest font-medium">Associação Brasileira</p>
+                  <p className="text-white text-sm md:text-base font-bold tracking-wide">ABRACANM</p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="flex -space-x-1.5">
-                    <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-white/40" />
-                    <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-white/60" />
-                  </div>
-                  <div className="ml-2 px-2 py-0.5 rounded-full bg-amber-600/20 backdrop-blur-sm">
-                    <span className="text-[8px] md:text-[10px] font-bold text-amber-800">ATIVO</span>
-                  </div>
+                <div className="flex items-center">
+                  <svg className="w-8 h-8 md:w-10 md:h-10 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22V12"/>
+                    <path d="M12 12C12 12 8 10 6 6C6 6 10 7 12 12"/>
+                    <path d="M12 12C12 12 16 10 18 6C18 6 14 7 12 12"/>
+                    <path d="M12 12C12 12 6 8 2 8C2 8 6 11 12 12"/>
+                    <path d="M12 12C12 12 18 8 22 8C22 8 18 11 12 12"/>
+                    <path d="M12 12C12 12 10 6 12 2C12 2 14 6 12 12"/>
+                  </svg>
                 </div>
               </div>
             </div>
