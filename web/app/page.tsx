@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroCarteirinha } from "@/components/ui/hero-carteirinha";
 import { InfiniteBenefitsCarousel } from "@/components/ui/infinite-benefits-carousel";
-import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { FaqAccordion } from "@/components/ui/faq-chat-accordion";
 import Header from "@/components/shared/Header";
 import { FooterSection } from "@/components/ui/footer-section";
@@ -249,49 +248,52 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <ContainerScroll
-          titleComponent={
-            <div className="flex flex-col items-center">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-gray-900 leading-[1.1]">
-                Simples. <span className="text-[#3FA174]">Seguro.</span>
-                <br />
-                Feito para Você.
-              </h1>
-              
-              <p className="text-gray-500 text-base lg:text-lg mb-8 max-w-xl mx-auto">
-                Conectamos você a médicos prescritores especializados.
-                Consultas por vídeo, receita digital válida em todo o Brasil.
-              </p>
-              
-              <div className="flex gap-3 justify-center mb-8">
-                <Button
-                  asChild
-                  className="bg-[#3FA174] hover:bg-[#359966] text-white px-6 py-5 text-sm font-medium rounded-full"
-                >
-                  <Link href="/cadastro">
-                    Agendar consulta
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-5 text-sm font-medium rounded-full"
-                >
-                  <Link href="/planos">
-                    Como funciona
-                  </Link>
-                </Button>
-              </div>
+        <div className="flex flex-col items-center pt-8 md:pt-16 px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 md:mb-12"
+          >
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-gray-900 leading-[1.1]">
+              Simples. <span className="text-[#3FA174]">Seguro.</span>
+              <br />
+              Feito para Você.
+            </h1>
+            
+            <p className="text-gray-500 text-base lg:text-lg mb-8 max-w-xl mx-auto">
+              Conectamos você a médicos prescritores especializados.
+              Consultas por vídeo, receita digital válida em todo o Brasil.
+            </p>
+            
+            <div className="flex gap-3 justify-center">
+              <Button
+                asChild
+                className="bg-[#3FA174] hover:bg-[#359966] text-white px-6 py-5 text-sm font-medium rounded-full"
+              >
+                <Link href="/cadastro">
+                  Agendar consulta
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-5 text-sm font-medium rounded-full"
+              >
+                <Link href="/planos">
+                  Como funciona
+                </Link>
+              </Button>
             </div>
-          }
-        >
-          <div className="relative h-full w-full flex items-center justify-center p-4 md:p-8">
-            <HeroCarteirinha className="scale-90 md:scale-100" />
+          </motion.div>
+
+          <div className="relative z-30 w-full flex justify-center py-8 md:py-16">
+            <HeroCarteirinha />
           </div>
-        </ContainerScroll>
+        </div>
 
         {/* Mobile Floating Badges */}
-        <div className="flex md:hidden justify-center gap-2 -mt-24 mb-8 flex-wrap px-4">
+        <div className="flex md:hidden justify-center gap-2 mb-8 flex-wrap px-4">
           <span className="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
             <Zap className="w-3 h-3" />
             Atendimento Rápido
@@ -306,7 +308,7 @@ export default function Home() {
         </div>
 
         {/* Stats Section */}
-        <div className="relative -mt-16 md:-mt-32 pb-16">
+        <div className="relative pb-16">
           <div className="max-w-4xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
