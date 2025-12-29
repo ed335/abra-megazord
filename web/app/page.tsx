@@ -20,6 +20,7 @@ import { InfiniteBenefitsCarousel } from "@/components/ui/infinite-benefits-caro
 import { FaqAccordion } from "@/components/ui/faq-chat-accordion";
 import Header from "@/components/shared/Header";
 import { FooterSection } from "@/components/ui/footer-section";
+import { StatsSection } from "@/components/ui/stats-section";
 
 const faqData = [
   {
@@ -307,35 +308,7 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Stats Section */}
-        <div className="relative pb-16">
-          <div className="max-w-4xl mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8"
-            >
-              <div className="flex items-center justify-center gap-8 md:gap-16 flex-wrap">
-                <div className="text-center">
-                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">+5.000</span>
-                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">pacientes atendidos</p>
-                </div>
-                <div className="hidden md:block w-px h-12 bg-gray-200" />
-                <div className="text-center">
-                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">48h</span>
-                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">atendimento rápido</p>
-                </div>
-                <div className="hidden md:block w-px h-12 bg-gray-200" />
-                <div className="text-center">
-                  <span className="text-3xl md:text-4xl font-bold text-[#3FA174]">100%</span>
-                  <p className="text-gray-500 mt-1 text-xs uppercase tracking-wide">legal e seguro</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
+        <StatsSection />
       </section>
 
       {/* Conditions Section - Pill Tags */}
