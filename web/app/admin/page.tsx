@@ -135,22 +135,22 @@ function MetricCard({
 }) {
   return (
     <Card className="relative overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-500">{titulo}</p>
-            <p className="text-2xl font-bold text-gray-900">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-2">
+          <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
+            <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">{titulo}</p>
+            <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
               {prefixo}{typeof valor === 'number' ? valor.toLocaleString('pt-BR') : valor}{sufixo}
             </p>
             {variacao !== undefined && (
-              <div className={`flex items-center gap-1 text-sm ${variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {variacao >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                <span>{Math.abs(variacao)}% vs período anterior</span>
+              <div className={`flex items-center gap-1 text-xs sm:text-sm ${variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {variacao >= 0 ? <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" /> : <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />}
+                <span className="truncate">{Math.abs(variacao)}% vs anterior</span>
               </div>
             )}
           </div>
-          <div className={`p-3 rounded-xl ${cor}`}>
-            <Icon className="w-6 h-6 text-white" />
+          <div className={`p-2 sm:p-3 rounded-xl ${cor} flex-shrink-0`}>
+            <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
         </div>
       </CardContent>
@@ -170,41 +170,41 @@ function FunilConversao({ funil }: { funil: DashboardMetrics['funil'] }) {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
+      <CardHeader className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-[#3FA174]" />
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Target className="w-4 h-4 sm:w-5 sm:h-5 text-[#3FA174]" />
               Funil de Conversão
             </CardTitle>
-            <CardDescription>Taxa de conversão total: {funil.taxas.total}%</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Taxa de conversão total: {funil.taxas.total}%</CardDescription>
           </div>
-          <Badge variant="secondary" className="bg-green-100 text-green-700">
+          <Badge variant="secondary" className="bg-green-100 text-green-700 w-fit text-xs sm:text-sm">
             {funil.taxas.total}% conversão
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0 sm:pt-0">
         {etapas.map((etapa, index) => (
-          <div key={etapa.nome} className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
+          <div key={etapa.nome} className="space-y-1.5 sm:space-y-2">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
               <span className="font-medium text-gray-700">{etapa.nome}</span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <span className="text-gray-900 font-semibold">{etapa.valor}</span>
                 {index > 0 && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0">
                     {etapa.taxa}%
                   </Badge>
                 )}
               </div>
             </div>
-            <div className="h-8 bg-gray-100 rounded-lg overflow-hidden">
+            <div className="h-6 sm:h-8 bg-gray-100 rounded-lg overflow-hidden">
               <div
-                className={`h-full ${etapa.cor} transition-all duration-500 rounded-lg flex items-center justify-end px-3`}
+                className={`h-full ${etapa.cor} transition-all duration-500 rounded-lg flex items-center justify-end px-2 sm:px-3`}
                 style={{ width: `${(etapa.valor / maxValor) * 100}%` }}
               >
                 {etapa.valor > 0 && (
-                  <span className="text-white text-xs font-medium">
+                  <span className="text-white text-[10px] sm:text-xs font-medium">
                     {Math.round((etapa.valor / maxValor) * 100)}%
                   </span>
                 )}
@@ -224,55 +224,55 @@ function AlertasCard({ alertas }: {
 
   return (
     <Card className={totalAlertas > 0 ? 'border-amber-200 bg-amber-50/50' : ''}>
-      <CardHeader>
+      <CardHeader className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-amber-500" />
-            Alertas & Notificações
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+            <span className="hidden xs:inline">Alertas & </span>Notificações
           </CardTitle>
           {totalAlertas > 0 && (
-            <Badge className="bg-amber-500">{totalAlertas}</Badge>
+            <Badge className="bg-amber-500 text-xs">{totalAlertas}</Badge>
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0 sm:pt-0">
         {alertas.consultasHoje > 0 && (
-          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-            <Calendar className="w-5 h-5 text-blue-500" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-blue-900">{alertas.consultasHoje} consultas hoje</p>
-              <p className="text-xs text-blue-600">Acompanhe os atendimentos do dia</p>
+          <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-blue-50 rounded-lg">
+            <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-blue-900">{alertas.consultasHoje} consultas hoje</p>
+              <p className="text-[10px] sm:text-xs text-blue-600 hidden sm:block">Acompanhe os atendimentos</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-blue-400" />
+            <ChevronRight className="w-4 h-4 text-blue-400 flex-shrink-0" />
           </div>
         )}
         
         {alertas.pagamentosPendentes > 0 && (
-          <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
-            <Clock className="w-5 h-5 text-amber-500" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-amber-900">{alertas.pagamentosPendentes} pagamentos pendentes</p>
-              <p className="text-xs text-amber-600">Aguardando confirmação de PIX</p>
+          <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-amber-50 rounded-lg border border-amber-200">
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-amber-900">{alertas.pagamentosPendentes} pagamentos pendentes</p>
+              <p className="text-[10px] sm:text-xs text-amber-600 hidden sm:block">Aguardando PIX</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-amber-400" />
+            <ChevronRight className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
         )}
         
         {alertas.assinaturasExpirando > 0 && (
-          <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-            <AlertTriangle className="w-5 h-5 text-red-500" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-red-900">{alertas.assinaturasExpirando} assinaturas expirando</p>
-              <p className="text-xs text-red-600">Nos próximos 7 dias</p>
+          <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-red-50 rounded-lg border border-red-200">
+            <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-red-900">{alertas.assinaturasExpirando} assinaturas expirando</p>
+              <p className="text-[10px] sm:text-xs text-red-600 hidden sm:block">Próximos 7 dias</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-red-400" />
+            <ChevronRight className="w-4 h-4 text-red-400 flex-shrink-0" />
           </div>
         )}
 
         {totalAlertas === 0 && alertas.consultasHoje === 0 && (
-          <div className="text-center py-4 text-gray-500">
-            <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Nenhum alerta no momento</p>
+          <div className="text-center py-3 sm:py-4 text-gray-500">
+            <Activity className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-xs sm:text-sm">Nenhum alerta</p>
           </div>
         )}
       </CardContent>
@@ -283,7 +283,7 @@ function AlertasCard({ alertas }: {
 function AtividadeRecente({ atividades }: { atividades: DashboardMetrics['atividadeRecente'] }) {
   const getAcaoInfo = (acao: string) => {
     const map: Record<string, { label: string; cor: string }> = {
-      'CADASTRO': { label: 'Novo cadastro', cor: 'bg-green-100 text-green-700' },
+      'CADASTRO': { label: 'Cadastro', cor: 'bg-green-100 text-green-700' },
       'LOGIN': { label: 'Login', cor: 'bg-blue-100 text-blue-700' },
       'PAGAMENTO': { label: 'Pagamento', cor: 'bg-amber-100 text-amber-700' },
       'ASSINATURA': { label: 'Assinatura', cor: 'bg-purple-100 text-purple-700' },
@@ -294,36 +294,36 @@ function AtividadeRecente({ atividades }: { atividades: DashboardMetrics['ativid
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Zap className="w-5 h-5 text-[#3FA174]" />
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-[#3FA174]" />
           Atividade Recente
         </CardTitle>
-        <CardDescription>Últimas 24 horas</CardDescription>
+        <CardDescription className="text-xs sm:text-sm">Últimas 24 horas</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {atividades.slice(0, 8).map((atividade) => {
+      <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+        <div className="space-y-2 sm:space-y-3">
+          {atividades.slice(0, 6).map((atividade) => {
             const info = getAcaoInfo(atividade.acao);
             return (
-              <div key={atividade.id} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
-                <Badge className={info.cor} variant="secondary">
+              <div key={atividade.id} className="flex items-center gap-2 sm:gap-3 py-1.5 sm:py-2 border-b border-gray-100 last:border-0">
+                <Badge className={`${info.cor} text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5`} variant="secondary">
                   {info.label}
                 </Badge>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 truncate">{atividade.usuario}</p>
-                  <p className="text-xs text-gray-500">{atividade.recurso}</p>
+                  <p className="text-xs sm:text-sm text-gray-900 truncate">{atividade.usuario}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 truncate hidden sm:block">{atividade.recurso}</p>
                 </div>
-                <span className="text-xs text-gray-400 whitespace-nowrap">
+                <span className="text-[10px] sm:text-xs text-gray-400 whitespace-nowrap hidden xs:block">
                   {formatarData(atividade.criadoEm)}
                 </span>
               </div>
             );
           })}
           {atividades.length === 0 && (
-            <div className="text-center py-6 text-gray-500">
-              <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Nenhuma atividade recente</p>
+            <div className="text-center py-4 sm:py-6 text-gray-500">
+              <Activity className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-xs sm:text-sm">Nenhuma atividade recente</p>
             </div>
           )}
         </div>
@@ -415,36 +415,37 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout title="Dashboard">
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Visão Geral</h1>
-            <p className="text-gray-500">Métricas dos últimos {periodo} dias</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Visão Geral</h1>
+            <p className="text-xs sm:text-sm text-gray-500">Métricas dos últimos {periodo} dias</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <select
               value={periodo}
               onChange={(e) => setPeriodo(e.target.value)}
-              className="px-3 py-2 border rounded-lg text-sm bg-white"
+              className="px-2 sm:px-3 py-1.5 sm:py-2 border rounded-lg text-xs sm:text-sm bg-white flex-1 sm:flex-none"
             >
-              <option value="7">Últimos 7 dias</option>
-              <option value="30">Últimos 30 dias</option>
-              <option value="90">Últimos 90 dias</option>
-              <option value="365">Último ano</option>
+              <option value="7">7 dias</option>
+              <option value="30">30 dias</option>
+              <option value="90">90 dias</option>
+              <option value="365">1 ano</option>
             </select>
             <Button
               variant="outline"
               size="sm"
               onClick={handleRefresh}
               disabled={refreshing}
+              className="px-2 sm:px-3"
             >
-              <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              Atualizar
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline ml-2">Atualizar</span>
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <MetricCard
             titulo="Receita Total"
             valor={formatarMoeda(metrics.financeiro.receita)}
@@ -472,14 +473,14 @@ export default function AdminDashboard() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Receita Mensal</CardTitle>
-              <CardDescription>Evolução da receita nos últimos 12 meses</CardDescription>
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg">Receita Mensal</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Evolução dos últimos 12 meses</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="h-80">
+            <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+              <div className="h-56 sm:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={metrics.financeiro.receitaMensal}>
                     <defs>
@@ -491,16 +492,18 @@ export default function AdminDashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis 
                       dataKey="mes" 
-                      tick={{ fontSize: 12 }}
+                      tick={{ fontSize: 10 }}
                       tickFormatter={(value: string) => {
                         const [, month] = value.split('-');
-                        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                        const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
                         return months[parseInt(month) - 1];
                       }}
+                      interval="preserveStartEnd"
                     />
                     <YAxis 
-                      tick={{ fontSize: 12 }}
-                      tickFormatter={(value: number) => `R$ ${(value / 1000).toFixed(0)}k`}
+                      tick={{ fontSize: 10 }}
+                      tickFormatter={(value: number) => `${(value / 1000).toFixed(0)}k`}
+                      width={35}
                     />
                     <Tooltip 
                       formatter={(value) => [formatarMoeda(Number(value)), 'Receita']}
@@ -526,23 +529,23 @@ export default function AdminDashboard() {
           <FunilConversao funil={metrics.funil} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Assinaturas por Plano</CardTitle>
-              <CardDescription>Distribuição atual</CardDescription>
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg">Assinaturas por Plano</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Distribuição atual</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="h-64">
+            <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+              <div className="h-48 sm:h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={metrics.assinaturas.porPlano}
                       cx="50%"
                       cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={5}
+                      innerRadius={35}
+                      outerRadius={60}
+                      paddingAngle={3}
                       dataKey="quantidade"
                       nameKey="planoNome"
                     >
@@ -565,55 +568,55 @@ export default function AdminDashboard() {
           <AtividadeRecente atividades={metrics.atividadeRecente} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Novas Assinaturas</h3>
-                <Badge className="bg-green-100 text-green-700">{metrics.assinaturas.novas}</Badge>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Novas Assinaturas</h3>
+                <Badge className="bg-green-100 text-green-700 text-xs">{metrics.assinaturas.novas}</Badge>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500">Canceladas</p>
-                  <p className="text-xl font-bold text-gray-900">{metrics.assinaturas.canceladas}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Canceladas</p>
+                  <p className="text-lg sm:text-xl font-bold text-gray-900">{metrics.assinaturas.canceladas}</p>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500">Churn Rate</p>
-                  <p className="text-xl font-bold text-gray-900">{metrics.assinaturas.churnRate}%</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Churn</p>
+                  <p className="text-lg sm:text-xl font-bold text-gray-900">{metrics.assinaturas.churnRate}%</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Consultas</h3>
-                <Badge className="bg-blue-100 text-blue-700">{metrics.consultas.agendadas} agendadas</Badge>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Consultas</h3>
+                <Badge className="bg-blue-100 text-blue-700 text-xs">{metrics.consultas.agendadas}</Badge>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500">Canceladas</p>
-                  <p className="text-xl font-bold text-gray-900">{metrics.consultas.canceladas}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Canceladas</p>
+                  <p className="text-lg sm:text-xl font-bold text-gray-900">{metrics.consultas.canceladas}</p>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500">Taxa Cancelamento</p>
-                  <p className="text-xl font-bold text-gray-900">{metrics.consultas.taxaCancelamento}%</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Taxa Canc.</p>
+                  <p className="text-lg sm:text-xl font-bold text-gray-900">{metrics.consultas.taxaCancelamento}%</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Transações</h3>
-                <Badge className="bg-amber-100 text-amber-700">{metrics.financeiro.totalTransacoes}</Badge>
+          <Card className="sm:col-span-2 md:col-span-1">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Transações</h3>
+                <Badge className="bg-amber-100 text-amber-700 text-xs">{metrics.financeiro.totalTransacoes}</Badge>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 {metrics.financeiro.receitaPorTipo.slice(0, 3).map((tipo) => (
-                  <div key={tipo.tipo} className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">{tipo.tipo}</span>
+                  <div key={tipo.tipo} className="flex items-center justify-between text-xs sm:text-sm">
+                    <span className="text-gray-600 truncate">{tipo.tipo}</span>
                     <span className="font-medium">{formatarMoeda(tipo.valor)}</span>
                   </div>
                 ))}
