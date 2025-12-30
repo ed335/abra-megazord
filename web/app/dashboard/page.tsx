@@ -433,22 +433,23 @@ export default function DashboardPage() {
           />
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-5">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-              <Crown className="w-6 h-6 text-gray-600" />
+        <div className="bg-gradient-to-r from-[#3FA174]/10 to-emerald-50 border border-[#3FA174]/30 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#3FA174] flex items-center justify-center flex-shrink-0">
+              <Crown className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900">Seja um associado Premium</p>
-              <p className="text-sm text-gray-500 mt-0.5">
-                Consultas com desconto e suporte prioritário
+              <p className="font-semibold text-gray-900">Seja um associado Premium!</p>
+              <p className="text-sm text-gray-600 mt-0.5">
+                Acesso a consultas com desconto, suporte prioritário e muito mais
               </p>
+              <Link href="/planos">
+                <Button size="sm" className="mt-3 bg-[#3FA174] hover:bg-[#359966]">
+                  Ver planos
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
             </div>
-            <Link href="/planos">
-              <Button className="bg-gray-900 hover:bg-gray-800">
-                Ver planos
-              </Button>
-            </Link>
           </div>
         </div>
 
