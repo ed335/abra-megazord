@@ -14,7 +14,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AppLayout } from '@/components/layout/AppLayout';
+import AppLayout from '@/components/layout/AppLayout';
 import { fetchWithAuth } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 

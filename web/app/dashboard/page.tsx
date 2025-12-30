@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { getToken, clearToken, fetchWithAuth } from '@/lib/auth';
 import AppLayout from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { 
   ClipboardList, 
@@ -22,15 +21,11 @@ import {
   FileText,
   Activity,
   Wallet,
-  Star,
   Shield,
   Sparkles,
   Crown,
-  Video,
-  HeartPulse,
-  Gift
+  HeartPulse
 } from 'lucide-react';
-import CannabisLeaf from '@/components/icons/CannabisLeaf';
 
 type PlanoAtivo = {
   id: string;
@@ -583,44 +578,6 @@ function QuickAction({
           {label}
         </p>
       </div>
-    </Link>
-  );
-}
-
-function PremiumQuickAction({ 
-  href, 
-  icon: Icon, 
-  label, 
-  done = false,
-  highlight = false
-}: { 
-  href: string; 
-  icon: React.ElementType; 
-  label: string; 
-  done?: boolean;
-  highlight?: boolean;
-}) {
-  return (
-    <Link href={href}>
-      <motion.div 
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className={`group rounded-xl p-4 transition-all h-full ${
-          highlight 
-            ? 'bg-[#3FA174] text-white shadow-lg shadow-[#3FA174]/20' 
-            : 'bg-white border border-gray-200 hover:border-[#3FA174]/40 hover:shadow-md'
-        }`}
-      >
-        <div className="flex items-center justify-between mb-2">
-          <Icon className={`w-5 h-5 ${highlight ? 'text-white' : 'text-[#3FA174]'}`} />
-          {done && <CheckCircle2 className={`w-4 h-4 ${highlight ? 'text-white' : 'text-green-600'}`} />}
-        </div>
-        <p className={`text-sm font-medium ${
-          highlight ? 'text-white' : 'text-gray-900 group-hover:text-[#3FA174]'
-        } transition-colors`}>
-          {label}
-        </p>
-      </motion.div>
     </Link>
   );
 }
