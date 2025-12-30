@@ -198,14 +198,24 @@ export default function PainelMedicoPage() {
                 <p className="text-xs text-gray-500">CRM de Pacientes</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              onClick={() => router.push('/dashboard')}
-              className="gap-2"
-            >
-              <Calendar className="w-4 h-4" />
-              Agenda
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => router.push('/medico/pacientes')}
+                className="gap-2"
+              >
+                <Users className="w-4 h-4" />
+                CRM Pacientes
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push('/dashboard')}
+                className="gap-2"
+              >
+                <Calendar className="w-4 h-4" />
+                Agenda
+              </Button>
+            </div>
           </div>
         </div>
       </header>

@@ -72,12 +72,15 @@ export async function GET(request: NextRequest) {
       };
     } else if (filter === 'aguardando') {
       whereClause.status = 'AGENDADO';
+    } else if (filter === 'agendados') {
+      whereClause.status = {
+        in: ['AGENDADO', 'CONFIRMADO'],
+      };
     }
 
-    // Incluir status PENDENTE_PAGAMENTO e AGENDADO no filtro base
     if (!whereClause.status) {
       whereClause.status = {
-        in: ['PENDENTE_PAGAMENTO', 'AGENDADO', 'CONFIRMADO', 'EM_ANDAMENTO'],
+        in: ['PENDENTE_PAGAMENTO', 'AGENDADO', 'CONFIRMADO', 'EM_ANDAMENTO', 'CONCLUIDO'],
       };
     }
 
@@ -144,8 +147,14 @@ export async function GET(request: NextRequest) {
           id: paciente.id,
           nome: paciente.nome,
           email: paciente.email,
+          whatsapp: paciente.telefone || '',
           telefone: paciente.telefone || '',
           cpf: paciente.cpf || '',
+          cidade: paciente.cidade || null,
+          estado: paciente.estado || null,
+          patologiaCID: paciente.patologiaCID || null,
+          jaUsaCannabis: paciente.jaUsaCannabis || false,
+          criadoEm: paciente.criadoEm?.toISOString() || '',
           dataNascimento: paciente.dataNascimento?.toISOString() || '',
           fotoUrl: paciente.documentoIdentidadeUrl || null,
           preAnamnese: preAnamnese
@@ -165,6 +174,7 @@ export async function GET(request: NextRequest) {
                 tabagismo: dadosExtras.tabagismo || '',
                 alcool: dadosExtras.alcool || '',
                 expectativasTratamento: dadosExtras.expectativasTratamento || preAnamnese.recomendacoes || [],
+                expectativasOutro: dadosExtras.expectativasOutro || '',
                 preocupacoes: dadosExtras.preocupacoes || preAnamnese.notas || '',
                 idade: dadosExtras.idade || '',
                 peso: dadosExtras.peso || '',
@@ -196,9 +206,13 @@ export async function GET(request: NextRequest) {
         };
       });
 
-    const uniquePacientes = Array.from(
-      new Map(pacientes.map((p) => [p.id, p])).values()
-    );
+    let uniquePacientes = Array.from(
+      new Map(pacientes.map((p: any) => [p.id, p])).values()
+    ) as any[];
+
+    if (filter === 'com-anamnese') {
+      uniquePacientes = uniquePacientes.filter((p) => p.preAnamnese !== null);
+    }
 
     return NextResponse.json({
       success: true,
