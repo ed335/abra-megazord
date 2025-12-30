@@ -39,13 +39,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingUser = await prisma.usuario.findUnique({
+    const existingEmail = await prisma.usuario.findUnique({
       where: { email },
     });
 
-    if (existingUser) {
+    if (existingEmail) {
       return NextResponse.json(
-        { message: 'Email já cadastrado' },
+        { message: 'Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.' },
+        { status: 400 }
+      );
+    }
+
+    const cleanCpf = cpf.replace(/\D/g, '');
+    const existingCpf = await prisma.paciente.findUnique({
+      where: { cpf: cleanCpf },
+    });
+
+    if (existingCpf) {
+      return NextResponse.json(
+        { message: 'Este CPF já está cadastrado. Tente fazer login ou entre em contato com o suporte.' },
         { status: 400 }
       );
     }
@@ -60,7 +72,7 @@ export async function POST(request: NextRequest) {
         paciente: {
           create: {
             nome,
-            cpf,
+            cpf: cleanCpf,
             email,
             whatsapp,
             consenteLGPD: consenteLGPD || false,
