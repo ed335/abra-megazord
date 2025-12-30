@@ -107,7 +107,11 @@ export async function POST(request: NextRequest) {
     const webhookUrl = `${baseUrl}/api/pagamentos/webhook`;
 
     // Create Pix payment via Syncpay
-    const phone = paciente.whatsapp ? paciente.whatsapp.replace(/\D/g, '') : '';
+    let phone = paciente.whatsapp ? paciente.whatsapp.replace(/\D/g, '') : '';
+    // Syncpay requires phone with 10-11 digits, use default if invalid
+    if (phone.length < 10 || phone.length > 11) {
+      phone = '11999999999'; // Default placeholder phone
+    }
     const pixResponse = await createPixPayment(
       valor,
       descricao,
