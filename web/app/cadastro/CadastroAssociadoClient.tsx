@@ -50,7 +50,7 @@ type FormData = {
   estado: string;
   documentoIdentidadeUrl: string;
   jaUsaCannabis: boolean;
-  patologiaSelecionada: string;
+  patologiasSelecionadas: string[];
   patologiaPersonalizada: string;
   documentosMedicosUrls: string[];
 };
@@ -74,7 +74,7 @@ const initialFormData: FormData = {
   estado: '',
   documentoIdentidadeUrl: '',
   jaUsaCannabis: false,
-  patologiaSelecionada: '',
+  patologiasSelecionadas: [],
   patologiaPersonalizada: '',
   documentosMedicosUrls: [],
 };
@@ -304,11 +304,25 @@ export default function CadastroAssociadoClient() {
   };
 
   const getPatologiaCID = (): string => {
-    if (formData.patologiaSelecionada === 'Outra (especificar)') {
-      return formData.patologiaPersonalizada;
-    }
-    const patologia = PATOLOGIAS_COMUNS.find(p => p.label === formData.patologiaSelecionada);
-    return patologia ? `${patologia.label} (${patologia.cid})` : '';
+    const patologias = formData.patologiasSelecionadas.map(label => {
+      if (label === 'Outra (especificar)') {
+        return formData.patologiaPersonalizada;
+      }
+      const patologia = PATOLOGIAS_COMUNS.find(p => p.label === label);
+      return patologia ? `${patologia.label} (${patologia.cid})` : label;
+    }).filter(Boolean);
+    return patologias.join('; ');
+  };
+
+  const togglePatologia = (label: string) => {
+    setFormData(prev => {
+      const current = prev.patologiasSelecionadas;
+      if (current.includes(label)) {
+        return { ...prev, patologiasSelecionadas: current.filter(p => p !== label) };
+      } else {
+        return { ...prev, patologiasSelecionadas: [...current, label] };
+      }
+    });
   };
 
   const validateStep = (step: number): boolean => {
@@ -392,11 +406,11 @@ export default function CadastroAssociadoClient() {
         }
         break;
       case 4:
-        if (!formData.patologiaSelecionada) {
-          errors.patologiaSelecionada = 'Selecione uma patologia';
+        if (formData.patologiasSelecionadas.length === 0) {
+          errors.patologiasSelecionadas = 'Selecione pelo menos uma condição de saúde';
           isValid = false;
         }
-        if (formData.patologiaSelecionada === 'Outra (especificar)' && !formData.patologiaPersonalizada) {
+        if (formData.patologiasSelecionadas.includes('Outra (especificar)') && !formData.patologiaPersonalizada) {
           errors.patologiaPersonalizada = 'Informe a patologia com CID';
           isValid = false;
         }
@@ -992,23 +1006,37 @@ export default function CadastroAssociadoClient() {
                   </div>
                 </div>
 
-                <label className="flex flex-col gap-1.5">
-                  <span className={labelClass}>Qual sua condição de saúde? *</span>
-                  <select
-                    value={formData.patologiaSelecionada}
-                    onChange={(e) => updateField('patologiaSelecionada', e.target.value)}
-                    className={inputClass}
-                  >
-                    <option value="">Selecione uma condição</option>
+                <div className="flex flex-col gap-2">
+                  <span className={labelClass}>Quais suas condições de saúde? * <span className="text-xs text-gray-500 font-normal">(selecione todas que se aplicam)</span></span>
+                  {fieldErrors.patologiasSelecionadas && <span className="text-xs text-red-500">{fieldErrors.patologiasSelecionadas}</span>}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto p-3 border border-gray-200 rounded-lg bg-white">
                     {PATOLOGIAS_COMUNS.map((patologia) => (
-                      <option key={patologia.label} value={patologia.label}>
-                        {patologia.cid ? `${patologia.label} (${patologia.cid})` : patologia.label}
-                      </option>
+                      <label
+                        key={patologia.label}
+                        className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-all ${
+                          formData.patologiasSelecionadas.includes(patologia.label)
+                            ? 'bg-[#3FA174]/10 border border-[#3FA174]'
+                            : 'hover:bg-gray-50 border border-transparent'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.patologiasSelecionadas.includes(patologia.label)}
+                          onChange={() => togglePatologia(patologia.label)}
+                          className="w-4 h-4 text-[#3FA174] border-gray-300 rounded focus:ring-[#3FA174]"
+                        />
+                        <span className="text-sm text-gray-700">
+                          {patologia.cid ? `${patologia.label} (${patologia.cid})` : patologia.label}
+                        </span>
+                      </label>
                     ))}
-                  </select>
-                </label>
+                  </div>
+                  {formData.patologiasSelecionadas.length > 0 && (
+                    <p className="text-xs text-[#3FA174]">{formData.patologiasSelecionadas.length} condição(ões) selecionada(s)</p>
+                  )}
+                </div>
 
-                {formData.patologiaSelecionada === 'Outra (especificar)' && (
+                {formData.patologiasSelecionadas.includes('Outra (especificar)') && (
                   <label className="flex flex-col gap-1.5">
                     <span className={labelClass}>Informe sua condição com CID *</span>
                     <input
