@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { WhatsAppFloatButton } from "@/components/ui/whatsapp-float-button";
 import "./globals.css";
 
 const siteUrl = new URL("https://abracanm.com");
@@ -115,6 +116,7 @@ export default function RootLayout({
         />
         {children}
         <Toaster position="top-right" richColors />
+        <WhatsAppFloatButton />
       </body>
     </html>
   );
