@@ -4,105 +4,342 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAdminToken } from '@/lib/admin-auth-client';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { 
-  Users, 
-  UserPlus, 
-  FileText, 
-  TrendingUp, 
-  TrendingDown, 
-  MapPin, 
-  Activity,
-  BarChart3,
-  ClipboardList,
-  MessageCircle,
-  Calendar,
-  Search,
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import {
   DollarSign,
-  Package,
+  Calendar,
+  TrendingUp,
+  AlertTriangle,
   CreditCard,
-  Video
+  Activity,
+  Clock,
+  ArrowUpRight,
+  ArrowDownRight,
+  RefreshCw,
+  ChevronRight,
+  Bell,
+  Target,
+  Zap
 } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend
+} from 'recharts';
 
-type Stats = {
-  resumo: {
-    total: number;
-    ativos: number;
-    inativos: number;
-    novosEsteMes: number;
-    novosMesPassado: number;
-    crescimento: number;
-    comDocumentosMedicos: number;
-    semDocumentosMedicos: number;
+type DashboardMetrics = {
+  periodo: number;
+  financeiro: {
+    receita: number;
+    receitaAnterior: number;
+    variacaoReceita: number;
+    totalTransacoes: number;
+    mrr: number;
+    receitaPorTipo: { tipo: string; valor: number; quantidade: number }[];
+    receitaMensal: { mes: string; valor: number; quantidade: number }[];
   };
-  porEstado: { estado: string; total: number }[];
-  porPatologia: { patologia: string; total: number }[];
-  cadastrosPorMes: { mes: string; total: number }[];
-};
-
-type PreAnamnese = {
-  id: string;
-  perfil: string;
-  objetivoPrincipal: string;
-  gravidade: number;
-  tratamentosPrevios: string[];
-  comorbidades: string[];
-  notas: string;
-  preferenciaAcompanhamento: string;
-  melhorHorario: string;
-  diagnostico: {
-    titulo: string;
-    resumo: string;
-    nivelUrgencia: 'baixa' | 'moderada' | 'alta';
-    indicacoes: string[];
-    contraindicacoes: string[];
-    observacoes: string;
-  } | null;
-  scorePrioridade: number;
-  recomendacoes: string[];
-  proximosPasso: string;
-  criadoEm: string;
-};
-
-type Associado = {
-  id: string;
-  nome: string;
-  email: string;
-  whatsapp: string;
-  cidade: string | null;
-  estado: string | null;
-  jaUsaCannabis: boolean;
-  patologiaCID: string | null;
-  termoAjuizamento: boolean;
-  consenteLGPD: boolean;
-  criadoEm: string;
-  usuario: {
-    ativo: boolean;
-    emailVerificado: boolean;
+  assinaturas: {
+    ativas: number;
+    novas: number;
+    canceladas: number;
+    expirando: number;
+    churnRate: number;
+    porPlano: { planoId: string; planoNome: string; quantidade: number }[];
   };
-  preAnamnese: PreAnamnese | null;
+  consultas: {
+    realizadas: number;
+    agendadas: number;
+    canceladas: number;
+    taxaCancelamento: number;
+  };
+  funil: {
+    cadastros: number;
+    preAnamnese: number;
+    assinaturas: number;
+    consultas: number;
+    taxas: {
+      preAnamnese: number;
+      assinatura: number;
+      consulta: number;
+      total: number;
+    };
+  };
+  alertas: {
+    pagamentosPendentes: number;
+    assinaturasExpirando: number;
+    consultasHoje: number;
+  };
+  pagamentosPendentes: {
+    id: string;
+    valor: number;
+    tipo: string;
+    paciente: string;
+    email: string;
+    expiracao: string;
+    criadoEm: string;
+  }[];
+  atividadeRecente: {
+    id: string;
+    acao: string;
+    recurso: string;
+    usuario: string;
+    criadoEm: string;
+  }[];
 };
 
-type Pagination = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
+const CORES_PLANOS = ['#3FA174', '#6EC1E4', '#F59E0B', '#8B5CF6', '#EC4899'];
+
+const formatarMoeda = (valor: number) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(valor);
 };
+
+const formatarData = (data: string) => {
+  return new Date(data).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+function MetricCard({
+  titulo,
+  valor,
+  variacao,
+  icone: Icon,
+  cor,
+  prefixo = '',
+  sufixo = ''
+}: {
+  titulo: string;
+  valor: string | number;
+  variacao?: number;
+  icone: React.ElementType;
+  cor: string;
+  prefixo?: string;
+  sufixo?: string;
+}) {
+  return (
+    <Card className="relative overflow-hidden">
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-500">{titulo}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {prefixo}{typeof valor === 'number' ? valor.toLocaleString('pt-BR') : valor}{sufixo}
+            </p>
+            {variacao !== undefined && (
+              <div className={`flex items-center gap-1 text-sm ${variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {variacao >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                <span>{Math.abs(variacao)}% vs período anterior</span>
+              </div>
+            )}
+          </div>
+          <div className={`p-3 rounded-xl ${cor}`}>
+            <Icon className="w-6 h-6 text-white" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function FunilConversao({ funil }: { funil: DashboardMetrics['funil'] }) {
+  const etapas = [
+    { nome: 'Cadastros', valor: funil.cadastros, cor: 'bg-blue-500', taxa: 100 },
+    { nome: 'Pré-Anamnese', valor: funil.preAnamnese, cor: 'bg-purple-500', taxa: funil.taxas.preAnamnese },
+    { nome: 'Assinaturas', valor: funil.assinaturas, cor: 'bg-amber-500', taxa: funil.taxas.assinatura },
+    { nome: 'Consultas', valor: funil.consultas, cor: 'bg-green-500', taxa: funil.taxas.consulta },
+  ];
+
+  const maxValor = Math.max(...etapas.map(e => e.valor), 1);
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-[#3FA174]" />
+              Funil de Conversão
+            </CardTitle>
+            <CardDescription>Taxa de conversão total: {funil.taxas.total}%</CardDescription>
+          </div>
+          <Badge variant="secondary" className="bg-green-100 text-green-700">
+            {funil.taxas.total}% conversão
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {etapas.map((etapa, index) => (
+          <div key={etapa.nome} className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-gray-700">{etapa.nome}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-900 font-semibold">{etapa.valor}</span>
+                {index > 0 && (
+                  <Badge variant="outline" className="text-xs">
+                    {etapa.taxa}%
+                  </Badge>
+                )}
+              </div>
+            </div>
+            <div className="h-8 bg-gray-100 rounded-lg overflow-hidden">
+              <div
+                className={`h-full ${etapa.cor} transition-all duration-500 rounded-lg flex items-center justify-end px-3`}
+                style={{ width: `${(etapa.valor / maxValor) * 100}%` }}
+              >
+                {etapa.valor > 0 && (
+                  <span className="text-white text-xs font-medium">
+                    {Math.round((etapa.valor / maxValor) * 100)}%
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+function AlertasCard({ alertas }: { 
+  alertas: DashboardMetrics['alertas'];
+}) {
+  const totalAlertas = alertas.pagamentosPendentes + alertas.assinaturasExpirando;
+
+  return (
+    <Card className={totalAlertas > 0 ? 'border-amber-200 bg-amber-50/50' : ''}>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Bell className="w-5 h-5 text-amber-500" />
+            Alertas & Notificações
+          </CardTitle>
+          {totalAlertas > 0 && (
+            <Badge className="bg-amber-500">{totalAlertas}</Badge>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {alertas.consultasHoje > 0 && (
+          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+            <Calendar className="w-5 h-5 text-blue-500" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-blue-900">{alertas.consultasHoje} consultas hoje</p>
+              <p className="text-xs text-blue-600">Acompanhe os atendimentos do dia</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-blue-400" />
+          </div>
+        )}
+        
+        {alertas.pagamentosPendentes > 0 && (
+          <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+            <Clock className="w-5 h-5 text-amber-500" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-900">{alertas.pagamentosPendentes} pagamentos pendentes</p>
+              <p className="text-xs text-amber-600">Aguardando confirmação de PIX</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-amber-400" />
+          </div>
+        )}
+        
+        {alertas.assinaturasExpirando > 0 && (
+          <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+            <AlertTriangle className="w-5 h-5 text-red-500" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-900">{alertas.assinaturasExpirando} assinaturas expirando</p>
+              <p className="text-xs text-red-600">Nos próximos 7 dias</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-red-400" />
+          </div>
+        )}
+
+        {totalAlertas === 0 && alertas.consultasHoje === 0 && (
+          <div className="text-center py-4 text-gray-500">
+            <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Nenhum alerta no momento</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function AtividadeRecente({ atividades }: { atividades: DashboardMetrics['atividadeRecente'] }) {
+  const getAcaoInfo = (acao: string) => {
+    const map: Record<string, { label: string; cor: string }> = {
+      'CADASTRO': { label: 'Novo cadastro', cor: 'bg-green-100 text-green-700' },
+      'LOGIN': { label: 'Login', cor: 'bg-blue-100 text-blue-700' },
+      'PAGAMENTO': { label: 'Pagamento', cor: 'bg-amber-100 text-amber-700' },
+      'ASSINATURA': { label: 'Assinatura', cor: 'bg-purple-100 text-purple-700' },
+      'CONSULTA': { label: 'Consulta', cor: 'bg-teal-100 text-teal-700' },
+    };
+    return map[acao] || { label: acao, cor: 'bg-gray-100 text-gray-700' };
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Zap className="w-5 h-5 text-[#3FA174]" />
+          Atividade Recente
+        </CardTitle>
+        <CardDescription>Últimas 24 horas</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {atividades.slice(0, 8).map((atividade) => {
+            const info = getAcaoInfo(atividade.acao);
+            return (
+              <div key={atividade.id} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                <Badge className={info.cor} variant="secondary">
+                  {info.label}
+                </Badge>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-900 truncate">{atividade.usuario}</p>
+                  <p className="text-xs text-gray-500">{atividade.recurso}</p>
+                </div>
+                <span className="text-xs text-gray-400 whitespace-nowrap">
+                  {formatarData(atividade.criadoEm)}
+                </span>
+              </div>
+            );
+          })}
+          {atividades.length === 0 && (
+            <div className="text-center py-6 text-gray-500">
+              <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Nenhuma atividade recente</p>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'stats' | 'associados'>('stats');
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [periodo, setPeriodo] = useState('30');
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
-  const [associados, setAssociados] = useState<Associado[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [associadosLoading, setAssociadosLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState('');
-
-  const fetchStats = useCallback(async () => {
+  const fetchMetrics = useCallback(async () => {
     const token = getAdminToken();
     if (!token) {
       router.push('/admin/login');
@@ -110,7 +347,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch('/api/admin/stats', {
+      const response = await fetch(`/api/admin/dashboard/metrics?periodo=${periodo}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -119,402 +356,271 @@ export default function AdminDashboard() {
         return;
       }
 
-      if (!response.ok) throw new Error('Erro ao carregar estatísticas');
+      if (!response.ok) throw new Error('Erro ao carregar métricas');
       const data = await response.json();
-      setStats(data);
+      setMetrics(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
+      console.error(err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
-  }, [router]);
-
-  const fetchAssociados = useCallback(async (page: number, searchTerm: string = '') => {
-    setAssociadosLoading(true);
-    const token = getAdminToken();
-    if (!token) {
-      router.push('/admin/login');
-      return;
-    }
-
-    try {
-      const params = new URLSearchParams();
-      params.set('page', page.toString());
-      params.set('limit', '10');
-      if (searchTerm) params.set('search', searchTerm);
-
-      const response = await fetch(`/api/admin/associados?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) throw new Error('Erro ao carregar associados');
-      const data = await response.json();
-      setAssociados(data.associados || []);
-      setPagination(data.pagination);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
-    } finally {
-      setAssociadosLoading(false);
-    }
-  }, [router]);
+  }, [periodo, router]);
 
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    fetchMetrics();
+  }, [fetchMetrics]);
 
-  useEffect(() => {
-    if (activeTab === 'associados') {
-      fetchAssociados(currentPage, search);
-    }
-  }, [activeTab, currentPage, fetchAssociados, search]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    fetchAssociados(1, search);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  };
-
-  const formatWhatsApp = (whatsapp: string) => {
-    if (!whatsapp) return '-';
-    const numbers = whatsapp.replace(/\D/g, '');
-    if (numbers.length === 11) {
-      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-    }
-    return whatsapp;
-  };
-
-  const getWhatsAppLink = (whatsapp: string, nome: string) => {
-    const numbers = whatsapp.replace(/\D/g, '');
-    const phone = numbers.startsWith('55') ? numbers : `55${numbers}`;
-    const firstName = nome.split(' ')[0];
-    const message = encodeURIComponent(`Olá ${firstName}! Aqui é da ABRACANM.`);
-    return `https://wa.me/${phone}?text=${message}`;
-  };
-
-  const formatMonth = (mesStr: string) => {
-    const [year, month] = mesStr.split('-');
-    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    return `${months[parseInt(month) - 1]}/${year.slice(2)}`;
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchMetrics();
   };
 
   if (loading) {
     return (
       <AdminLayout title="Dashboard">
-        <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-cinza-claro rounded w-1/4" />
-          <div className="grid grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-24 bg-cinza-claro rounded-lg" />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i}>
+                <CardContent className="p-6">
+                  <Skeleton className="h-4 w-24 mb-4" />
+                  <Skeleton className="h-8 w-32 mb-2" />
+                  <Skeleton className="h-4 w-20" />
+                </CardContent>
+              </Card>
             ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Skeleton className="h-80 rounded-xl" />
+            <Skeleton className="h-80 rounded-xl" />
           </div>
         </div>
       </AdminLayout>
     );
   }
 
-  if (error) {
+  if (!metrics) {
     return (
       <AdminLayout title="Dashboard">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
-          {error}
+        <div className="text-center py-12">
+          <p className="text-gray-500">Erro ao carregar métricas</p>
+          <Button onClick={handleRefresh} className="mt-4">
+            Tentar novamente
+          </Button>
         </div>
       </AdminLayout>
     );
   }
-
-  const maxCadastro = stats ? Math.max(...stats.cadastrosPorMes.map(c => c.total), 1) : 1;
 
   return (
     <AdminLayout title="Dashboard">
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-cinza-escuro">Painel Administrativo</h1>
-            <p className="text-sm text-cinza-medio mt-1">Gerencie associados e acompanhe métricas</p>
+            <h1 className="text-2xl font-bold text-gray-900">Visão Geral</h1>
+            <p className="text-gray-500">Métricas dos últimos {periodo} dias</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <select
+              value={periodo}
+              onChange={(e) => setPeriodo(e.target.value)}
+              className="px-3 py-2 border rounded-lg text-sm bg-white"
+            >
+              <option value="7">Últimos 7 dias</option>
+              <option value="30">Últimos 30 dias</option>
+              <option value="90">Últimos 90 dias</option>
+              <option value="365">Último ano</option>
+            </select>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={refreshing}
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
           </div>
         </div>
 
-        <div className="flex border-b border-cinza-claro mb-6">
-          <button
-            onClick={() => setActiveTab('stats')}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition ${
-              activeTab === 'stats' 
-                ? 'border-verde-oliva text-verde-oliva' 
-                : 'border-transparent text-cinza-medio hover:text-cinza-escuro'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 inline-block mr-2" />
-            Estatísticas
-          </button>
-          <button
-            onClick={() => setActiveTab('associados')}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition ${
-              activeTab === 'associados' 
-                ? 'border-verde-oliva text-verde-oliva' 
-                : 'border-transparent text-cinza-medio hover:text-cinza-escuro'
-            }`}
-          >
-            <Users className="w-4 h-4 inline-block mr-2" />
-            Associados
-          </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            titulo="Receita Total"
+            valor={formatarMoeda(metrics.financeiro.receita)}
+            variacao={metrics.financeiro.variacaoReceita}
+            icone={DollarSign}
+            cor="bg-green-500"
+          />
+          <MetricCard
+            titulo="MRR"
+            valor={formatarMoeda(metrics.financeiro.mrr)}
+            icone={TrendingUp}
+            cor="bg-blue-500"
+          />
+          <MetricCard
+            titulo="Assinaturas Ativas"
+            valor={metrics.assinaturas.ativas}
+            icone={CreditCard}
+            cor="bg-purple-500"
+          />
+          <MetricCard
+            titulo="Consultas Realizadas"
+            valor={metrics.consultas.realizadas}
+            icone={Calendar}
+            cor="bg-amber-500"
+          />
         </div>
 
-        {activeTab === 'stats' && stats && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="border border-cinza-claro rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-cinza-medio">Total</span>
-                  <Users size={16} className="text-verde-oliva" />
-                </div>
-                <p className="text-2xl font-semibold text-cinza-escuro">{stats.resumo.total}</p>
-                <p className="text-xs text-cinza-medio mt-1">{stats.resumo.ativos} ativos</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Receita Mensal</CardTitle>
+              <CardDescription>Evolução da receita nos últimos 12 meses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={metrics.financeiro.receitaMensal}>
+                    <defs>
+                      <linearGradient id="colorReceita" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3FA174" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#3FA174" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis 
+                      dataKey="mes" 
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(value: string) => {
+                        const [, month] = value.split('-');
+                        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                        return months[parseInt(month) - 1];
+                      }}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(value: number) => `R$ ${(value / 1000).toFixed(0)}k`}
+                    />
+                    <Tooltip 
+                      formatter={(value) => [formatarMoeda(Number(value)), 'Receita']}
+                      labelFormatter={(label: string) => {
+                        const [year, month] = label.split('-');
+                        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                        return `${months[parseInt(month) - 1]} ${year}`;
+                      }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="valor" 
+                      stroke="#3FA174" 
+                      strokeWidth={2}
+                      fill="url(#colorReceita)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="border border-cinza-claro rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-cinza-medio">Novos este mês</span>
-                  <UserPlus size={16} className="text-blue-600" />
+          <FunilConversao funil={metrics.funil} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Assinaturas por Plano</CardTitle>
+              <CardDescription>Distribuição atual</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={metrics.assinaturas.porPlano}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="quantidade"
+                      nameKey="planoNome"
+                    >
+                      {metrics.assinaturas.porPlano.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={CORES_PLANOS[index % CORES_PLANOS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value, name) => [Number(value), String(name)]} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <AlertasCard 
+            alertas={metrics.alertas} 
+          />
+
+          <AtividadeRecente atividades={metrics.atividadeRecente} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900">Novas Assinaturas</h3>
+                <Badge className="bg-green-100 text-green-700">{metrics.assinaturas.novas}</Badge>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500">Canceladas</p>
+                  <p className="text-xl font-bold text-gray-900">{metrics.assinaturas.canceladas}</p>
                 </div>
-                <p className="text-2xl font-semibold text-cinza-escuro">{stats.resumo.novosEsteMes}</p>
-                <div className="flex items-center gap-1 text-xs mt-1">
-                  {stats.resumo.crescimento >= 0 ? (
-                    <>
-                      <TrendingUp size={12} className="text-green-600" />
-                      <span className="text-green-600">+{stats.resumo.crescimento}%</span>
-                    </>
-                  ) : (
-                    <>
-                      <TrendingDown size={12} className="text-red-600" />
-                      <span className="text-red-600">{stats.resumo.crescimento}%</span>
-                    </>
-                  )}
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500">Churn Rate</p>
+                  <p className="text-xl font-bold text-gray-900">{metrics.assinaturas.churnRate}%</p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="border border-cinza-claro rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-cinza-medio">Com laudos</span>
-                  <FileText size={16} className="text-amber-600" />
-                </div>
-                <p className="text-2xl font-semibold text-cinza-escuro">{stats.resumo.comDocumentosMedicos}</p>
-                <p className="text-xs text-cinza-medio mt-1">
-                  {stats.resumo.total > 0 ? `${Math.round((stats.resumo.comDocumentosMedicos / stats.resumo.total) * 100)}%` : '0%'} do total
-                </p>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900">Consultas</h3>
+                <Badge className="bg-blue-100 text-blue-700">{metrics.consultas.agendadas} agendadas</Badge>
               </div>
-
-              <div className="border border-cinza-claro rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-cinza-medio">Sem laudos</span>
-                  <Activity size={16} className="text-red-600" />
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500">Canceladas</p>
+                  <p className="text-xl font-bold text-gray-900">{metrics.consultas.canceladas}</p>
                 </div>
-                <p className="text-2xl font-semibold text-cinza-escuro">{stats.resumo.semDocumentosMedicos}</p>
-                <p className="text-xs text-cinza-medio mt-1">Pendente</p>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500">Taxa Cancelamento</p>
+                  <p className="text-xl font-bold text-gray-900">{metrics.consultas.taxaCancelamento}%</p>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="grid lg:grid-cols-2 gap-6">
-              <div className="border border-cinza-claro rounded-lg p-5">
-                <h2 className="text-sm font-medium text-cinza-escuro mb-4 flex items-center gap-2">
-                  <BarChart3 size={16} className="text-verde-oliva" />
-                  Cadastros por mês
-                </h2>
-                {stats.cadastrosPorMes.length > 0 ? (
-                  <div className="space-y-2">
-                    {stats.cadastrosPorMes.map((item) => (
-                      <div key={item.mes} className="flex items-center gap-3">
-                        <span className="text-xs text-cinza-medio w-14">{formatMonth(item.mes)}</span>
-                        <div className="flex-1 bg-cinza-muito-claro rounded-full h-5 overflow-hidden">
-                          <div 
-                            className="h-full bg-verde-oliva rounded-full flex items-center justify-end pr-2"
-                            style={{ width: `${Math.max((item.total / maxCadastro) * 100, 10)}%` }}
-                          >
-                            <span className="text-xs text-white font-medium">{item.total}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900">Transações</h3>
+                <Badge className="bg-amber-100 text-amber-700">{metrics.financeiro.totalTransacoes}</Badge>
+              </div>
+              <div className="space-y-2">
+                {metrics.financeiro.receitaPorTipo.slice(0, 3).map((tipo) => (
+                  <div key={tipo.tipo} className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">{tipo.tipo}</span>
+                    <span className="font-medium">{formatarMoeda(tipo.valor)}</span>
                   </div>
-                ) : (
-                  <p className="text-cinza-medio text-sm">Nenhum dado</p>
-                )}
+                ))}
               </div>
-
-              <div className="border border-cinza-claro rounded-lg p-5">
-                <h2 className="text-sm font-medium text-cinza-escuro mb-4 flex items-center gap-2">
-                  <MapPin size={16} className="text-verde-oliva" />
-                  Por estado
-                </h2>
-                {stats.porEstado.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    {stats.porEstado.slice(0, 8).map((item) => (
-                      <div key={item.estado} className="flex items-center justify-between p-2 bg-cinza-muito-claro/50 rounded">
-                        <span className="text-sm text-cinza-escuro">{item.estado}</span>
-                        <span className="text-sm text-cinza-medio">{item.total}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-cinza-medio text-sm">Nenhum dado</p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <a href="/admin/pagamentos" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
-                <DollarSign size={20} className="text-emerald-600 mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">Pagamentos</p>
-              </a>
-              <a href="/admin/assinaturas" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
-                <CreditCard size={20} className="text-indigo-600 mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">Assinaturas</p>
-              </a>
-              <a href="/admin/planos" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
-                <Package size={20} className="text-teal-600 mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">Planos</p>
-              </a>
-              <a href="/admin/agendamentos" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
-                <Calendar size={20} className="text-blue-600 mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">Agendamentos</p>
-              </a>
-              <a href="/medico/consultas" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition bg-verde-claro/5">
-                <Video size={20} className="text-verde-claro mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">Teleconsultas</p>
-              </a>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <a href="/admin/admins" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
-                <UserPlus size={20} className="text-amber-600 mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">Administradores</p>
-              </a>
-              <a href="/admin/whatsapp" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
-                <MessageCircle size={20} className="text-green-600 mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">WhatsApp</p>
-              </a>
-              <a href="/admin/logs" className="border border-cinza-claro rounded-lg p-4 hover:border-verde-oliva/50 transition">
-                <ClipboardList size={20} className="text-purple-600 mb-2" />
-                <p className="text-sm font-medium text-cinza-escuro">Logs</p>
-              </a>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'associados' && (
-          <div className="space-y-4">
-            <form onSubmit={handleSearch} className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-cinza-medio" size={16} />
-                <input
-                  type="text"
-                  placeholder="Buscar por nome, email ou telefone..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-cinza-claro rounded-lg text-sm focus:outline-none focus:border-verde-oliva"
-                />
-              </div>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-verde-oliva text-white rounded-lg text-sm font-medium hover:bg-verde-oliva/90"
-              >
-                Buscar
-              </button>
-              <a 
-                href="/admin/associados" 
-                className="px-4 py-2 border border-cinza-claro rounded-lg text-sm font-medium text-cinza-escuro hover:bg-cinza-muito-claro"
-              >
-                Avançado
-              </a>
-            </form>
-
-            {pagination && (
-              <p className="text-xs text-cinza-medio">{pagination.total} associados</p>
-            )}
-
-            {associadosLoading ? (
-              <div className="text-center py-8 text-cinza-medio text-sm">Carregando...</div>
-            ) : associados.length === 0 ? (
-              <div className="text-center py-8 text-cinza-medio text-sm">Nenhum associado encontrado</div>
-            ) : (
-              <div className="border border-cinza-claro rounded-lg overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-cinza-muito-claro/50">
-                    <tr>
-                      <th className="px-4 py-2.5 text-left text-xs font-medium text-cinza-escuro">Nome</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-medium text-cinza-escuro hidden sm:table-cell">WhatsApp</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-medium text-cinza-escuro hidden md:table-cell">Local</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-medium text-cinza-escuro">Status</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-medium text-cinza-escuro hidden lg:table-cell">Data</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-cinza-claro">
-                    {associados.map((a) => (
-                      <tr key={a.id} className="hover:bg-cinza-muito-claro/30">
-                        <td className="px-4 py-3">
-                          <p className="font-medium text-cinza-escuro">{a.nome}</p>
-                          <p className="text-xs text-cinza-medio">{a.email}</p>
-                        </td>
-                        <td className="px-4 py-3 hidden sm:table-cell">
-                          <a
-                            href={getWhatsAppLink(a.whatsapp, a.nome)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-verde-oliva hover:underline"
-                          >
-                            {formatWhatsApp(a.whatsapp)}
-                          </a>
-                        </td>
-                        <td className="px-4 py-3 text-cinza-medio hidden md:table-cell">
-                          {a.cidade && a.estado ? `${a.cidade}/${a.estado}` : '-'}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                            a.usuario.ativo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                          }`}>
-                            {a.usuario.ativo ? 'Ativo' : 'Inativo'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-cinza-medio hidden lg:table-cell">
-                          {formatDate(a.criadoEm)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {pagination && pagination.totalPages > 1 && (
-              <div className="flex justify-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1.5 border border-cinza-claro rounded text-sm disabled:opacity-50"
-                >
-                  Anterior
-                </button>
-                <span className="px-3 py-1.5 text-sm text-cinza-medio">
-                  {currentPage} / {pagination.totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(pagination.totalPages, p + 1))}
-                  disabled={currentPage === pagination.totalPages}
-                  className="px-3 py-1.5 border border-cinza-claro rounded text-sm disabled:opacity-50"
-                >
-                  Próxima
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </AdminLayout>
   );

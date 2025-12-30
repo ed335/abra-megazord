@@ -14,6 +14,8 @@ import {
   FileText,
   X,
   ChevronLeft,
+  ClipboardList,
+  Video,
   Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,14 +27,15 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: '/admin', label: 'Resumo', icon: Home },
-  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/associados', label: 'Associados', icon: Users },
   { href: '/admin/agendamentos', label: 'Agendamentos', icon: Calendar },
   { href: '/admin/assinaturas', label: 'Assinaturas', icon: FileText },
   { href: '/admin/pagamentos', label: 'Pagamentos', icon: CreditCard },
   { href: '/admin/planos', label: 'Planos', icon: Package },
+  { href: '/medico/consultas', label: 'Teleconsultas', icon: Video },
   { href: '/admin/whatsapp', label: 'WhatsApp', icon: MessageCircle },
+  { href: '/admin/logs', label: 'Logs', icon: ClipboardList },
   { href: '/admin/admins', label: 'Administradores', icon: Shield },
 ];
 
