@@ -7,7 +7,22 @@ export const dynamic = 'force-dynamic';
 const UPLOADS_DIR = join(process.cwd(), '..', 'backend', 'uploads');
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_FILES = 5;
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+const ALLOWED_TYPES = [
+  'image/jpeg', 
+  'image/png', 
+  'image/gif', 
+  'image/webp',
+  'image/heic',
+  'image/heif',
+  'image/bmp',
+  'image/tiff',
+  'application/pdf'
+];
+const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'bmp', 'tiff', 'tif', 'pdf'];
+
+function getFileExtension(filename: string): string {
+  return filename.split('.').pop()?.toLowerCase() || '';
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,13 +46,20 @@ export async function POST(request: NextRequest) {
     for (const file of files) {
       if (file.size > MAX_FILE_SIZE) {
         return NextResponse.json(
-          { success: false, message: 'Um ou mais arquivos excedem 10MB' },
+          { success: false, message: `O arquivo "${file.name}" excede 10MB. Tente reduzir a qualidade ou converter para PDF.` },
           { status: 400 }
         );
       }
-      if (!ALLOWED_TYPES.includes(file.type)) {
+      
+      const fileExtension = getFileExtension(file.name);
+      const isValidType = ALLOWED_TYPES.includes(file.type) || ALLOWED_EXTENSIONS.includes(fileExtension);
+      
+      if (!isValidType) {
         return NextResponse.json(
-          { success: false, message: 'Tipo de arquivo não permitido. Use: JPG, PNG, GIF, WebP ou PDF' },
+          { 
+            success: false, 
+            message: `Formato "${fileExtension || file.type}" não suportado no arquivo "${file.name}". Formatos aceitos: JPG, PNG, GIF, WebP, HEIC (iPhone), BMP, TIFF ou PDF.`
+          },
           { status: 400 }
         );
       }

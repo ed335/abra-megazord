@@ -924,19 +924,30 @@ export default function CadastroAssociadoClient() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
                       <p className="text-cinza-medio">
-                        {uploadingDoc ? 'Enviando...' : 'Clique para selecionar ou arraste o arquivo'}
+                        {uploadingDoc ? 'Enviando...' : 'Clique para selecionar ou tirar foto'}
                       </p>
-                      <p className="text-xs text-cinza-medio">JPG, PNG ou PDF. Máximo 10MB</p>
+                      <p className="text-xs text-cinza-medio">
+                        Formatos aceitos: JPG, PNG, HEIC (iPhone), WebP, GIF, BMP, TIFF ou PDF
+                      </p>
+                      <p className="text-xs text-cinza-medio">Máximo 10MB</p>
                     </div>
                     <input
                       type="file"
-                      accept=".jpg,.jpeg,.png,.pdf"
+                      accept=".jpg,.jpeg,.png,.pdf,.heic,.heif,.webp,.gif,.bmp,.tiff,.tif,image/*"
+                      capture="environment"
                       onChange={handleDocumentoUpload}
                       className="hidden"
                       disabled={uploadingDoc}
                     />
                   </label>
                 )}
+              </div>
+              
+              <div className="bg-azul-claro/10 border border-azul-claro/30 rounded-lg p-4">
+                <p className="text-xs text-cinza-medio">
+                  <strong className="text-cinza-escuro">Dica:</strong> Se estiver usando iPhone, suas fotos podem estar em formato HEIC - isso é suportado! 
+                  Caso tenha problemas, abra a foto no app Fotos, toque em "Compartilhar" e escolha "Salvar como JPEG".
+                </p>
               </div>
             </motion.div>
           )}
@@ -1038,13 +1049,15 @@ export default function CadastroAssociadoClient() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                           <p className="text-cinza-medio">
-                            {uploadingMedicos ? 'Enviando...' : 'Clique para selecionar os arquivos'}
+                            {uploadingMedicos ? 'Enviando...' : 'Clique para selecionar ou tirar foto'}
                           </p>
-                          <p className="text-xs text-cinza-medio">JPG, PNG ou PDF</p>
+                          <p className="text-xs text-cinza-medio">
+                            Formatos: JPG, PNG, HEIC (iPhone), WebP, GIF, BMP, TIFF ou PDF
+                          </p>
                         </div>
                         <input
                           type="file"
-                          accept=".jpg,.jpeg,.png,.pdf"
+                          accept=".jpg,.jpeg,.png,.pdf,.heic,.heif,.webp,.gif,.bmp,.tiff,.tif,image/*"
                           multiple
                           onChange={handleDocumentosMedicosUpload}
                           className="hidden"
