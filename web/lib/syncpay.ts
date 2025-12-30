@@ -61,11 +61,19 @@ export async function getSyncpayToken(): Promise<string> {
   const clientId = process.env.SYNCPAY_CLIENT_ID;
   const clientSecret = process.env.SYNCPAY_CLIENT_SECRET;
 
+  console.log('[Syncpay] Iniciando autenticação...');
+  console.log('[Syncpay] Client ID presente:', !!clientId);
+  console.log('[Syncpay] Client Secret presente:', !!clientSecret);
+
   if (!clientId || !clientSecret) {
-    throw new Error('Credenciais Syncpay não configuradas');
+    console.error('[Syncpay] Credenciais não configuradas');
+    throw new Error('Credenciais Syncpay não configuradas. Configure SYNCPAY_CLIENT_ID e SYNCPAY_CLIENT_SECRET.');
   }
 
-  const response = await fetch(`${SYNCPAY_API_URL}/api/partner/v1/auth-token`, {
+  const authUrl = `${SYNCPAY_API_URL}/api/partner/v1/auth-token`;
+  console.log('[Syncpay] Auth URL:', authUrl);
+
+  const response = await fetch(authUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -78,8 +86,9 @@ export async function getSyncpayToken(): Promise<string> {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error('Syncpay auth error:', error);
-    throw new Error('Falha na autenticação com Syncpay');
+    console.error('[Syncpay] Auth error status:', response.status);
+    console.error('[Syncpay] Auth error body:', error);
+    throw new Error(`Falha na autenticação com Syncpay: ${response.status} - ${error}`);
   }
 
   const data: SyncpayAuthResponse = await response.json();
