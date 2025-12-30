@@ -63,7 +63,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
         <div className="flex flex-col h-full">
           <div className={cn(
             "flex items-center justify-between p-4 border-b border-cinza-claro",
-            collapsed && "lg:justify-center lg:px-4"
+            collapsed && "lg:justify-center lg:px-3"
           )}>
             <Link href="/" className={cn(
               "flex items-center gap-3",
@@ -74,14 +74,6 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
               </div>
               <span className="text-lg font-bold text-cinza-escuro">ABRACANM</span>
             </Link>
-            
-            {collapsed && (
-              <Link href="/" className="hidden lg:flex">
-                <div className="w-10 h-10 bg-verde-oliva rounded-xl flex items-center justify-center">
-                  <CannabisLeaf className="text-white" size={20} />
-                </div>
-              </Link>
-            )}
 
             <Button 
               variant="ghost" 
@@ -97,7 +89,10 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
                 variant="ghost" 
                 size="sm" 
                 onClick={onToggleCollapse}
-                className="hidden lg:flex"
+                className={cn(
+                  "hidden lg:flex",
+                  collapsed && "w-10 h-10"
+                )}
               >
                 <ChevronLeft className={cn(
                   "w-5 h-5 transition-transform",
