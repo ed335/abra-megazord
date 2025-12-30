@@ -19,7 +19,7 @@ import {
   CalendarDays,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fetchWithAuth } from '@/lib/auth';
+import { fetchWithAuth, getToken, clearToken } from '@/lib/auth';
 import { toast } from 'sonner';
 import CannabisLeaf from '@/components/icons/CannabisLeaf';
 
@@ -89,10 +89,22 @@ export default function PainelMedicoPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'todos' | 'hoje' | 'semana' | 'aguardando'>('todos');
   const [selectedPaciente, setSelectedPaciente] = useState<Paciente | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    fetchPacientes();
-  }, [filter]);
+    const token = getToken();
+    if (!token) {
+      router.replace('/login-medico');
+      return;
+    }
+    setAuthChecked(true);
+  }, [router]);
+
+  useEffect(() => {
+    if (authChecked) {
+      fetchPacientes();
+    }
+  }, [filter, authChecked]);
 
   const fetchPacientes = async () => {
     try {
@@ -103,7 +115,16 @@ export default function PainelMedicoPage() {
         setPacientes(response.pacientes);
         setStats(response.stats);
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.code === 'UNAUTHORIZED' || err?.message?.includes('Sessão')) {
+        router.replace('/login-medico');
+        return;
+      }
+      if (err?.message?.includes('médicos')) {
+        toast.error('Acesso restrito a médicos');
+        router.replace('/dashboard');
+        return;
+      }
       toast.error('Erro ao carregar pacientes');
     } finally {
       setLoading(false);
