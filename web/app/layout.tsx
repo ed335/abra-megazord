@@ -37,6 +37,9 @@ const webSiteJsonLd = {
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
+  icons: {
+    icon: '/icon.svg',
+  },
   title: "Abracanm - Associação Brasileira de Cannabis Medicinal",
   description:
     "Abracanm: Associação Brasileira de Cannabis Medicinal. Informação segura, acolhimento, orientação a pacientes e prescritores, e conteúdos confiáveis sobre tratamento com cannabis.",
