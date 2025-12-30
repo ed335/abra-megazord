@@ -4,17 +4,42 @@ import * as jsonwebtoken from 'jsonwebtoken';
 export const dynamic = 'force-dynamic';
 
 interface PreAnamneseRequest {
-  perfil: 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';
+  perfil: 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR' | string;
   objetivoPrincipal: string;
-  objetivoOutro: string;
-  gravidade: number;
-  tratamentosPrevios: string[];
-  tratamentoOutro: string;
-  comorbidades: string[];
-  comorbidadeOutro: string;
-  notas: string;
-  preferenciaAcompanhamento: string;
-  melhorHorario: string;
+  objetivoOutro?: string;
+  gravidade?: number;
+  tratamentosPrevios?: string[];
+  tratamentoOutro?: string;
+  comorbidades?: string[];
+  comorbidadeOutro?: string;
+  notas?: string;
+  preferenciaAcompanhamento?: string;
+  melhorHorario?: string;
+  idade?: string;
+  peso?: string;
+  altura?: string;
+  objetivoSecundario?: string[];
+  tempoSintomas?: string;
+  intensidadeSintomas?: number;
+  frequenciaSintomas?: string;
+  usouCannabis?: string;
+  experienciaCannabis?: string;
+  medicamentosAtuais?: string[];
+  medicamentoOutro?: string;
+  alergiaMedicamentos?: string;
+  condicoesSaude?: string[];
+  condicaoOutra?: string;
+  historicoFamiliar?: string[];
+  tabagismo?: string;
+  alcool?: string;
+  atividadeFisica?: string;
+  qualidadeSono?: string;
+  nivelEstresse?: number;
+  expectativasTratamento?: string[];
+  preocupacoes?: string;
+  disponibilidadeHorario?: string;
+  preferenciaContato?: string;
+  consentimento?: boolean;
 }
 
 interface ScoreExplanation {
@@ -51,10 +76,13 @@ function generateDiagnostico(data: PreAnamneseRequest, patologiaCID: string | nu
     observacoes: ''
   };
 
-  if (jaUsaCannabis) {
+  const intensidade = data.intensidadeSintomas || data.gravidade || 5;
+  const usaCannabis = jaUsaCannabis || data.usouCannabis === 'uso_atual';
+
+  if (usaCannabis) {
     diagnostico.titulo = 'Acompanhamento de Paciente em Tratamento';
     diagnostico.resumo = 'Você já utiliza cannabis medicinal. Recomendamos uma consulta para avaliar a eficácia do tratamento atual e possíveis ajustes.';
-  } else if (data.perfil === 'CUIDADOR') {
+  } else if (data.perfil === 'CUIDADOR' || data.perfil === 'cuidador' || data.perfil === 'familiar') {
     diagnostico.titulo = 'Orientação para Cuidador';
     diagnostico.resumo = 'Como cuidador, você terá acesso a orientações especializadas para apoiar o tratamento do paciente sob sua responsabilidade.';
   } else {
@@ -62,10 +90,10 @@ function generateDiagnostico(data: PreAnamneseRequest, patologiaCID: string | nu
     diagnostico.resumo = 'Baseado nas suas respostas, identificamos que você pode se beneficiar de uma avaliação médica especializada em cannabis medicinal.';
   }
 
-  if (data.gravidade >= 4) {
+  if (intensidade >= 8) {
     diagnostico.nivelUrgencia = 'alta';
     diagnostico.observacoes = 'Seus sintomas indicam alta intensidade. Recomendamos agendar uma consulta o mais breve possível.';
-  } else if (data.gravidade >= 3) {
+  } else if (intensidade >= 5) {
     diagnostico.nivelUrgencia = 'moderada';
     diagnostico.observacoes = 'Sintomas de intensidade moderada identificados. Uma consulta nas próximas semanas é aconselhável.';
   } else {
@@ -94,11 +122,12 @@ function generateDiagnostico(data: PreAnamneseRequest, patologiaCID: string | nu
     }
   }
 
-  if (data.comorbidades.includes('Gestação/planejamento')) {
+  const comorbidades = data.comorbidades || data.condicoesSaude || [];
+  if (comorbidades.includes('Gestação/planejamento')) {
     diagnostico.contraindicacoes.push('Cannabis é contraindicada durante gestação e amamentação');
     diagnostico.nivelUrgencia = 'alta';
   }
-  if (data.comorbidades.includes('Histórico psiquiátrico')) {
+  if (comorbidades.includes('Histórico psiquiátrico') || comorbidades.includes('Transtornos psiquiátricos')) {
     diagnostico.contraindicacoes.push('Avaliação psiquiátrica recomendada antes de iniciar tratamento');
   }
 
@@ -110,7 +139,8 @@ function generateRecomendacoes(data: PreAnamneseRequest, diagnostico: Diagnostic
 
   recomendacoes.push('Agende uma consulta com um médico prescritor da ABRACANM');
 
-  if (data.tratamentosPrevios.length > 0 && !data.tratamentosPrevios.includes('Nenhum')) {
+  const tratamentos = data.tratamentosPrevios || data.medicamentosAtuais || [];
+  if (tratamentos.length > 0 && !tratamentos.includes('Nenhum')) {
     recomendacoes.push('Leve seus laudos e receitas de tratamentos anteriores para a consulta');
   }
 
@@ -118,7 +148,7 @@ function generateRecomendacoes(data: PreAnamneseRequest, diagnostico: Diagnostic
     recomendacoes.push('Priorize o agendamento da consulta devido à intensidade dos sintomas');
   }
 
-  if (data.perfil === 'CUIDADOR') {
+  if (data.perfil === 'CUIDADOR' || data.perfil === 'cuidador' || data.perfil === 'familiar') {
     recomendacoes.push('Providencie documentação que comprove a tutela ou responsabilidade pelo paciente');
   }
 
@@ -140,10 +170,11 @@ function calculateScorePrioridade(data: PreAnamneseRequest, diagnostico: Diagnos
   const explicacao: ScoreExplanation[] = [];
   let score = 0;
   
-  const gravidadePontos = data.gravidade * 20;
+  const gravidade = data.gravidade || Math.ceil((data.intensidadeSintomas || 5) / 2);
+  const gravidadePontos = gravidade * 20;
   explicacao.push({
     criterio: 'Intensidade dos Sintomas',
-    descricao: `Você indicou nível ${data.gravidade} de 5 na escala de gravidade`,
+    descricao: `Você indicou nível ${gravidade} de 5 na escala de gravidade`,
     pontos: gravidadePontos
   });
   score += gravidadePontos;
@@ -173,7 +204,8 @@ function calculateScorePrioridade(data: PreAnamneseRequest, diagnostico: Diagnos
     score += 10;
   }
   
-  if (data.tratamentosPrevios.length > 0 && !data.tratamentosPrevios.includes('Nenhum')) {
+  const tratamentos = data.tratamentosPrevios || data.medicamentosAtuais || [];
+  if (tratamentos.length > 0 && !tratamentos.includes('Nenhum')) {
     explicacao.push({
       criterio: 'Histórico de Tratamento',
       descricao: 'Você já tentou outros tratamentos anteriormente',
@@ -239,26 +271,67 @@ export async function POST(request: NextRequest) {
 
     const diagnostico = generateDiagnostico(body, paciente.patologiaCID, paciente.jaUsaCannabis);
     const recomendacoes = generateRecomendacoes(body, diagnostico);
-    const proximoPasso = generateProximoPasso(body.preferenciaAcompanhamento);
+    const preferenciaAcomp = body.preferenciaAcompanhamento || body.preferenciaContato || 'Online';
+    const proximoPasso = generateProximoPasso(preferenciaAcomp);
     const { score: scorePrioridade, explicacao: scoreExplicacao } = calculateScorePrioridade(body, diagnostico);
     
     diagnostico.scoreExplicacao = scoreExplicacao;
 
+    const perfilMap: Record<string, 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR'> = {
+      paciente: 'PACIENTE_NOVO',
+      cuidador: 'CUIDADOR',
+      familiar: 'CUIDADOR',
+      PACIENTE_NOVO: 'PACIENTE_NOVO',
+      EM_TRATAMENTO: 'EM_TRATAMENTO',
+      CUIDADOR: 'CUIDADOR',
+    };
+    const perfilNormalizado = perfilMap[body.perfil] || 'PACIENTE_NOVO';
+    const gravidadeNormalizada = body.gravidade || Math.ceil((body.intensidadeSintomas || 5) / 2);
+
+    const dadosExtras = {
+      idade: body.idade,
+      peso: body.peso,
+      altura: body.altura,
+      tempoSintomas: body.tempoSintomas,
+      intensidadeSintomas: body.intensidadeSintomas,
+      frequenciaSintomas: body.frequenciaSintomas,
+      usouCannabis: body.usouCannabis,
+      experienciaCannabis: body.experienciaCannabis,
+      medicamentosAtuais: body.medicamentosAtuais,
+      alergiaMedicamentos: body.alergiaMedicamentos,
+      condicoesSaude: body.condicoesSaude,
+      historicoFamiliar: body.historicoFamiliar,
+      tabagismo: body.tabagismo,
+      alcool: body.alcool,
+      atividadeFisica: body.atividadeFisica,
+      qualidadeSono: body.qualidadeSono,
+      nivelEstresse: body.nivelEstresse,
+      expectativasTratamento: body.expectativasTratamento,
+      preocupacoes: body.preocupacoes,
+      disponibilidadeHorario: body.disponibilidadeHorario,
+      preferenciaContato: body.preferenciaContato,
+    };
+
+    const diagnosticoCompleto = {
+      ...diagnostico,
+      dadosExtras,
+    };
+
     await prisma.preAnamnese.create({
       data: {
         pacienteId: paciente.id,
-        perfil: body.perfil,
+        perfil: perfilNormalizado,
         objetivoPrincipal: body.objetivoPrincipal,
         objetivoOutro: body.objetivoOutro || null,
-        gravidade: body.gravidade,
-        tratamentosPrevios: body.tratamentosPrevios,
-        tratamentoOutro: body.tratamentoOutro || null,
-        comorbidades: body.comorbidades,
-        comorbidadeOutro: body.comorbidadeOutro || null,
-        notas: body.notas,
-        preferenciaAcompanhamento: body.preferenciaAcompanhamento,
-        melhorHorario: body.melhorHorario,
-        diagnostico: JSON.parse(JSON.stringify(diagnostico)),
+        gravidade: gravidadeNormalizada,
+        tratamentosPrevios: body.tratamentosPrevios || body.medicamentosAtuais || [],
+        tratamentoOutro: body.tratamentoOutro || body.medicamentoOutro || null,
+        comorbidades: body.comorbidades || body.condicoesSaude || [],
+        comorbidadeOutro: body.comorbidadeOutro || body.condicaoOutra || null,
+        notas: body.notas || body.preocupacoes || null,
+        preferenciaAcompanhamento: preferenciaAcomp,
+        melhorHorario: body.melhorHorario || body.disponibilidadeHorario || 'manha',
+        diagnostico: JSON.parse(JSON.stringify(diagnosticoCompleto)),
         scorePrioridade: scorePrioridade,
         recomendacoes: recomendacoes,
         proximosPasso: proximoPasso
