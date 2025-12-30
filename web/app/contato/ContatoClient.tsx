@@ -1,88 +1,353 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Send, 
+  ChevronLeft, 
+  Bot, 
+  User,
+  HelpCircle,
+  Calendar,
+  CreditCard,
+  FileText,
+  Stethoscope,
+  Phone,
+  Mail
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import CannabisLeaf from '@/components/icons/CannabisLeaf';
+
+interface Message {
+  id: string;
+  type: 'bot' | 'user';
+  content: string;
+  options?: QuickOption[];
+  timestamp: Date;
+}
+
+interface QuickOption {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+  response: string;
+  followUp?: QuickOption[];
+}
+
+const faqData: QuickOption[] = [
+  {
+    id: 'cadastro',
+    label: 'Como me cadastrar?',
+    icon: User,
+    response: 'O cadastro é simples e rápido! Você pode se cadastrar como Paciente (Associado), Médico Prescritor, Instituto Médico ou Associação Parceira. Basta acessar nossa página de cadastro e escolher seu perfil. O processo leva apenas alguns minutos.',
+    followUp: [
+      { id: 'cadastro-paciente', label: 'Cadastro de Paciente', icon: User, response: 'Para se cadastrar como paciente, você precisará informar seus dados pessoais, endereço e fazer upload de um documento de identidade. Após o cadastro, nossa equipe entrará em contato para dar continuidade ao seu tratamento.' },
+      { id: 'cadastro-medico', label: 'Cadastro de Médico', icon: Stethoscope, response: 'Médicos podem se cadastrar informando CRM, especialidade e documentação profissional. Após validação do CRM, você terá acesso à área do prescritor para atender pacientes via teleconsulta.' },
+    ]
+  },
+  {
+    id: 'consulta',
+    label: 'Como agendar consulta?',
+    icon: Calendar,
+    response: 'Após completar seu cadastro e a pré-anamnese, você poderá agendar uma teleconsulta com um de nossos prescritores. Basta acessar a área "Agendar" no seu dashboard e escolher um horário disponível.',
+  },
+  {
+    id: 'pagamento',
+    label: 'Formas de pagamento',
+    icon: CreditCard,
+    response: 'Aceitamos pagamento via PIX com processamento imediato. Oferecemos diferentes planos de assinatura: Essencial, Premium e Família. Cada plano inclui benefícios específicos como consultas, acompanhamento e descontos em produtos.',
+  },
+  {
+    id: 'prescricao',
+    label: 'Sobre prescrições',
+    icon: FileText,
+    response: 'As prescrições são emitidas digitalmente após a teleconsulta com o médico. O documento é válido em todo o território nacional e permite a aquisição de produtos à base de cannabis medicinal em farmácias autorizadas ou importação pela ANVISA.',
+  },
+  {
+    id: 'outros',
+    label: 'Outras dúvidas',
+    icon: HelpCircle,
+    response: 'Se sua dúvida não foi respondida, você pode nos enviar uma mensagem detalhada abaixo ou entrar em contato diretamente via WhatsApp. Nossa equipe responde em até 24 horas úteis.',
+  },
+];
 
 export default function ContatoClient() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [showContactForm, setShowContactForm] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    setMessages([{
+      id: '1',
+      type: 'bot',
+      content: 'Olá! Sou o assistente virtual da ABRACANM. Como posso ajudar você hoje?',
+      options: faqData,
+      timestamp: new Date(),
+    }]);
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const addBotMessage = (content: string, options?: QuickOption[]) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        type: 'bot',
+        content,
+        options,
+        timestamp: new Date(),
+      }]);
+      setIsTyping(false);
+    }, 800);
+  };
+
+  const handleOptionClick = (option: QuickOption) => {
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      type: 'user',
+      content: option.label,
+      timestamp: new Date(),
+    }]);
+
+    setTimeout(() => {
+      addBotMessage(option.response, option.followUp);
+    }, 300);
+  };
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    const userMessage = inputValue.trim();
+    setInputValue('');
+
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      type: 'user',
+      content: userMessage,
+      timestamp: new Date(),
+    }]);
+
+    setShowContactForm(true);
+    addBotMessage(
+      'Obrigado pela sua mensagem! Para que nossa equipe possa responder, por favor informe seu nome e email abaixo, ou entre em contato diretamente pelo WhatsApp.'
+    );
+  };
+
+  const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const nome = formData.get('nome');
+    const email = formData.get('email');
+
+    if (nome && email) {
+      setShowContactForm(false);
+      addBotMessage(
+        `Perfeito, ${nome}! Recebemos sua mensagem e responderemos em breve no email ${email}. Você também pode nos chamar no WhatsApp para atendimento mais rápido.`
+      );
+    }
+  };
+
+  const openWhatsApp = () => {
+    window.open('https://wa.me/5561981471038?text=Olá! Vim pelo site da ABRACANM e gostaria de mais informações.', '_blank');
+  };
+
   return (
-    <main className="min-h-screen bg-off-white px-4 sm:px-6 lg:px-8 py-16">
-      <Card className="max-w-3xl mx-auto">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-verde-oliva font-medium mb-2">ABRACANM</p>
-              <CardTitle className="text-2xl sm:text-3xl">Fale com a gente</CardTitle>
-              <CardDescription>
-                Tire dúvidas sobre cadastro, prescrições ou parceria com prescritores.
-              </CardDescription>
-            </div>
-            <Link href="/" className="text-sm text-verde-oliva hover:underline">
-              Voltar
-            </Link>
+    <main className="min-h-screen bg-[#fafaf8]">
+      <div className="max-w-2xl mx-auto flex flex-col h-screen">
+        <header className="bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
+          <Link href="/" className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </Link>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3FA174] to-[#2D8B5F] flex items-center justify-center">
+            <CannabisLeaf className="text-white" size={20} />
           </div>
-        </CardHeader>
+          <div className="flex-1">
+            <h1 className="font-semibold text-gray-900">Suporte ABRACANM</h1>
+            <p className="text-xs text-green-600 flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              Online agora
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={openWhatsApp}
+            className="gap-2 text-green-600 border-green-200 hover:bg-green-50"
+          >
+            <Phone className="w-4 h-4" />
+            <span className="hidden sm:inline">WhatsApp</span>
+          </Button>
+        </header>
 
-        <CardContent>
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-cinza-escuro">
-                  Nome completo
-                </label>
-                <input
-                  type="text"
-                  name="nome"
-                  className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
-                  placeholder="Seu nome"
-                />
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+          <AnimatePresence mode="popLayout">
+            {messages.map((message) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`flex gap-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    message.type === 'bot' 
+                      ? 'bg-gradient-to-br from-[#3FA174] to-[#2D8B5F]' 
+                      : 'bg-gray-200'
+                  }`}>
+                    {message.type === 'bot' ? (
+                      <Bot className="w-4 h-4 text-white" />
+                    ) : (
+                      <User className="w-4 h-4 text-gray-600" />
+                    )}
+                  </div>
+                  <div>
+                    <div className={`rounded-2xl px-4 py-3 ${
+                      message.type === 'bot'
+                        ? 'bg-white border border-gray-100 shadow-sm rounded-tl-md'
+                        : 'bg-[#3FA174] text-white rounded-tr-md'
+                    }`}>
+                      <p className="text-sm leading-relaxed">{message.content}</p>
+                    </div>
+                    
+                    {message.options && message.options.length > 0 && (
+                      <motion.div 
+                        className="mt-3 flex flex-wrap gap-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        {message.options.map((option) => (
+                          <motion.button
+                            key={option.id}
+                            onClick={() => handleOptionClick(option)}
+                            className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-[#3FA174] hover:text-[#3FA174] transition-all shadow-sm"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <option.icon className="w-4 h-4" />
+                            {option.label}
+                          </motion.button>
+                        ))}
+                      </motion.div>
+                    )}
+                    
+                    <p className={`text-[10px] mt-1 ${message.type === 'bot' ? 'text-gray-400' : 'text-gray-400 text-right'}`}>
+                      {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {isTyping && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex gap-2"
+            >
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#3FA174] to-[#2D8B5F] flex items-center justify-center">
+                <Bot className="w-4 h-4 text-white" />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-cinza-escuro">E-mail</label>
-                <input
-                  type="email"
-                  name="email"
-                  className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
-                  placeholder="voce@email.com"
-                />
+              <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
               </div>
-            </div>
+            </motion.div>
+          )}
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-cinza-escuro">
-                Assunto
-              </label>
-              <input
-                type="text"
-                name="assunto"
-                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all"
-                placeholder="Ex: Dúvida sobre prescrição"
-              />
-            </div>
+          <AnimatePresence>
+            {showContactForm && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
+              >
+                <form onSubmit={handleContactSubmit} className="space-y-3">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Mail className="w-4 h-4 text-[#3FA174]" />
+                    <p className="text-sm font-medium text-gray-700">Seus dados para contato</p>
+                  </div>
+                  <input
+                    type="text"
+                    name="nome"
+                    required
+                    placeholder="Seu nome"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3FA174]/20 focus:border-[#3FA174]"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="Seu email"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3FA174]/20 focus:border-[#3FA174]"
+                  />
+                  <div className="flex gap-2">
+                    <Button type="submit" size="sm" className="flex-1">
+                      Enviar
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={openWhatsApp}
+                      className="gap-2"
+                    >
+                      <Phone className="w-4 h-4" />
+                      WhatsApp
+                    </Button>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-cinza-escuro">
-                Mensagem
-              </label>
-              <textarea
-                name="mensagem"
-                rows={5}
-                className="w-full rounded-xl border border-cinza-claro px-4 py-2.5 text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva transition-all resize-none"
-                placeholder="Como podemos ajudar?"
-              />
-            </div>
+          <div ref={messagesEndRef} />
+        </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <p className="text-sm text-cinza-medio">
-                Responderemos em até 1 dia útil. Dados protegidos conforme LGPD.
-              </p>
-              <Button type="submit">
-                Enviar mensagem
-              </Button>
-            </div>
+        <div className="bg-white border-t border-gray-100 p-4">
+          <form onSubmit={handleSendMessage} className="flex gap-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Digite sua mensagem..."
+              className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#3FA174]/20 focus:border-[#3FA174] transition-all"
+            />
+            <motion.button
+              type="submit"
+              disabled={!inputValue.trim()}
+              className="w-12 h-12 rounded-full bg-[#3FA174] text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Send className="w-5 h-5" />
+            </motion.button>
           </form>
-        </CardContent>
-      </Card>
+          <p className="text-center text-[10px] text-gray-400 mt-2">
+            Resposta automática para dúvidas frequentes. Para atendimento humano, use o WhatsApp.
+          </p>
+        </div>
+      </div>
     </main>
   );
 }
