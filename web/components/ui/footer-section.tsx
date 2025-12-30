@@ -111,26 +111,26 @@ function FooterSection() {
                   <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                     <MapPin className="w-4 h-4 text-[#3FA174]" />
                   </div>
-                  <p className="text-gray-600 text-sm">São Paulo, SP - Brasil</p>
+                  <p className="text-gray-600 text-sm">Brasília, DF - Brasil</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Clock className="w-4 h-4 text-[#3FA174]" />
                   </div>
-                  <p className="text-gray-600 text-sm">Segunda a Sexta: 8h às 18h</p>
+                  <p className="text-gray-600 text-sm">Segunda a Sexta: 9h às 18h</p>
                 </div>
-                <div className="flex items-start gap-3">
+                <Link href="https://wa.me/5561981471038" target="_blank" className="flex items-start gap-3 hover:opacity-80 transition-opacity">
                   <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Phone className="w-4 h-4 text-[#3FA174]" />
                   </div>
-                  <p className="text-gray-600 text-sm">(11) 99999-9999</p>
-                </div>
-                <div className="flex items-start gap-3">
+                  <p className="text-gray-600 text-sm">(61) 98147-1038</p>
+                </Link>
+                <Link href="mailto:contato@abracanm.org.br" className="flex items-start gap-3 hover:opacity-80 transition-opacity">
                   <div className="w-8 h-8 bg-[#3FA174]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Mail className="w-4 h-4 text-[#3FA174]" />
                   </div>
-                  <p className="text-gray-600 text-sm">contato@abracanm.com.br</p>
-                </div>
+                  <p className="text-gray-600 text-sm">contato@abracanm.org.br</p>
+                </Link>
               </div>
             </div>
 
@@ -172,16 +172,16 @@ function FooterSection() {
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-gray-500 text-center md:text-left">
-              © 2024 ABRACANM - Associação Brasileira de Cannabis Medicinal. Todos os direitos reservados.
+              © 2025 ABRACANM - Associação Brasileira de Cannabis Medicinal. Todos os direitos reservados.
             </p>
             <nav className="flex flex-wrap justify-center gap-6 text-sm">
-              <Link href="/privacidade" className="text-gray-500 hover:text-[#3FA174] transition-colors">
+              <Link href="/politica-privacidade" className="text-gray-500 hover:text-[#3FA174] transition-colors">
                 Política de Privacidade
               </Link>
-              <Link href="/termos" className="text-gray-500 hover:text-[#3FA174] transition-colors">
+              <Link href="/termos-uso" className="text-gray-500 hover:text-[#3FA174] transition-colors">
                 Termos de Uso
               </Link>
-              <Link href="/cookies" className="text-gray-500 hover:text-[#3FA174] transition-colors">
+              <Link href="/politica-cookies" className="text-gray-500 hover:text-[#3FA174] transition-colors">
                 Cookies
               </Link>
             </nav>
