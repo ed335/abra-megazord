@@ -3,74 +3,6 @@ import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
 import { getJWTSecret } from '@/lib/jwt';
 
-async function enviarWhatsAppConfirmacao(
-  whatsapp: string,
-  nomePaciente: string,
-  nomeMedico: string,
-  dataHora: Date
-) {
-  const evolutionApiUrl = process.env.EVOLUTION_API_URL;
-  const evolutionApiKey = process.env.EVOLUTION_API_KEY;
-  const evolutionInstance = process.env.EVOLUTION_INSTANCE;
-
-  if (!evolutionApiUrl || !evolutionApiKey || !evolutionInstance) {
-    console.log('Evolution API não configurada, pulando envio de WhatsApp');
-    return false;
-  }
-
-  try {
-    const dataFormatada = dataHora.toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-    const horaFormatada = dataHora.toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-    const mensagem = `Olá ${nomePaciente}! 🌿
-
-Sua consulta foi agendada com sucesso!
-
-📅 *Data:* ${dataFormatada}
-⏰ *Horário:* ${horaFormatada}
-👨‍⚕️ *Médico:* ${nomeMedico}
-
-Você receberá o link para a teleconsulta no dia da sua consulta.
-
-Em caso de dúvidas, entre em contato conosco.
-
-ABRACANM - Associação Brasileira de Cannabis Medicinal`;
-
-    const whatsappFormatado = whatsapp.replace(/\D/g, '');
-
-    const response = await fetch(`${evolutionApiUrl}/message/sendText/${evolutionInstance}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': evolutionApiKey,
-      },
-      body: JSON.stringify({
-        number: `55${whatsappFormatado}`,
-        text: mensagem,
-      }),
-    });
-
-    if (response.ok) {
-      console.log('WhatsApp de confirmação enviado com sucesso');
-      return true;
-    } else {
-      console.error('Erro ao enviar WhatsApp:', await response.text());
-      return false;
-    }
-  } catch (error) {
-    console.error('Erro ao enviar WhatsApp:', error);
-    return false;
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization');
@@ -109,7 +41,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const medico = await prisma.prescritor.findUnique({
+    const medico = await (prisma as any).prescritor.findUnique({
       where: { id: medicoId },
     });
 
@@ -124,7 +56,7 @@ export async function POST(request: NextRequest) {
     const dataHora = new Date(data);
     dataHora.setHours(hora, minuto, 0, 0);
 
-    const conflito = await prisma.agendamento.findFirst({
+    const conflito = await (prisma as any).agendamento.findFirst({
       where: {
         prescritorId: medicoId,
         dataHora,
@@ -143,14 +75,16 @@ export async function POST(request: NextRequest) {
 
     const salaId = `abracanm-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
-    const agendamento = await prisma.agendamento.create({
+    // Criar agendamento com status PENDENTE_PAGAMENTO
+    // O horário só será confirmado após validação do pagamento Pix
+    const agendamento = await (prisma as any).agendamento.create({
       data: {
         pacienteId: usuario.paciente.id,
         prescritorId: medicoId,
         dataHora,
-        duracao: medico.duracaoConsulta,
+        duracao: medico.duracaoConsulta || 30,
         tipo: tipo || 'PRIMEIRA_CONSULTA',
-        status: 'AGENDADO',
+        status: 'PENDENTE_PAGAMENTO',
         motivo,
         salaId,
       },
@@ -164,19 +98,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const whatsappEnviado = await enviarWhatsAppConfirmacao(
-      agendamento.paciente.whatsapp,
-      agendamento.paciente.nome,
-      agendamento.prescritor?.nome || 'Médico ABRACANM',
-      dataHora
-    );
-
-    if (whatsappEnviado) {
-      await prisma.agendamento.update({
-        where: { id: agendamento.id },
-        data: { whatsappConfirmacaoEnviado: true },
-      });
-    }
+    // WhatsApp de confirmação só será enviado após pagamento confirmado
 
     return NextResponse.json({
       success: true,
@@ -186,7 +108,7 @@ export async function POST(request: NextRequest) {
         medico: agendamento.prescritor?.nome,
         especialidade: agendamento.prescritor?.especialidade,
         status: agendamento.status,
-        whatsappEnviado,
+        pendentePagamento: true,
       },
     });
   } catch (error) {

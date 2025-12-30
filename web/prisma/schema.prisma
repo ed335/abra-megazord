@@ -469,6 +469,7 @@ model ConsentimentoLGPD {
 }
 
 enum StatusAgendamento {
+  PENDENTE_PAGAMENTO
   AGENDADO
   CONFIRMADO
   EM_ANDAMENTO
@@ -619,6 +620,8 @@ model Pagamento {
   
   assinaturaId    String?
   assinatura      Assinatura? @relation(fields: [assinaturaId], references: [id])
+  
+  agendamentoId   String?   // Vincular pagamento à consulta
   
   tipo            TipoPagamento
   valor           Decimal   @db.Decimal(10, 2)

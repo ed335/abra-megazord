@@ -3,6 +3,75 @@ import { prisma } from '@/lib/prisma';
 import { SyncpayWebhookPayload, isPaymentCompleted, isPaymentFailed } from '@/lib/syncpay';
 export const dynamic = 'force-dynamic';
 
+async function enviarWhatsAppConfirmacao(
+  whatsapp: string,
+  nomePaciente: string,
+  nomeMedico: string,
+  dataHora: Date
+) {
+  const evolutionApiUrl = process.env.EVOLUTION_API_URL;
+  const evolutionApiKey = process.env.EVOLUTION_API_KEY;
+  const evolutionInstance = process.env.EVOLUTION_INSTANCE;
+
+  if (!evolutionApiUrl || !evolutionApiKey || !evolutionInstance) {
+    console.log('Evolution API não configurada, pulando envio de WhatsApp');
+    return false;
+  }
+
+  try {
+    const dataFormatada = dataHora.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    const horaFormatada = dataHora.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    const mensagem = `Olá ${nomePaciente}! 🌿
+
+Seu pagamento foi confirmado e sua consulta está agendada!
+
+📅 *Data:* ${dataFormatada}
+⏰ *Horário:* ${horaFormatada}
+👨‍⚕️ *Médico:* ${nomeMedico}
+✅ *Status:* Pagamento confirmado
+
+Você receberá o link para a teleconsulta no dia da sua consulta.
+
+Em caso de dúvidas, entre em contato conosco.
+
+ABRACANM - Associação Brasileira de Cannabis Medicinal`;
+
+    const whatsappFormatado = whatsapp.replace(/\D/g, '');
+
+    const response = await fetch(`${evolutionApiUrl}/message/sendText/${evolutionInstance}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': evolutionApiKey,
+      },
+      body: JSON.stringify({
+        number: `55${whatsappFormatado}`,
+        text: mensagem,
+      }),
+    });
+
+    if (response.ok) {
+      console.log('WhatsApp de confirmação enviado com sucesso');
+      return true;
+    } else {
+      console.error('Erro ao enviar WhatsApp:', await response.text());
+      return false;
+    }
+  } catch (error) {
+    console.error('Erro ao enviar WhatsApp:', error);
+    return false;
+  }
+}
+
 function verifyWebhookAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get('Authorization');
   const expectedSecret = process.env.SYNCPAY_WEBHOOK_SECRET || process.env.SYNCPAY_CLIENT_SECRET;
@@ -85,6 +154,46 @@ export async function POST(request: NextRequest) {
           webhookData: payload as object,
         }
       });
+
+      // Se for pagamento de consulta, confirmar o agendamento
+      if (pagamento.agendamentoId) {
+        const agendamento = await (prisma as any).agendamento.findUnique({
+          where: { id: pagamento.agendamentoId },
+          include: {
+            paciente: { select: { nome: true, whatsapp: true } },
+            prescritor: { select: { nome: true } },
+          }
+        });
+
+        if (agendamento && agendamento.status === 'PENDENTE_PAGAMENTO') {
+          await (prisma as any).agendamento.update({
+            where: { id: pagamento.agendamentoId },
+            data: {
+              status: 'AGENDADO',
+              confirmadoEm: new Date(),
+            }
+          });
+
+          console.log(`Agendamento ${pagamento.agendamentoId} confirmado após pagamento`);
+
+          // Enviar WhatsApp de confirmação
+          if (agendamento.paciente?.whatsapp) {
+            const whatsappEnviado = await enviarWhatsAppConfirmacao(
+              agendamento.paciente.whatsapp,
+              agendamento.paciente.nome,
+              agendamento.prescritor?.nome || 'Médico ABRACANM',
+              agendamento.dataHora
+            );
+
+            if (whatsappEnviado) {
+              await (prisma as any).agendamento.update({
+                where: { id: pagamento.agendamentoId },
+                data: { whatsappConfirmacaoEnviado: true },
+              });
+            }
+          }
+        }
+      }
 
       if (pagamento.assinaturaId && pagamento.assinatura) {
         const tipoPlano = pagamento.assinatura.plano?.tipo || 'MENSAL';

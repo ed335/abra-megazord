@@ -53,10 +53,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { tipo, planoId, cpf } = body as { 
+    const { tipo, planoId, cpf, agendamentoId } = body as { 
       tipo: 'MENSALIDADE' | 'CONSULTA' | 'PRIMEIRA_CONSULTA';
       planoId?: string;
       cpf: string;
+      agendamentoId?: string;
     };
 
     if (!cpf || cpf.length !== 11) {
@@ -131,11 +132,12 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Save payment record
+    // Save payment record with agendamentoId if it's a consultation payment
     const pagamento = await (prisma as any).pagamento.create({
       data: {
         pacienteId: paciente.id,
         assinaturaId: assinatura?.id,
+        agendamentoId: agendamentoId || null, // Vincular ao agendamento
         tipo: tipo,
         valor: valor,
         status: 'PENDENTE',
