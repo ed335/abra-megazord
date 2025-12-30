@@ -189,149 +189,158 @@ export default function DashboardPage() {
     return (
       <AppLayout title="Início">
         <div className="space-y-6">
+          {/* Header Premium - Design Minimalista */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${planoConfig.gradient} p-6 text-white`}
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
           >
-            <div className="absolute top-0 right-0 opacity-10">
-              <CannabisLeaf size={120} className="text-white" />
-            </div>
-            <div className="relative z-10">
-              <div className="flex items-start justify-between mb-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/80 text-sm font-medium">Bem-vindo de volta,</p>
-                  <h1 className="text-2xl font-bold">{firstName}</h1>
+                  <p className="text-gray-500 text-sm">Bem-vindo de volta,</p>
+                  <h1 className="text-2xl font-semibold text-gray-900 mt-0.5">{firstName}</h1>
                 </div>
-                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                  <PlanoIcon className="w-4 h-4" />
-                  <span className="text-sm font-semibold">{planoNome}</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-900 rounded-full">
+                  <PlanoIcon className="w-4 h-4 text-white" />
+                  <span className="text-sm font-medium text-white">{planoNome}</span>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-3 gap-3 mt-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                  <Video className="w-5 h-5 mx-auto mb-1 opacity-90" />
-                  <p className="text-xs opacity-80">Teleconsulta</p>
-                  <p className="text-sm font-semibold">Ilimitada</p>
+            </div>
+            
+            <div className="border-t border-gray-100 bg-gray-50/50 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#3FA174]" />
+                    <span className="text-sm text-gray-600">Membro ativo</span>
+                  </div>
+                  {user.assinaturaAtiva?.dataFim && (
+                    <span className="text-sm text-gray-400">
+                      Válido até {new Date(user.assinaturaAtiva.dataFim).toLocaleDateString('pt-BR')}
+                    </span>
+                  )}
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                  <HeartPulse className="w-5 h-5 mx-auto mb-1 opacity-90" />
-                  <p className="text-xs opacity-80">Suporte</p>
-                  <p className="text-sm font-semibold">Prioritário</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                  <Gift className="w-5 h-5 mx-auto mb-1 opacity-90" />
-                  <p className="text-xs opacity-80">Benefícios</p>
-                  <p className="text-sm font-semibold">Exclusivos</p>
-                </div>
+                <Link href="/carteirinha">
+                  <span className="text-sm text-[#3FA174] font-medium hover:underline cursor-pointer">
+                    Ver carteirinha
+                  </span>
+                </Link>
               </div>
             </div>
           </motion.div>
 
+          {/* Ações Rápidas - Grid Minimalista */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-4"
           >
-            <PremiumQuickAction 
-              href="/agendar-consulta" 
-              icon={Calendar} 
-              label="Agendar Consulta"
-              highlight
-            />
-            <PremiumQuickAction 
-              href="/pre-anamnese" 
-              icon={ClipboardList} 
-              label="Pré-Anamnese"
-              done={hasPreAnamnese}
-            />
-            <PremiumQuickAction 
-              href="/carteirinha" 
-              icon={Wallet} 
-              label="Carteirinha"
-            />
-            <PremiumQuickAction 
-              href="/perfil" 
-              icon={User} 
-              label="Meu Perfil"
-            />
+            <Link href="/agendar-consulta" className="group">
+              <div className="bg-[#3FA174] rounded-2xl p-5 text-white transition-all hover:shadow-lg hover:scale-[1.02]">
+                <Calendar className="w-6 h-6 mb-3" />
+                <p className="font-medium">Agendar</p>
+                <p className="text-sm text-white/70">Consulta</p>
+              </div>
+            </Link>
+            <Link href="/pre-anamnese" className="group">
+              <div className={`bg-white rounded-2xl p-5 border transition-all hover:shadow-lg hover:scale-[1.02] ${hasPreAnamnese ? 'border-[#3FA174]' : 'border-gray-200'}`}>
+                <ClipboardList className={`w-6 h-6 mb-3 ${hasPreAnamnese ? 'text-[#3FA174]' : 'text-gray-400'}`} />
+                <p className="font-medium text-gray-900">Anamnese</p>
+                <p className="text-sm text-gray-500">{hasPreAnamnese ? 'Concluída' : 'Pendente'}</p>
+              </div>
+            </Link>
+            <Link href="/carteirinha" className="group">
+              <div className="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:shadow-lg hover:scale-[1.02]">
+                <Wallet className="w-6 h-6 mb-3 text-gray-400" />
+                <p className="font-medium text-gray-900">Carteirinha</p>
+                <p className="text-sm text-gray-500">Digital</p>
+              </div>
+            </Link>
+            <Link href="/perfil" className="group">
+              <div className="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:shadow-lg hover:scale-[1.02]">
+                <User className="w-6 h-6 mb-3 text-gray-400" />
+                <p className="font-medium text-gray-900">Perfil</p>
+                <p className="text-sm text-gray-500">Meus dados</p>
+              </div>
+            </Link>
           </motion.div>
 
+          {/* Alerta Pré-Anamnese */}
           {!hasPreAnamnese && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4"
+              className="bg-white border border-gray-200 rounded-2xl p-5"
             >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                  <Activity className="w-5 h-5 text-amber-600" />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                  <Activity className="w-6 h-6 text-gray-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-amber-900">Complete sua pré-anamnese</p>
-                  <p className="text-sm text-amber-700 mt-0.5">
-                    Importante para preparar sua consulta médica
+                  <p className="font-medium text-gray-900">Complete sua pré-anamnese</p>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    Necessário para agendar sua consulta
                   </p>
-                  <Link href="/pre-anamnese">
-                    <Button size="sm" className="mt-3 bg-amber-500 hover:bg-amber-600">
-                      Iniciar agora
-                      <ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </Link>
                 </div>
+                <Link href="/pre-anamnese">
+                  <Button className="bg-gray-900 hover:bg-gray-800 text-white">
+                    Iniciar
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
               </div>
             </motion.div>
           )}
 
+          {/* Card de Diagnóstico */}
           {preAnamnese && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+              className="bg-white border border-gray-200 rounded-2xl overflow-hidden"
             >
-              <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Pill className="w-4 h-4 text-[#3FA174]" />
-                  <span className="text-sm font-semibold text-gray-900">Sua Avaliação Médica</span>
+              <div className="p-5">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#3FA174]/10 flex items-center justify-center">
+                      <Pill className="w-5 h-5 text-[#3FA174]" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{preAnamnese.diagnostico.titulo}</p>
+                      <p className="text-sm text-gray-500">Avaliação médica</p>
+                    </div>
+                  </div>
+                  <PriorityBadge level={preAnamnese.diagnostico.nivelUrgencia} />
                 </div>
-                <PriorityBadge level={preAnamnese.diagnostico.nivelUrgencia} />
-              </div>
-              
-              <div className="p-4">
-                <p className="font-medium text-gray-900">{preAnamnese.diagnostico.titulo}</p>
-                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                
+                <p className="text-sm text-gray-600 leading-relaxed">
                   {preAnamnese.diagnostico.resumo}
                 </p>
                 
                 {preAnamnese.diagnostico.indicacoes?.length > 0 && (
-                  <>
-                    <Separator className="my-3" />
-                    <div className="flex flex-wrap gap-1.5">
-                      {preAnamnese.diagnostico.indicacoes.slice(0, 4).map((item, i) => (
-                        <span 
-                          key={i} 
-                          className="text-xs bg-[#3FA174]/10 text-[#3FA174] px-2.5 py-1 rounded-full font-medium"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <Clock className="w-3.5 h-3.5" />
-                    Próximo passo: agendar consulta
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {preAnamnese.diagnostico.indicacoes.slice(0, 3).map((item, i) => (
+                      <span 
+                        key={i} 
+                        className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full"
+                      >
+                        {item}
+                      </span>
+                    ))}
                   </div>
+                )}
+              </div>
+              
+              <div className="border-t border-gray-100 px-5 py-4 bg-gray-50/50">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Próximo passo: agendar consulta</span>
                   <Link href="/agendar-consulta">
-                    <Button size="sm" className="bg-[#3FA174] hover:bg-[#359966]">
-                      <Calendar className="w-4 h-4 mr-1.5" />
-                      Agendar
+                    <Button size="sm" className="bg-gray-900 hover:bg-gray-800">
+                      Agendar agora
                     </Button>
                   </Link>
                 </div>
@@ -339,94 +348,57 @@ export default function DashboardPage() {
             </motion.div>
           )}
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Separator className="my-2" />
-            
-            <div className="flex items-center gap-2 mb-3 mt-4">
-              <Star className="w-4 h-4 text-[#3FA174]" />
-              <span className="text-sm font-semibold text-gray-900">Benefícios do seu plano</span>
-            </div>
-            
-            <div className="grid sm:grid-cols-2 gap-3">
-              {user.planoAtivo?.beneficios?.slice(0, 4).map((beneficio, i) => (
-                <div key={i} className="flex items-center gap-2 p-3 bg-[#3FA174]/5 rounded-lg border border-[#3FA174]/20">
-                  <CheckCircle2 className="w-4 h-4 text-[#3FA174] flex-shrink-0" />
-                  <span className="text-sm text-gray-700">{beneficio}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+          {/* Benefícios - Design Limpo */}
+          {user.planoAtivo?.beneficios && user.planoAtivo.beneficios.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white border border-gray-200 rounded-2xl p-5"
+            >
+              <p className="text-sm font-medium text-gray-500 mb-4">Seus benefícios</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {user.planoAtivo.beneficios.slice(0, 4).map((beneficio, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-4 h-4 text-[#3FA174] flex-shrink-0" />
+                    <span className="text-sm text-gray-700">{beneficio}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
+          {/* Links Úteis - Grid Minimalista */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
-            className="relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4"
+            className="grid sm:grid-cols-3 gap-4"
           >
-            <div className="absolute top-0 right-0 opacity-10">
-              <svg viewBox="0 0 24 24" className="w-32 h-32 text-white fill-current">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-            </div>
-            <div className="relative z-10 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
-                <MessageCircle className="w-6 h-6 text-white" />
+            <a 
+              href="https://chat.whatsapp.com/BwaiJDQWbY786aOdMckn9m" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group"
+            >
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 transition-all hover:shadow-md hover:border-[#3FA174]">
+                <MessageCircle className="w-6 h-6 text-[#3FA174] mb-3" />
+                <p className="font-medium text-gray-900">Comunidade</p>
+                <p className="text-sm text-gray-500 mt-1">Grupo WhatsApp</p>
               </div>
-              <div className="flex-1">
-                <p className="font-bold text-white text-lg">Comunidade ABRACANM</p>
-                <p className="text-white/80 text-sm">Conecte-se com outros associados no WhatsApp</p>
-              </div>
-              <a 
-                href="https://chat.whatsapp.com/BwaiJDQWbY786aOdMckn9m" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                <Button className="bg-white text-green-600 hover:bg-gray-100 font-semibold shadow-lg">
-                  Entrar no grupo
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </Button>
-              </a>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="grid sm:grid-cols-2 gap-3"
-          >
-            <Link href="/educacao">
-              <div className="group border border-gray-200 rounded-xl p-4 hover:border-[#3FA174]/40 hover:bg-[#3FA174]/5 transition-all">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#3FA174]/10 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-[#3FA174]" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 group-hover:text-[#3FA174] transition-colors">
-                      Centro de Educação
-                    </p>
-                    <p className="text-xs text-gray-500">Artigos e vídeos exclusivos</p>
-                  </div>
-                </div>
+            </a>
+            <Link href="/educacao" className="group">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 transition-all hover:shadow-md hover:border-[#3FA174]">
+                <FileText className="w-6 h-6 text-gray-400 mb-3 group-hover:text-[#3FA174] transition-colors" />
+                <p className="font-medium text-gray-900">Educação</p>
+                <p className="text-sm text-gray-500 mt-1">Artigos e vídeos</p>
               </div>
             </Link>
-            <Link href="/contato">
-              <div className="group border border-gray-200 rounded-xl p-4 hover:border-[#3FA174]/40 hover:bg-[#3FA174]/5 transition-all">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#3FA174]/10 flex items-center justify-center">
-                    <MessageCircle className="w-5 h-5 text-[#3FA174]" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 group-hover:text-[#3FA174] transition-colors">
-                      Suporte Prioritário
-                    </p>
-                    <p className="text-xs text-gray-500">Atendimento exclusivo</p>
-                  </div>
-                </div>
+            <Link href="/contato" className="group">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 transition-all hover:shadow-md hover:border-[#3FA174]">
+                <HeartPulse className="w-6 h-6 text-gray-400 mb-3 group-hover:text-[#3FA174] transition-colors" />
+                <p className="font-medium text-gray-900">Suporte</p>
+                <p className="text-sm text-gray-500 mt-1">Atendimento prioritário</p>
               </div>
             </Link>
           </motion.div>
