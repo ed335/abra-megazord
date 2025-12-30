@@ -27,7 +27,10 @@ export function clearToken() {
   document.cookie = `${COOKIE_NAME}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 }
 
-type FetchOptions = RequestInit & { skipAuthHeader?: boolean };
+type FetchOptions = RequestInit & { 
+  skipAuthHeader?: boolean;
+  skipLogoutOn401?: boolean;
+};
 
 export async function fetchWithAuth<T = unknown>(
   path: string,
@@ -48,7 +51,7 @@ export async function fetchWithAuth<T = unknown>(
     headers,
   });
 
-  if (response.status === 401) {
+  if (response.status === 401 && !options.skipLogoutOn401) {
     clearToken();
     const error = new Error('Sessão expirada. Faça login novamente.');
     (error as Error & { code?: string }).code = 'UNAUTHORIZED';
@@ -58,7 +61,9 @@ export async function fetchWithAuth<T = unknown>(
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
     const message = errorData?.error || errorData?.message || 'Erro ao comunicar com o servidor';
-    throw new Error(message);
+    const error = new Error(message);
+    (error as Error & { status?: number }).status = response.status;
+    throw error;
   }
 
   return response.json() as Promise<T>;

@@ -134,28 +134,37 @@ export default function DashboardPage() {
       return;
     }
 
-    Promise.all([
-      fetch('/api/auth/me', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      }).then(res => {
-        if (!res.ok) throw new Error('Sessão inválida');
-        return res.json();
-      }),
-      fetchWithAuth<{ completed: boolean; preAnamnese?: PreAnamneseData }>('/api/pre-anamnese')
-        .catch(() => ({ completed: false, preAnamnese: undefined }))
-    ])
-      .then(([userData, preAnamneseData]) => {
-        setUser(userData);
-        if (preAnamneseData.completed && preAnamneseData.preAnamnese) {
-          setPreAnamnese(preAnamneseData.preAnamnese);
+    fetch('/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 401) {
+            clearToken();
+            router.replace('/login');
+          }
+          throw new Error('Sessão inválida');
         }
-        setLoading(false);
+        return res.json();
+      })
+      .then((userData) => {
+        setUser(userData);
+        
+        fetchWithAuth<{ completed: boolean; preAnamnese?: PreAnamneseData }>(
+          '/api/pre-anamnese',
+          { skipLogoutOn401: true }
+        )
+          .then((preAnamneseData) => {
+            if (preAnamneseData.completed && preAnamneseData.preAnamnese) {
+              setPreAnamnese(preAnamneseData.preAnamnese);
+            }
+          })
+          .catch(() => {})
+          .finally(() => setLoading(false));
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
-        clearToken();
-        router.replace('/login');
       });
   }, [router]);
 
