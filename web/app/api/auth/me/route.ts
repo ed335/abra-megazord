@@ -29,7 +29,20 @@ export async function GET(request: NextRequest) {
 
     const usuario = await prisma.usuario.findUnique({
       where: { id: decoded.sub },
-      include: { paciente: true, prescritor: true, admin: true },
+      include: { 
+        paciente: {
+          include: {
+            assinaturas: {
+              where: { status: 'ATIVO' },
+              include: { plano: true },
+              orderBy: { criadoEm: 'desc' },
+              take: 1,
+            },
+          },
+        }, 
+        prescritor: true, 
+        admin: true,
+      },
     });
 
     if (!usuario) {
@@ -41,9 +54,29 @@ export async function GET(request: NextRequest) {
 
     let nome = '';
     let cpf = '';
+    let planoAtivo = null;
+    let assinaturaAtiva = null;
+    
     if (usuario.paciente) {
       nome = usuario.paciente.nome;
       cpf = usuario.paciente.cpf || '';
+      
+      const assinatura = usuario.paciente.assinaturas?.[0];
+      if (assinatura) {
+        assinaturaAtiva = {
+          id: assinatura.id,
+          status: assinatura.status,
+          dataInicio: assinatura.dataInicio,
+          dataFim: assinatura.dataFim,
+          proximaCobranca: assinatura.proximaCobranca,
+        };
+        planoAtivo = {
+          id: assinatura.plano.id,
+          nome: assinatura.plano.nome,
+          tipo: assinatura.plano.tipo,
+          beneficios: assinatura.plano.beneficios,
+        };
+      }
     } else if (usuario.prescritor) {
       nome = usuario.prescritor.nome;
     }
@@ -54,6 +87,8 @@ export async function GET(request: NextRequest) {
       role: usuario.role,
       nome,
       cpf,
+      planoAtivo,
+      assinaturaAtiva,
     });
   } catch (error) {
     console.error('Me error:', error);

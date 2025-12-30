@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { getToken, clearToken, fetchWithAuth } from '@/lib/auth';
 import AppLayout from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
@@ -21,15 +22,40 @@ import {
   Pill,
   FileText,
   Activity,
-  Wallet
+  Wallet,
+  Star,
+  Shield,
+  Sparkles,
+  Crown,
+  Video,
+  HeartPulse,
+  Gift
 } from 'lucide-react';
 import { toast } from 'sonner';
+import CannabisLeaf from '@/components/icons/CannabisLeaf';
+
+type PlanoAtivo = {
+  id: string;
+  nome: string;
+  tipo: string;
+  beneficios: string[];
+};
+
+type AssinaturaAtiva = {
+  id: string;
+  status: string;
+  dataInicio: string | null;
+  dataFim: string | null;
+  proximaCobranca: string | null;
+};
 
 type UserData = {
   id: string;
   email: string;
   role: string;
   nome: string;
+  planoAtivo: PlanoAtivo | null;
+  assinaturaAtiva: AssinaturaAtiva | null;
 };
 
 interface Diagnostico {
@@ -72,6 +98,27 @@ function DashboardSkeleton() {
     </div>
   );
 }
+
+const planoBadgeConfig: Record<string, { bg: string; text: string; icon: React.ElementType; gradient: string }> = {
+  'Essencial': { 
+    bg: 'bg-emerald-100', 
+    text: 'text-emerald-700', 
+    icon: Shield,
+    gradient: 'from-emerald-500 to-green-600'
+  },
+  'Premium': { 
+    bg: 'bg-amber-100', 
+    text: 'text-amber-700', 
+    icon: Crown,
+    gradient: 'from-amber-400 to-orange-500'
+  },
+  'VIP': { 
+    bg: 'bg-violet-100', 
+    text: 'text-violet-700', 
+    icon: Sparkles,
+    gradient: 'from-violet-500 to-purple-600'
+  },
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -139,6 +186,228 @@ export default function DashboardPage() {
 
   const firstName = user.nome?.split(' ')[0] || 'Associado';
   const hasPreAnamnese = !!preAnamnese;
+  const hasPlanoAtivo = !!user.planoAtivo;
+  const planoNome = user.planoAtivo?.nome || 'Essencial';
+  const planoConfig = planoBadgeConfig[planoNome] || planoBadgeConfig['Essencial'];
+  const PlanoIcon = planoConfig.icon;
+
+  if (hasPlanoAtivo) {
+    return (
+      <AppLayout title="Início">
+        <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${planoConfig.gradient} p-6 text-white`}
+          >
+            <div className="absolute top-0 right-0 opacity-10">
+              <CannabisLeaf size={120} className="text-white" />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-white/80 text-sm font-medium">Bem-vindo de volta,</p>
+                  <h1 className="text-2xl font-bold">{firstName}</h1>
+                </div>
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                  <PlanoIcon className="w-4 h-4" />
+                  <span className="text-sm font-semibold">{planoNome}</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <Video className="w-5 h-5 mx-auto mb-1 opacity-90" />
+                  <p className="text-xs opacity-80">Teleconsulta</p>
+                  <p className="text-sm font-semibold">Ilimitada</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <HeartPulse className="w-5 h-5 mx-auto mb-1 opacity-90" />
+                  <p className="text-xs opacity-80">Suporte</p>
+                  <p className="text-sm font-semibold">Prioritário</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <Gift className="w-5 h-5 mx-auto mb-1 opacity-90" />
+                  <p className="text-xs opacity-80">Benefícios</p>
+                  <p className="text-sm font-semibold">Exclusivos</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+          >
+            <PremiumQuickAction 
+              href="/agendar-consulta" 
+              icon={Calendar} 
+              label="Agendar Consulta"
+              highlight
+            />
+            <PremiumQuickAction 
+              href="/pre-anamnese" 
+              icon={ClipboardList} 
+              label="Pré-Anamnese"
+              done={hasPreAnamnese}
+            />
+            <PremiumQuickAction 
+              href="/carteirinha" 
+              icon={Wallet} 
+              label="Carteirinha"
+            />
+            <PremiumQuickAction 
+              href="/perfil" 
+              icon={User} 
+              label="Meu Perfil"
+            />
+          </motion.div>
+
+          {!hasPreAnamnese && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                  <Activity className="w-5 h-5 text-amber-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-amber-900">Complete sua pré-anamnese</p>
+                  <p className="text-sm text-amber-700 mt-0.5">
+                    Importante para preparar sua consulta médica
+                  </p>
+                  <Link href="/pre-anamnese">
+                    <Button size="sm" className="mt-3 bg-amber-500 hover:bg-amber-600">
+                      Iniciar agora
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {preAnamnese && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+            >
+              <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Pill className="w-4 h-4 text-[#3FA174]" />
+                  <span className="text-sm font-semibold text-gray-900">Sua Avaliação Médica</span>
+                </div>
+                <PriorityBadge level={preAnamnese.diagnostico.nivelUrgencia} />
+              </div>
+              
+              <div className="p-4">
+                <p className="font-medium text-gray-900">{preAnamnese.diagnostico.titulo}</p>
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                  {preAnamnese.diagnostico.resumo}
+                </p>
+                
+                {preAnamnese.diagnostico.indicacoes?.length > 0 && (
+                  <>
+                    <Separator className="my-3" />
+                    <div className="flex flex-wrap gap-1.5">
+                      {preAnamnese.diagnostico.indicacoes.slice(0, 4).map((item, i) => (
+                        <span 
+                          key={i} 
+                          className="text-xs bg-[#3FA174]/10 text-[#3FA174] px-2.5 py-1 rounded-full font-medium"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <Clock className="w-3.5 h-3.5" />
+                    Próximo passo: agendar consulta
+                  </div>
+                  <Link href="/agendar-consulta">
+                    <Button size="sm" className="bg-[#3FA174] hover:bg-[#359966]">
+                      <Calendar className="w-4 h-4 mr-1.5" />
+                      Agendar
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Separator className="my-2" />
+            
+            <div className="flex items-center gap-2 mb-3 mt-4">
+              <Star className="w-4 h-4 text-[#3FA174]" />
+              <span className="text-sm font-semibold text-gray-900">Benefícios do seu plano</span>
+            </div>
+            
+            <div className="grid sm:grid-cols-2 gap-3">
+              {user.planoAtivo?.beneficios?.slice(0, 4).map((beneficio, i) => (
+                <div key={i} className="flex items-center gap-2 p-3 bg-[#3FA174]/5 rounded-lg border border-[#3FA174]/20">
+                  <CheckCircle2 className="w-4 h-4 text-[#3FA174] flex-shrink-0" />
+                  <span className="text-sm text-gray-700">{beneficio}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="grid sm:grid-cols-2 gap-3"
+          >
+            <Link href="/educacao">
+              <div className="group border border-gray-200 rounded-xl p-4 hover:border-[#3FA174]/40 hover:bg-[#3FA174]/5 transition-all">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#3FA174]/10 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-[#3FA174]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 group-hover:text-[#3FA174] transition-colors">
+                      Centro de Educação
+                    </p>
+                    <p className="text-xs text-gray-500">Artigos e vídeos exclusivos</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+            <Link href="/contato">
+              <div className="group border border-gray-200 rounded-xl p-4 hover:border-[#3FA174]/40 hover:bg-[#3FA174]/5 transition-all">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#3FA174]/10 flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5 text-[#3FA174]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 group-hover:text-[#3FA174] transition-colors">
+                      Suporte Prioritário
+                    </p>
+                    <p className="text-xs text-gray-500">Atendimento exclusivo</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout title="Início">
@@ -177,6 +446,26 @@ export default function DashboardPage() {
             icon={Wallet} 
             label="Carteirinha"
           />
+        </div>
+
+        <div className="bg-gradient-to-r from-[#3FA174]/10 to-emerald-50 border border-[#3FA174]/30 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#3FA174] flex items-center justify-center flex-shrink-0">
+              <Crown className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-gray-900">Seja um associado Premium!</p>
+              <p className="text-sm text-gray-600 mt-0.5">
+                Acesso a consultas com desconto, suporte prioritário e muito mais
+              </p>
+              <Link href="/planos">
+                <Button size="sm" className="mt-3 bg-[#3FA174] hover:bg-[#359966]">
+                  Ver planos
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {!hasPreAnamnese && (
@@ -309,6 +598,44 @@ function QuickAction({
           {label}
         </p>
       </div>
+    </Link>
+  );
+}
+
+function PremiumQuickAction({ 
+  href, 
+  icon: Icon, 
+  label, 
+  done = false,
+  highlight = false
+}: { 
+  href: string; 
+  icon: React.ElementType; 
+  label: string; 
+  done?: boolean;
+  highlight?: boolean;
+}) {
+  return (
+    <Link href={href}>
+      <motion.div 
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className={`group rounded-xl p-4 transition-all h-full ${
+          highlight 
+            ? 'bg-[#3FA174] text-white shadow-lg shadow-[#3FA174]/20' 
+            : 'bg-white border border-gray-200 hover:border-[#3FA174]/40 hover:shadow-md'
+        }`}
+      >
+        <div className="flex items-center justify-between mb-2">
+          <Icon className={`w-5 h-5 ${highlight ? 'text-white' : 'text-[#3FA174]'}`} />
+          {done && <CheckCircle2 className={`w-4 h-4 ${highlight ? 'text-white' : 'text-green-600'}`} />}
+        </div>
+        <p className={`text-sm font-medium ${
+          highlight ? 'text-white' : 'text-gray-900 group-hover:text-[#3FA174]'
+        } transition-colors`}>
+          {label}
+        </p>
+      </motion.div>
     </Link>
   );
 }
