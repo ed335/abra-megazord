@@ -19,7 +19,7 @@ import {
   CalendarDays,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fetchWithAuth, getToken, clearToken } from '@/lib/auth';
+import { fetchWithAuth, getToken } from '@/lib/auth';
 import { toast } from 'sonner';
 import CannabisLeaf from '@/components/icons/CannabisLeaf';
 
