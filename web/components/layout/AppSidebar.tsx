@@ -56,14 +56,14 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
         className={cn(
           "fixed top-0 left-0 z-50 h-screen bg-white border-r border-cinza-claro transition-all duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-          collapsed ? "lg:w-20" : "lg:w-64",
+          collapsed ? "lg:w-[72px]" : "lg:w-64",
           "w-72"
         )}
       >
         <div className="flex flex-col h-full">
           <div className={cn(
             "flex items-center justify-between p-4 border-b border-cinza-claro",
-            collapsed && "lg:justify-center lg:px-2"
+            collapsed && "lg:justify-center lg:px-4"
           )}>
             <Link href="/" className={cn(
               "flex items-center gap-3",
@@ -119,7 +119,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
                   onClick={onClose}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                    collapsed && "lg:justify-center lg:px-2",
+                    collapsed && "lg:justify-center lg:px-3",
                     isActive 
                       ? "bg-verde-oliva text-white shadow-sm" 
                       : "text-cinza-medio hover:bg-off-white hover:text-cinza-escuro"
@@ -135,11 +135,11 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
 
           <div className={cn(
             "p-4 border-t border-cinza-claro",
-            collapsed && "lg:px-2"
+            collapsed && "lg:px-3"
           )}>
             <div className={cn(
               "bg-verde-claro/10 rounded-xl p-4",
-              collapsed && "lg:p-2"
+              collapsed && "lg:p-3"
             )}>
               <div className={cn(
                 "flex items-center gap-3 mb-2",
