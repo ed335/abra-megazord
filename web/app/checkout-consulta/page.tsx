@@ -69,11 +69,6 @@ export default function CheckoutConsultaPage() {
       const userData = await fetchWithAuth<UserData>('/api/auth/me');
       setUser(userData);
 
-      if (!userData.planoAtivo) {
-        router.push('/planos');
-        return;
-      }
-
       if (agendamentoId) {
         const agendamentoData = await fetchWithAuth<{ agendamento: AgendamentoData }>(
           `/api/agendamento/${agendamentoId}`
