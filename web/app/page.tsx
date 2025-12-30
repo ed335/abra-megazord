@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Leaf, 
   FileText,
@@ -19,6 +20,14 @@ import { InfiniteBenefitsCarousel } from "@/components/ui/infinite-benefits-caro
 import { FaqAccordion } from "@/components/ui/faq-chat-accordion";
 import { FooterSection } from "@/components/ui/footer-section";
 import { StatsSection } from "@/components/ui/stats-section";
+
+const palavrasFlip = [
+  'humanizada',
+  'acessível', 
+  'segura',
+  'acolhedora',
+  'transparente',
+];
 
 const faqData = [
   {
@@ -155,6 +164,15 @@ const services = [
 
 
 export default function Home() {
+  const [palavraAtual, setPalavraAtual] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPalavraAtual((prev) => (prev + 1) % palavrasFlip.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative min-h-screen w-full bg-white">
 
@@ -253,10 +271,34 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-8 md:mb-12"
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-gray-900 leading-[1.1]">
-              Simples. <span className="text-[#3FA174]">Seguro.</span>
+            <p className="text-sm font-semibold tracking-widest text-[#3FA174] uppercase mb-4">
+              Cannabis Medicinal no Brasil
+            </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold mb-5 tracking-tight text-gray-900 leading-[1.1]">
+              Acesse seu
               <br />
-              Feito para Você.
+              tratamento de
+              <br />
+              <span className="inline-flex items-baseline">
+                forma{' '}
+                <span className="relative inline-block h-[1.15em] align-baseline overflow-hidden" style={{ minWidth: '340px' }}>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={palavraAtual}
+                      initial={{ y: 50, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -50, opacity: 0 }}
+                      transition={{ 
+                        duration: 0.4,
+                        ease: [0.25, 0.46, 0.45, 0.94]
+                      }}
+                      className="absolute left-0 text-[#3FA174] italic font-semibold"
+                    >
+                      {palavrasFlip[palavraAtual]}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
+              </span>
             </h1>
             
             <p className="text-gray-500 text-base lg:text-lg mb-8 max-w-xl mx-auto">
