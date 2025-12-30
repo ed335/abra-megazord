@@ -4,9 +4,8 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Pricing } from '@/components/ui/pricing';
-import { Shield, Users, Clock, HeartPulse, FileText, MessageCircle, Stethoscope, Check, X } from 'lucide-react';
+import { Shield, Users, Clock, HeartPulse, FileText, MessageCircle, Stethoscope, Check, X, Loader2 } from 'lucide-react';
 
 interface Plano {
   id: string;
@@ -36,32 +35,32 @@ const BENEFICIOS_DETALHADOS = [
   {
     icon: Stethoscope,
     titulo: 'Consultas com Desconto',
-    descricao: 'Primeira consulta por R$ 99 (economia de R$ 50) e consultas de retorno com preço especial.',
+    descricao: 'Primeira consulta por R$ 99 e consultas de retorno com preço especial.',
   },
   {
     icon: FileText,
     titulo: 'Receita Digital Válida',
-    descricao: 'Receitas emitidas por médicos prescritores autorizados, válidas em todo território nacional.',
+    descricao: 'Receitas emitidas por médicos prescritores, válidas em todo território nacional.',
   },
   {
     icon: HeartPulse,
     titulo: 'Desconto em Medicamentos',
-    descricao: 'Descontos exclusivos em medicamentos prescritos através de parcerias com fornecedores autorizados.',
+    descricao: 'Descontos exclusivos em medicamentos através de parceiros autorizados.',
   },
   {
     icon: MessageCircle,
     titulo: 'Suporte via WhatsApp',
-    descricao: 'Tire dúvidas sobre seu tratamento, produtos e legislação com nossa equipe.',
+    descricao: 'Tire dúvidas sobre tratamento, produtos e legislação com nossa equipe.',
   },
   {
     icon: Users,
     titulo: 'Acompanhamento Contínuo',
-    descricao: 'Monitoramento do seu tratamento com ajustes de dosagem conforme sua evolução.',
+    descricao: 'Monitoramento do tratamento com ajustes conforme sua evolução.',
   },
   {
     icon: Shield,
     titulo: 'Segurança Jurídica',
-    descricao: 'Orientação sobre importação legal, habeas corpus preventivo e direitos do paciente.',
+    descricao: 'Orientação sobre importação legal e direitos do paciente.',
   },
 ];
 
@@ -73,7 +72,7 @@ const COMPARATIVO = [
   { item: 'Conteúdo educativo exclusivo', associado: true, avulso: false },
   { item: 'Acompanhamento contínuo', associado: true, avulso: false },
   { item: 'Descontos em consultas de retorno', associado: true, avulso: false },
-  { item: 'Desconto em medicamentos prescritos', associado: true, avulso: false },
+  { item: 'Desconto em medicamentos', associado: true, avulso: false },
   { item: 'Orientação jurídica', associado: true, avulso: false },
 ];
 
@@ -83,14 +82,29 @@ const FALLBACK_PLANOS: Plano[] = [
     nome: 'Essencial',
     descricao: 'Acesso completo à plataforma ABRACANM',
     tipo: 'MENSAL',
-    valorMensalidade: 39.90,
-    valorConsulta: 149.00,
-    valorPrimeiraConsulta: 99.00,
+    valorMensalidade: 40,
+    valorConsulta: 149,
+    valorPrimeiraConsulta: 99,
     beneficios: [
       'Acesso à plataforma',
       'Conteúdo educativo',
       'Suporte via WhatsApp',
       'Acompanhamento personalizado',
+    ],
+    ativo: true,
+  },
+  {
+    id: 'plano-completo',
+    nome: 'Completo',
+    descricao: 'Todos os benefícios + consulta de retorno gratuita',
+    tipo: 'MENSAL',
+    valorMensalidade: 100,
+    valorConsulta: 79,
+    valorPrimeiraConsulta: 79,
+    beneficios: [
+      'Consulta de retorno gratuita',
+      'Prioridade no agendamento',
+      'Grupo exclusivo de pacientes',
     ],
     ativo: true,
   },
@@ -106,29 +120,28 @@ function convertToPricingPlans(planos: Plano[]): PricingPlan[] {
       'Consulta com médico prescritor',
       'Receita digital se indicado',
       'Orientações sobre o tratamento',
+      'Sem mensalidade',
+      'Pague apenas quando precisar',
     ],
     description: 'Para quem prefere pagar apenas quando precisar',
     buttonText: 'Agendar Consulta',
-    href: '/checkout?tipo=CONSULTA',
+    href: '/agendar-consulta',
     isPopular: false,
   };
 
-  const planosLimitados = planos.slice(0, 2);
-
-  const planosConvertidos = planosLimitados.map((plano, index) => ({
+  const planosConvertidos = planos.slice(0, 2).map((plano, index) => ({
     name: `Plano ${plano.nome}`,
     price: String(Math.round(plano.valorMensalidade)),
     yearlyPrice: String(Math.round(plano.valorMensalidade * 0.8)),
     period: 'mês',
     features: [
-      `Primeira consulta por R$ ${plano.valorPrimeiraConsulta.toFixed(0)} (economia de R$ 50)`,
+      `Primeira consulta por R$ ${plano.valorPrimeiraConsulta.toFixed(0)}`,
       'Suporte contínuo via WhatsApp',
       'Conteúdo educativo exclusivo',
       'Acompanhamento do tratamento',
       'Descontos em consultas de retorno',
-      'Desconto em medicamentos prescritos',
-      'Orientação jurídica e importação',
-      ...plano.beneficios,
+      'Desconto em medicamentos',
+      ...(index === 1 ? ['Consulta de retorno gratuita', 'Prioridade no agendamento'] : []),
     ],
     description: 'Cancele quando quiser, sem multa',
     buttonText: 'Tornar-se Associado',
@@ -147,7 +160,7 @@ export default function PlanosPage() {
     fetch('/api/planos')
       .then(res => res.json())
       .then(data => {
-        const planosData = data.planos || FALLBACK_PLANOS;
+        const planosData = data.planos?.length >= 2 ? data.planos : FALLBACK_PLANOS;
         setPricingPlans(convertToPricingPlans(planosData));
         setLoading(false);
       })
@@ -159,126 +172,100 @@ export default function PlanosPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#fafaf8]">
-        
-        <section className="bg-white py-16">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-4">
-            <Skeleton className="h-10 w-3/4 mx-auto" />
-            <Skeleton className="h-6 w-2/3 mx-auto" />
-            <div className="flex justify-center gap-6 pt-4">
-              <Skeleton className="h-8 w-28" />
-              <Skeleton className="h-8 w-28" />
-              <Skeleton className="h-8 w-28" />
-            </div>
-          </div>
-        </section>
-        <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-          <div className="grid md:grid-cols-3 gap-8">
-            <Skeleton className="h-96 rounded-2xl" />
-            <Skeleton className="h-96 rounded-2xl" />
-            <Skeleton className="h-96 rounded-2xl" />
-          </div>
-        </section>
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#3FA174] animate-spin" />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#fafaf8]">
-      
-      
-      <section className="bg-white py-16">
+    <main className="min-h-screen bg-white">
+      <section className="pt-16 pb-8 border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl sm:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight"
+            transition={{ duration: 0.5 }}
+            className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"
           >
             Seu caminho para o tratamento
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-xl text-[#86868b] max-w-2xl mx-auto mb-8"
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-lg text-gray-500 max-w-2xl mx-auto mb-8"
           >
-            A ABRACANM conecta você a médicos prescritores, oferece suporte completo 
-            e acompanha toda sua jornada de tratamento de forma segura e legal.
+            Conectamos você a médicos prescritores com suporte completo 
+            e acompanhamento durante toda sua jornada de tratamento.
           </motion.p>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-6 text-sm text-[#86868b]"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-wrap justify-center gap-8 text-sm text-gray-500"
           >
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#6B7C59]/10 rounded-full flex items-center justify-center">
-                <Shield className="w-4 h-4 text-[#6B7C59]" />
-              </div>
+              <Shield className="w-4 h-4 text-[#3FA174]" />
               <span>100% Legal</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#6B7C59]/10 rounded-full flex items-center justify-center">
-                <Users className="w-4 h-4 text-[#6B7C59]" />
-              </div>
+              <Users className="w-4 h-4 text-[#3FA174]" />
               <span>+5.000 pacientes</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#6B7C59]/10 rounded-full flex items-center justify-center">
-                <Clock className="w-4 h-4 text-[#6B7C59]" />
-              </div>
+              <Clock className="w-4 h-4 text-[#3FA174]" />
               <span>Atendimento em até 48h</span>
             </div>
           </motion.div>
         </div>
       </section>
 
-      <section className="bg-[#fafaf8]">
-        <Pricing 
-          plans={pricingPlans}
-          title="Escolha o plano ideal"
-          description="Todos os planos incluem acesso à nossa plataforma e suporte dedicado."
-        />
-      </section>
+      <Pricing 
+        plans={pricingPlans}
+        title="Escolha o plano ideal"
+        description="Todos os planos incluem acesso à nossa plataforma e suporte dedicado."
+      />
 
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <Card className="mb-16 bg-white border-[#e5e5e5]">
-            <CardHeader>
-              <CardTitle className="text-xl text-center text-[#1d1d1f]">Compare as opções</CardTitle>
+          <Card className="mb-12 bg-white border-gray-200">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold text-center text-gray-900">
+                Compare as opções
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[#e5e5e5]">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-[#1d1d1f]"></th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-[#6B7C59]">Associado</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-[#86868b]">Avulso</th>
+                    <tr className="border-b border-gray-100">
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-500"></th>
+                      <th className="text-center py-3 px-4 text-sm font-semibold text-[#3FA174]">Associado</th>
+                      <th className="text-center py-3 px-4 text-sm font-medium text-gray-400">Avulso</th>
                     </tr>
                   </thead>
                   <tbody>
                     {COMPARATIVO.map((row, idx) => (
-                      <tr key={idx} className="border-b border-[#e5e5e5]/50">
-                        <td className="py-3 px-4 text-sm text-[#1d1d1f]">{row.item}</td>
+                      <tr key={idx} className="border-b border-gray-50">
+                        <td className="py-3 px-4 text-sm text-gray-700">{row.item}</td>
                         <td className="text-center py-3 px-4">
                           {row.associado ? (
-                            <Check className="w-5 h-5 text-[#6B7C59] mx-auto" />
+                            <Check className="w-4 h-4 text-[#3FA174] mx-auto" />
                           ) : (
-                            <X className="w-5 h-5 text-[#e5e5e5] mx-auto" />
+                            <X className="w-4 h-4 text-gray-200 mx-auto" />
                           )}
                         </td>
                         <td className="text-center py-3 px-4">
                           {row.avulso ? (
-                            <Check className="w-5 h-5 text-[#86868b] mx-auto" />
+                            <Check className="w-4 h-4 text-gray-400 mx-auto" />
                           ) : (
-                            <X className="w-5 h-5 text-[#e5e5e5] mx-auto" />
+                            <X className="w-4 h-4 text-gray-200 mx-auto" />
                           )}
                         </td>
                       </tr>
@@ -293,14 +280,14 @@ export default function PlanosPage() {
         <motion.h2 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-3xl font-semibold text-[#1d1d1f] text-center mb-10 tracking-tight"
+          className="text-2xl font-bold text-gray-900 text-center mb-8"
         >
           O que você recebe como associado
         </motion.h2>
         
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
           {BENEFICIOS_DETALHADOS.map((beneficio, idx) => {
             const Icon = beneficio.icon;
             return (
@@ -308,16 +295,16 @@ export default function PlanosPage() {
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.05 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
                 viewport={{ once: true }}
               >
-                <Card className="hover:border-[#6B7C59]/50 transition bg-white border-[#e5e5e5] h-full">
-                  <CardContent className="pt-6">
-                    <div className="w-12 h-12 bg-[#6B7C59]/10 rounded-2xl flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6 text-[#6B7C59]" />
+                <Card className="bg-white border-gray-100 hover:border-[#3FA174]/30 transition-colors h-full">
+                  <CardContent className="pt-5 pb-5">
+                    <div className="w-10 h-10 bg-[#3FA174]/10 rounded-xl flex items-center justify-center mb-3">
+                      <Icon className="w-5 h-5 text-[#3FA174]" />
                     </div>
-                    <h3 className="font-semibold mb-2 text-[#1d1d1f]">{beneficio.titulo}</h3>
-                    <p className="text-sm text-[#86868b]">{beneficio.descricao}</p>
+                    <h3 className="font-semibold text-sm mb-1.5 text-gray-900">{beneficio.titulo}</h3>
+                    <p className="text-xs text-gray-500 leading-relaxed">{beneficio.descricao}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -326,27 +313,27 @@ export default function PlanosPage() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <Card className="bg-[#6B7C59]/5 border-[#6B7C59]/20">
-            <CardContent className="py-10 text-center">
-              <h2 className="text-2xl font-semibold mb-3 text-[#1d1d1f]">
+          <Card className="bg-gray-50 border-gray-100">
+            <CardContent className="py-8 text-center">
+              <h2 className="text-xl font-semibold mb-2 text-gray-900">
                 Ainda tem dúvidas?
               </h2>
-              <p className="text-[#86868b] mb-6 max-w-lg mx-auto">
+              <p className="text-sm text-gray-500 mb-5 max-w-md mx-auto">
                 Nossa equipe está pronta para ajudar você a entender se a cannabis medicinal 
-                é indicada para o seu caso. Fale conosco sem compromisso.
+                é indicada para o seu caso.
               </p>
-              <Button variant="outline" asChild className="border-[#6B7C59] text-[#6B7C59] hover:bg-[#6B7C59] hover:text-white">
+              <Button variant="outline" asChild className="border-[#3FA174] text-[#3FA174] hover:bg-[#3FA174] hover:text-white">
                 <a
                   href="https://wa.me/5561981471038?text=Olá! Gostaria de saber mais sobre os planos da ABRACANM"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <MessageCircle className="w-5 h-5 mr-2" />
+                  <MessageCircle className="w-4 h-4 mr-2" />
                   Falar pelo WhatsApp
                 </a>
               </Button>

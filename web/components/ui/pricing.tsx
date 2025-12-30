@@ -1,16 +1,13 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Check, Star } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
-import NumberFlow from "@number-flow/react";
 
 interface PricingPlan {
   name: string;
@@ -33,10 +30,9 @@ interface PricingProps {
 export function Pricing({
   plans,
   title = "Planos e Preços",
-  description = "Escolha o plano ideal para você\nTodos os planos incluem acesso à nossa plataforma e suporte dedicado.",
+  description = "Escolha o plano ideal para você",
 }: PricingProps) {
   const [isMonthly, setIsMonthly] = useState(true);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const switchRef = useRef<HTMLButtonElement>(null);
 
   const handleToggle = (checked: boolean) => {
@@ -53,7 +49,7 @@ export function Pricing({
           x: x / window.innerWidth,
           y: y / window.innerHeight,
         },
-        colors: ["#6B7C59", "#A8C686", "#D4A574", "#4A5A3A"],
+        colors: ["#3FA174", "#6EC1E4", "#10B981", "#34D399"],
         ticks: 200,
         gravity: 1.2,
         decay: 0.94,
@@ -64,138 +60,118 @@ export function Pricing({
   };
 
   return (
-    <div className="container py-20">
-      <div className="text-center space-y-4 mb-12">
-        <h2 className="text-4xl font-bold tracking-tight sm:text-5xl text-[#1d1d1f]">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">
           {title}
         </h2>
-        <p className="text-[#86868b] text-lg whitespace-pre-line">
+        <p className="text-gray-500 text-base max-w-xl mx-auto">
           {description}
         </p>
       </div>
 
-      <div className="flex justify-center mb-10">
-        <label className="relative inline-flex items-center cursor-pointer">
-          <Label>
-            <Switch
-              ref={switchRef as React.RefObject<HTMLButtonElement>}
-              checked={!isMonthly}
-              onCheckedChange={handleToggle}
-              className="relative data-[state=checked]:bg-[#6B7C59]"
-            />
-          </Label>
-        </label>
-        <span className="ml-2 font-semibold text-[#1d1d1f]">
-          Plano anual <span className="text-[#6B7C59]">(Economize 20%)</span>
+      <div className="flex items-center justify-center gap-3 mb-12">
+        <span className={cn(
+          "text-sm font-medium transition-colors",
+          isMonthly ? "text-gray-900" : "text-gray-400"
+        )}>
+          Mensal
         </span>
+        <Switch
+          ref={switchRef as React.RefObject<HTMLButtonElement>}
+          checked={!isMonthly}
+          onCheckedChange={handleToggle}
+          className="data-[state=checked]:bg-[#3FA174]"
+        />
+        <span className={cn(
+          "text-sm font-medium transition-colors",
+          !isMonthly ? "text-gray-900" : "text-gray-400"
+        )}>
+          Anual
+        </span>
+        {!isMonthly && (
+          <span className="ml-2 text-xs font-medium text-[#3FA174] bg-[#3FA174]/10 px-2 py-1 rounded-full">
+            20% OFF
+          </span>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 sm:2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan, index) => (
           <motion.div
             key={index}
-            initial={{ y: 50, opacity: 1 }}
-            whileInView={
-              isDesktop
-                ? {
-                    y: plan.isPopular ? -20 : 0,
-                    opacity: 1,
-                    x: index === 2 ? -30 : index === 0 ? 30 : 0,
-                    scale: index === 0 || index === 2 ? 0.94 : 1.0,
-                  }
-                : {}
-            }
-            viewport={{ once: true }}
-            transition={{
-              duration: 1.6,
-              type: "spring",
-              stiffness: 100,
-              damping: 30,
-              delay: 0.4,
-              opacity: { duration: 0.5 },
-            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
             className={cn(
-              `rounded-2xl border-[1px] p-6 bg-white text-center lg:flex lg:flex-col lg:justify-center relative`,
-              plan.isPopular ? "border-[#6B7C59] border-2" : "border-[#e5e5e5]",
-              "flex flex-col",
-              !plan.isPopular && "mt-5",
-              index === 0 || index === 2
-                ? "z-0 transform translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg]"
-                : "z-10",
-              index === 0 && "origin-right",
-              index === 2 && "origin-left"
+              "relative rounded-2xl border bg-white p-6 flex flex-col",
+              plan.isPopular 
+                ? "border-[#3FA174] border-2 shadow-lg shadow-[#3FA174]/10" 
+                : "border-gray-200"
             )}
           >
             {plan.isPopular && (
-              <div className="absolute top-0 right-0 bg-[#6B7C59] py-0.5 px-2 rounded-bl-xl rounded-tr-xl flex items-center">
-                <Star className="text-white h-4 w-4 fill-current" />
-                <span className="text-white ml-1 font-sans font-semibold">
-                  Popular
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="inline-flex items-center gap-1 bg-[#3FA174] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  <Star className="h-3 w-3 fill-current" />
+                  Mais Popular
                 </span>
               </div>
             )}
-            <div className="flex-1 flex flex-col">
-              <p className="text-base font-semibold text-[#86868b]">
-                {plan.name}
-              </p>
-              <div className="mt-6 flex items-center justify-center gap-x-2">
-                <span className="text-5xl font-bold tracking-tight text-[#1d1d1f]">
-                  <NumberFlow
-                    value={
-                      isMonthly ? Number(plan.price) : Number(plan.yearlyPrice)
-                    }
-                    format={{
-                      style: "currency",
-                      currency: "BRL",
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    }}
-                    transformTiming={{
-                      duration: 500,
-                      easing: "ease-out",
-                    }}
-                    willChange
-                    className="font-variant-numeric: tabular-nums"
-                  />
-                </span>
-                {plan.period !== "Next 3 months" && (
-                  <span className="text-sm font-semibold leading-6 tracking-wide text-[#86868b]">
-                    / {plan.period}
-                  </span>
-                )}
-              </div>
 
-              <p className="text-xs leading-5 text-[#86868b]">
+            <div className="text-center mb-6 pt-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {plan.name}
+              </h3>
+              
+              <div className="flex items-baseline justify-center gap-1">
+                <span className="text-4xl font-bold text-gray-900">
+                  R$ {isMonthly ? plan.price : plan.yearlyPrice}
+                </span>
+                <span className="text-gray-500 text-sm">
+                  /{plan.period}
+                </span>
+              </div>
+              
+              <p className="text-xs text-gray-400 mt-2">
                 {isMonthly ? "cobrado mensalmente" : "cobrado anualmente"}
               </p>
+            </div>
 
-              <ul className="mt-5 gap-2 flex flex-col">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#6B7C59] mt-1 flex-shrink-0" />
-                    <span className="text-left text-[#1d1d1f]">{feature}</span>
+            <div className="flex-1">
+              <ul className="space-y-3 mb-6">
+                {plan.features.slice(0, 6).map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <div className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[#3FA174]/10 flex items-center justify-center">
+                      <Check className="h-2.5 w-2.5 text-[#3FA174]" />
+                    </div>
+                    <span className="text-sm text-gray-600 leading-tight">{feature}</span>
                   </li>
                 ))}
+                {plan.features.length > 6 && (
+                  <li className="text-xs text-gray-400 pl-6">
+                    +{plan.features.length - 6} benefícios adicionais
+                  </li>
+                )}
               </ul>
+            </div>
 
-              <hr className="w-full my-4 border-[#e5e5e5]" />
-
-              <Link
-                href={plan.href}
+            <div className="mt-auto">
+              <Button
+                asChild
                 className={cn(
-                  buttonVariants({
-                    variant: "outline",
-                  }),
-                  "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-[#6B7C59] hover:ring-offset-1 hover:bg-[#6B7C59] hover:text-white",
+                  "w-full font-semibold",
                   plan.isPopular
-                    ? "bg-[#6B7C59] text-white border-[#6B7C59]"
-                    : "bg-white text-[#1d1d1f] border-[#e5e5e5]"
+                    ? "bg-[#3FA174] hover:bg-[#358c64] text-white"
+                    : "bg-white border border-gray-200 text-gray-900 hover:bg-gray-50"
                 )}
               >
-                {plan.buttonText}
-              </Link>
-              <p className="mt-6 text-xs leading-5 text-[#86868b]">
+                <Link href={plan.href}>
+                  {plan.buttonText}
+                </Link>
+              </Button>
+              
+              <p className="text-xs text-gray-400 text-center mt-3">
                 {plan.description}
               </p>
             </div>
