@@ -706,8 +706,7 @@ export default function CadastroAssociadoClient() {
                             className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva cursor-pointer ${fieldErrors.termoAjuizamento ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
                           />
                           <span className={`flex-1 text-sm ${fieldErrors.termoAjuizamento ? 'text-red-600' : 'text-cinza-escuro'}`}>
-                            Li e aceito o <a href="/termos-uso" target="_blank" className="text-verde-oliva underline">Termo de Uso</a> da ABRACANM, 
-                            incluindo as condições para ajuizamento de ações coletivas em meu benefício.
+                            Li e aceito o <a href="/termos-uso" target="_blank" className="text-verde-oliva underline">Termo de Uso</a> da ABRACANM.
                           </span>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -716,10 +715,9 @@ export default function CadastroAssociadoClient() {
                               </button>
                             </TooltipTrigger>
                             <TooltipContent side="left" className="max-w-xs p-3 bg-white border border-cinza-claro shadow-lg">
-                              <p className="text-sm text-cinza-escuro font-medium mb-2">Termo de Uso e Ajuizamento</p>
+                              <p className="text-sm text-cinza-escuro font-medium mb-2">Termo de Uso</p>
                               <ul className="text-xs text-cinza-medio space-y-1">
                                 <li>• Define as regras de uso da plataforma ABRACANM</li>
-                                <li>• Autoriza a associação a representá-lo em ações coletivas judiciais</li>
                                 <li>• Estabelece direitos e deveres como associado</li>
                                 <li>• Inclui condições para importação de medicamentos via Anvisa</li>
                               </ul>
