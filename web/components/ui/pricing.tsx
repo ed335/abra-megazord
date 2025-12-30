@@ -8,6 +8,7 @@ import { Check, Star } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
+import NumberFlow from "@number-flow/react";
 
 interface PricingPlan {
   name: string;
@@ -129,7 +130,12 @@ export function Pricing({
               
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-4xl font-bold text-gray-900">
-                  R$ {isMonthly ? plan.price : plan.yearlyPrice}
+                  R$ <NumberFlow 
+                    value={Number(isMonthly ? plan.price : plan.yearlyPrice)} 
+                    format={{ minimumFractionDigits: 0, maximumFractionDigits: 0 }}
+                    transformTiming={{ duration: 500, easing: 'ease-out' }}
+                    spinTiming={{ duration: 500, easing: 'ease-out' }}
+                  />
                 </span>
                 <span className="text-gray-500 text-sm">
                   /{plan.period}
