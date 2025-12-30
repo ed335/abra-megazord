@@ -346,6 +346,23 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Mission Statement */}
+      <section className="py-16 px-4 md:px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-xl md:text-2xl text-center text-gray-700 leading-relaxed"
+          >
+            Democratizamos o acesso a tratamentos com cannabis medicinal no Brasil, 
+            conectando pacientes a médicos prescritores especializados de forma{" "}
+            <span className="font-bold text-gray-900">100% legal e segura</span>.
+          </motion.p>
+        </div>
+      </section>
+
       {/* How it Works - Timeline */}
       <section id="como-funciona" className="py-20 px-4 md:px-6 bg-gray-50">
         <div className="max-w-5xl mx-auto">
@@ -516,6 +533,90 @@ export default function Home() {
           </motion.div>
 
           <AnimatedTestimonials testimonials={testimonials} />
+        </div>
+      </section>
+
+      {/* Nossa Missão Section */}
+      <section className="py-24 px-4 md:px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-[#3FA174] text-sm font-semibold tracking-wider uppercase mb-4 block">
+              NOSSA MISSÃO
+            </span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+              Quebrar barreiras e tabus com
+              <br />
+              <span className="text-[#3FA174]">ciência</span>,{" "}
+              <span className="text-[#3FA174]">segurança</span> e{" "}
+              <span className="text-[#3FA174]">humanidade</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-12 mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-left"
+            >
+              <span className="text-7xl lg:text-8xl font-bold text-gray-100 block mb-4">01</span>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Cuidado humanizado</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Acolhemos cada paciente de forma única, oferecendo suporte completo no acesso ao tratamento para você e sua família.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-left"
+            >
+              <span className="text-7xl lg:text-8xl font-bold text-gray-100 block mb-4">02</span>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Ciência e educação</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Trabalhamos com base em evidências científicas, promovendo capacitação contínua e informação de qualidade.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="text-left"
+            >
+              <span className="text-7xl lg:text-8xl font-bold text-gray-100 block mb-4">03</span>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Comunidade ativa</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Construímos uma rede de apoio onde pacientes compartilham experiências e se fortalecem juntos.
+              </p>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <Link 
+              href="/sobre" 
+              className="inline-flex items-center gap-2 text-[#3FA174] font-semibold hover:text-[#2D7A5A] transition-colors duration-200"
+            >
+              Conheça nossa história
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
