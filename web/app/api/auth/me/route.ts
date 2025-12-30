@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         paciente: {
           include: {
             assinaturas: {
-              where: { status: 'ATIVO' },
+              where: { status: 'ATIVA' },
               include: { plano: true },
               orderBy: { criadoEm: 'desc' },
               take: 1,
