@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Clock3, CheckCircle2, User, MapPin, FileText, Stethoscope, Info } from 'lucide-react';
+import { Eye, EyeOff, Clock3, CheckCircle2, User, MapPin, FileText, Stethoscope, Info, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { setToken } from '@/lib/auth';
@@ -152,6 +152,8 @@ export default function CadastroAssociadoClient() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [hasRestoredData, setHasRestoredData] = useState(false);
+  const [restoredFields, setRestoredFields] = useState<string[]>([]);
   const router = useRouter();
   
   const totalSteps = steps.length;
@@ -164,6 +166,28 @@ export default function CadastroAssociadoClient() {
       if (savedForm) {
         const parsed = JSON.parse(savedForm);
         setFormData({ ...initialFormData, ...parsed });
+        
+        const fieldLabels: Record<string, string> = {
+          nome: 'Nome',
+          email: 'E-mail',
+          cpf: 'CPF',
+          whatsapp: 'WhatsApp',
+          cep: 'CEP',
+          rua: 'Rua',
+          numero: 'Número',
+          bairro: 'Bairro',
+          cidade: 'Cidade',
+          estado: 'Estado',
+        };
+        
+        const filledFields = Object.entries(parsed)
+          .filter(([key, value]) => value && typeof value === 'string' && value.trim() !== '' && fieldLabels[key])
+          .map(([key]) => fieldLabels[key]);
+        
+        if (filledFields.length > 0) {
+          setHasRestoredData(true);
+          setRestoredFields(filledFields);
+        }
       }
       if (savedStep) {
         setCurrentStep(parseInt(savedStep, 10));
@@ -592,6 +616,35 @@ export default function CadastroAssociadoClient() {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="space-y-6"
             >
+              {hasRestoredData && (
+                <div className="bg-[#3FA174]/10 border border-[#3FA174]/30 rounded-xl p-4 mb-2">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-[#3FA174]/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-[#3FA174]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[#3FA174]">Dados recuperados</p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Encontramos informações do seu cadastro anterior: <span className="font-medium">{restoredFields.join(', ')}</span>
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          localStorage.removeItem(STORAGE_KEY);
+                          localStorage.removeItem(STORAGE_STEP_KEY);
+                          setFormData(initialFormData);
+                          setCurrentStep(1);
+                          setHasRestoredData(false);
+                          setRestoredFields([]);
+                        }}
+                        className="text-xs text-gray-500 hover:text-red-500 underline mt-2 transition-colors"
+                      >
+                        Limpar e começar do zero
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
               <h2 className="text-xl font-semibold text-cinza-escuro mb-4">Dados Pessoais e Termos</h2>
               
               <div className="space-y-4">
