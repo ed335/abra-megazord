@@ -78,8 +78,8 @@ export async function GET(
         status: agendamento.status,
         tipo: agendamento.tipo,
         medico: {
-          nome: agendamento.prescritor.nome,
-          especialidade: agendamento.prescritor.especialidade || 'Medicina Integrativa',
+          nome: agendamento.prescritor?.nome || 'Médico ABRACANM',
+          especialidade: agendamento.prescritor?.especialidade || 'Medicina Integrativa',
         },
         valorConsulta,
         valorComDesconto,

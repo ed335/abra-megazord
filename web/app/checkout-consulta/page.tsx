@@ -83,7 +83,15 @@ export default function CheckoutConsultaPage() {
   };
 
   const handleGeneratePix = async () => {
-    if (!user?.cpf || !agendamento) return;
+    if (!agendamento) {
+      setError('Agendamento não encontrado. Volte e selecione uma consulta.');
+      return;
+    }
+    
+    if (!user?.cpf) {
+      setError('CPF não cadastrado. Por favor, atualize seu perfil antes de continuar.');
+      return;
+    }
 
     setProcessing(true);
     setError('');
