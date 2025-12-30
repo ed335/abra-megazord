@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { MessageCircle, X, Send, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function WhatsAppFloatButton() {
   const [isOpen, setIsOpen] = useState(false);
+  const [step, setStep] = useState<'form' | 'message'>('form');
   const [nome, setNome] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
-  const [errors, setErrors] = useState<{ nome?: string; whatsapp?: string }>({});
+  const [mensagem, setMensagem] = useState('');
+  const [errors, setErrors] = useState<{ nome?: string; whatsapp?: string; mensagem?: string }>({});
 
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, '').slice(0, 11);
@@ -19,7 +21,7 @@ export function WhatsAppFloatButton() {
     return digits.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
     
     const newErrors: { nome?: string; whatsapp?: string } = {};
@@ -38,14 +40,38 @@ export function WhatsAppFloatButton() {
       return;
     }
 
-    const message = `Olá! Meu nome é ${nome.trim()} e meu WhatsApp é ${whatsapp}. Vim pelo site da ABRACANM e gostaria de mais informações.`;
-    const encodedMessage = encodeURIComponent(message);
+    setErrors({});
+    setStep('message');
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!mensagem.trim()) {
+      setErrors({ mensagem: 'Escreva sua mensagem' });
+      return;
+    }
+
+    const fullMessage = `Olá! Meu nome é ${nome.trim()} e meu WhatsApp é ${whatsapp}.\n\n${mensagem.trim()}`;
+    const encodedMessage = encodeURIComponent(fullMessage);
     
     window.open(`https://wa.me/5561981471038?text=${encodedMessage}`, '_blank');
     
+    handleClose();
+  };
+
+  const handleClose = () => {
     setIsOpen(false);
+    setStep('form');
     setNome('');
     setWhatsapp('');
+    setMensagem('');
+    setErrors({});
+  };
+
+  const handleBack = () => {
+    setStep('form');
+    setMensagem('');
     setErrors({});
   };
 
@@ -59,7 +85,7 @@ export function WhatsAppFloatButton() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/20 z-40"
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
             />
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -75,12 +101,14 @@ export function WhatsAppFloatButton() {
                       <MessageCircle className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <p className="text-white font-semibold">Fale Conosco</p>
-                      <p className="text-white/80 text-xs">Resposta rápida via WhatsApp</p>
+                      <p className="text-white font-semibold">Fale com Humano</p>
+                      <p className="text-white/80 text-xs">
+                        {step === 'form' ? 'Seus dados' : 'Sua mensagem'}
+                      </p>
                     </div>
                   </div>
                   <button
-                    onClick={() => setIsOpen(false)}
+                    onClick={handleClose}
                     className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
                   >
                     <X className="w-4 h-4 text-white" />
@@ -88,59 +116,125 @@ export function WhatsAppFloatButton() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-4 space-y-4">
-                <p className="text-sm text-gray-600">
-                  Preencha seus dados para iniciar uma conversa:
-                </p>
+              <AnimatePresence mode="wait">
+                {step === 'form' ? (
+                  <motion.form
+                    key="form"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    onSubmit={handleNextStep}
+                    className="p-4 space-y-4"
+                  >
+                    <p className="text-sm text-gray-600">
+                      Preencha seus dados para falar com nossa equipe:
+                    </p>
 
-                <div>
-                  <input
-                    type="text"
-                    value={nome}
-                    onChange={(e) => {
-                      setNome(e.target.value);
-                      if (errors.nome) setErrors(prev => ({ ...prev, nome: undefined }));
-                    }}
-                    placeholder="Seu nome"
-                    className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#25D366]/30 focus:border-[#25D366] transition-all ${
-                      errors.nome ? 'border-red-400' : 'border-gray-200'
-                    }`}
-                  />
-                  {errors.nome && (
-                    <p className="text-xs text-red-500 mt-1">{errors.nome}</p>
-                  )}
-                </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={nome}
+                        onChange={(e) => {
+                          setNome(e.target.value);
+                          if (errors.nome) setErrors(prev => ({ ...prev, nome: undefined }));
+                        }}
+                        placeholder="Seu nome"
+                        className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#25D366]/30 focus:border-[#25D366] transition-all ${
+                          errors.nome ? 'border-red-400' : 'border-gray-200'
+                        }`}
+                      />
+                      {errors.nome && (
+                        <p className="text-xs text-red-500 mt-1">{errors.nome}</p>
+                      )}
+                    </div>
 
-                <div>
-                  <input
-                    type="tel"
-                    value={whatsapp}
-                    onChange={(e) => {
-                      setWhatsapp(formatPhone(e.target.value));
-                      if (errors.whatsapp) setErrors(prev => ({ ...prev, whatsapp: undefined }));
-                    }}
-                    placeholder="(00) 00000-0000"
-                    className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#25D366]/30 focus:border-[#25D366] transition-all ${
-                      errors.whatsapp ? 'border-red-400' : 'border-gray-200'
-                    }`}
-                  />
-                  {errors.whatsapp && (
-                    <p className="text-xs text-red-500 mt-1">{errors.whatsapp}</p>
-                  )}
-                </div>
+                    <div>
+                      <input
+                        type="tel"
+                        value={whatsapp}
+                        onChange={(e) => {
+                          setWhatsapp(formatPhone(e.target.value));
+                          if (errors.whatsapp) setErrors(prev => ({ ...prev, whatsapp: undefined }));
+                        }}
+                        placeholder="(00) 00000-0000"
+                        className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#25D366]/30 focus:border-[#25D366] transition-all ${
+                          errors.whatsapp ? 'border-red-400' : 'border-gray-200'
+                        }`}
+                      />
+                      {errors.whatsapp && (
+                        <p className="text-xs text-red-500 mt-1">{errors.whatsapp}</p>
+                      )}
+                    </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  Iniciar conversa
-                </Button>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white gap-2"
+                    >
+                      Continuar
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </motion.form>
+                ) : (
+                  <motion.form
+                    key="message"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    onSubmit={handleSubmit}
+                    className="p-4 space-y-4"
+                  >
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                      <div className="w-8 h-8 bg-[#25D366]/10 rounded-full flex items-center justify-center">
+                        <User className="w-4 h-4 text-[#25D366]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{nome}</p>
+                        <p className="text-xs text-gray-500">{whatsapp}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="text-xs text-[#25D366] hover:underline"
+                      >
+                        Editar
+                      </button>
+                    </div>
 
-                <p className="text-[10px] text-gray-400 text-center">
-                  Ao continuar, você concorda com nossa política de privacidade.
-                </p>
-              </form>
+                    <div>
+                      <label className="text-sm text-gray-600 mb-2 block">
+                        Escreva sua mensagem:
+                      </label>
+                      <textarea
+                        value={mensagem}
+                        onChange={(e) => {
+                          setMensagem(e.target.value);
+                          if (errors.mensagem) setErrors(prev => ({ ...prev, mensagem: undefined }));
+                        }}
+                        placeholder="Olá! Gostaria de saber mais sobre..."
+                        rows={4}
+                        className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#25D366]/30 focus:border-[#25D366] transition-all resize-none ${
+                          errors.mensagem ? 'border-red-400' : 'border-gray-200'
+                        }`}
+                      />
+                      {errors.mensagem && (
+                        <p className="text-xs text-red-500 mt-1">{errors.mensagem}</p>
+                      )}
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white gap-2"
+                    >
+                      <Send className="w-4 h-4" />
+                      Enviar via WhatsApp
+                    </Button>
+
+                    <p className="text-[10px] text-gray-400 text-center">
+                      Você será redirecionado para o WhatsApp com sua mensagem.
+                    </p>
+                  </motion.form>
+                )}
+              </AnimatePresence>
             </motion.div>
           </>
         )}
