@@ -10,6 +10,13 @@ const noHeaderRoutes = [
   '/login',
   '/cadastro',
   '/medico',
+  '/dashboard',
+  '/perfil',
+  '/agendar',
+  '/checkout',
+  '/consulta',
+  '/pre-anamnese',
+  '/carteirinha',
 ];
 
 export default function Template({ children }: { children: ReactNode }) {

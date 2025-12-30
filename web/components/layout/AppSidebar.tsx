@@ -11,7 +11,7 @@ import {
   CreditCard, 
   MessageCircle,
   BookOpen,
-  Heart,
+  Leaf,
   X,
   ChevronLeft
 } from 'lucide-react';
@@ -70,7 +70,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
               collapsed && "lg:hidden"
             )}>
               <div className="w-10 h-10 bg-verde-oliva rounded-xl flex items-center justify-center">
-                <Heart className="w-5 h-5 text-white" />
+                <Leaf className="w-5 h-5 text-white" />
               </div>
               <span className="text-lg font-bold text-cinza-escuro">ABRACANM</span>
             </Link>
@@ -78,7 +78,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
             {collapsed && (
               <Link href="/" className="hidden lg:flex">
                 <div className="w-10 h-10 bg-verde-oliva rounded-xl flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
+                  <Leaf className="w-5 h-5 text-white" />
                 </div>
               </Link>
             )}
@@ -146,7 +146,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
                 collapsed && "lg:justify-center"
               )}>
                 <div className="w-8 h-8 bg-verde-oliva/20 rounded-lg flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-verde-oliva" />
+                  <Leaf className="w-4 h-4 text-verde-oliva" />
                 </div>
                 <span className={cn(
                   "text-sm font-medium text-cinza-escuro",

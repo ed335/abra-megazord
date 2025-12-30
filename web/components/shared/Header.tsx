@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { clearToken, getToken } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
-import { Shield, User, Menu, X, Heart, ChevronDown, LogOut, LayoutDashboard, Settings } from 'lucide-react';
+import { Shield, User, Menu, X, Leaf, ChevronDown, LogOut, LayoutDashboard, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -102,7 +102,7 @@ export default function Header() {
           <div className="flex items-center justify-between h-16 lg:h-18">
             <Link href="/" className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#3FA174] group-hover:bg-[#359966] group-hover:scale-105">
-                <Heart className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
+                <Leaf className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
               </div>
               <span className="text-lg lg:text-xl font-bold text-gray-900 tracking-tight">
                 ABRACANM
