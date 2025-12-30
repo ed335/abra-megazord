@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from "react"
-import { Check, ChevronUp, Leaf, Shield, Calendar, CreditCard, QrCode, User } from "lucide-react"
+import { Check, ChevronUp, Shield, Calendar, CreditCard, QrCode, User } from "lucide-react"
+import CannabisLeaf from "@/components/icons/CannabisLeaf"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from '@/lib/utils'
 
@@ -145,7 +146,7 @@ export function CarteirinhaAssociado({
                     <div className="relative z-10 h-full flex flex-col justify-between">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
-                          <Leaf className="w-8 h-8 text-white" />
+                          <CannabisLeaf className="text-white" size={32} />
                           <div>
                             <div className="text-white font-bold text-lg tracking-wide">ABRACANM</div>
                             <div className="text-white/70 text-[10px] tracking-wider">
@@ -304,7 +305,7 @@ export function CarteirinhaSimples({ associado }: { associado: AssociadoData }) 
       <div className="relative z-10 space-y-6">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-2">
-            <Leaf className="w-7 h-7 text-white" />
+            <CannabisLeaf className="text-white" size={28} />
             <div className="text-white font-bold text-base tracking-wide">ABRACANM</div>
           </div>
           <div className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/20 text-white">

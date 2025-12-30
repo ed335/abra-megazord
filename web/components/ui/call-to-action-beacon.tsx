@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Leaf, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import CannabisLeaf from "@/components/icons/CannabisLeaf";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -177,7 +178,7 @@ export function CallToActionBeacon({
               className="w-20 h-20 rounded-full flex items-center justify-center mx-auto"
               style={{ backgroundColor: `${lightColor}20` }}
             >
-              <Leaf className="h-10 w-10" style={{ color: lightColor }} />
+              <CannabisLeaf className="" size={40} />
             </div>
             <motion.div
               className="absolute inset-0 rounded-full"

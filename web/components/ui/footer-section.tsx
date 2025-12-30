@@ -14,9 +14,9 @@ import {
   Clock,
   Phone,
   Mail,
-  ArrowRight,
-  Leaf
+  ArrowRight
 } from "lucide-react"
+import CannabisLeaf from "@/components/icons/CannabisLeaf"
 
 function FooterSection() {
   return (
@@ -30,7 +30,7 @@ function FooterSection() {
         
         <div className="container mx-auto max-w-4xl text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-            <Leaf className="w-4 h-4 text-[#3FA174]" />
+            <CannabisLeaf className="text-[#3FA174]" size={16} />
             <span className="text-white/90 text-sm font-medium">Cannabis Medicinal Legal</span>
           </div>
           
@@ -63,7 +63,7 @@ function FooterSection() {
             <div>
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-12 h-12 bg-gradient-to-br from-[#3FA174] to-[#2D8B5F] rounded-xl flex items-center justify-center shadow-lg shadow-[#3FA174]/20">
-                  <Leaf className="w-6 h-6 text-white" />
+                  <CannabisLeaf className="text-white" size={24} />
                 </div>
                 <span className="text-xl font-bold text-gray-900">ABRACANM</span>
               </div>

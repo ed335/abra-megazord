@@ -1,7 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Heart, Users, Shield, Award, Leaf, Target } from "lucide-react"
+import { Heart, Users, Shield, Award, Target } from "lucide-react"
+import CannabisLeaf from "@/components/icons/CannabisLeaf"
 import { FooterSection } from "@/components/ui/footer-section"
 
 const valores = [
@@ -46,7 +47,7 @@ export default function SobrePage() {
             transition={{ duration: 0.5 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-              <Leaf className="w-4 h-4 text-[#3FA174]" />
+              <CannabisLeaf className="text-[#3FA174]" size={16} />
               <span className="text-white/90 text-sm font-medium">Nossa História</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">

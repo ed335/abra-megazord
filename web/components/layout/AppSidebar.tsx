@@ -11,10 +11,10 @@ import {
   CreditCard, 
   MessageCircle,
   BookOpen,
-  Leaf,
   X,
   ChevronLeft
 } from 'lucide-react';
+import CannabisLeaf from '@/components/icons/CannabisLeaf';
 import { Button } from '@/components/ui/button';
 
 interface NavItem {
@@ -70,7 +70,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
               collapsed && "lg:hidden"
             )}>
               <div className="w-10 h-10 bg-verde-oliva rounded-xl flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-white" />
+                <CannabisLeaf className="text-white" size={20} />
               </div>
               <span className="text-lg font-bold text-cinza-escuro">ABRACANM</span>
             </Link>
@@ -78,7 +78,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
             {collapsed && (
               <Link href="/" className="hidden lg:flex">
                 <div className="w-10 h-10 bg-verde-oliva rounded-xl flex items-center justify-center">
-                  <Leaf className="w-5 h-5 text-white" />
+                  <CannabisLeaf className="text-white" size={20} />
                 </div>
               </Link>
             )}
@@ -146,7 +146,7 @@ export default function AppSidebar({ isOpen, onClose, collapsed = false, onToggl
                 collapsed && "lg:justify-center"
               )}>
                 <div className="w-8 h-8 bg-verde-oliva/20 rounded-lg flex items-center justify-center">
-                  <Leaf className="w-4 h-4 text-verde-oliva" />
+                  <CannabisLeaf className="text-verde-oliva" size={16} />
                 </div>
                 <span className={cn(
                   "text-sm font-medium text-cinza-escuro",

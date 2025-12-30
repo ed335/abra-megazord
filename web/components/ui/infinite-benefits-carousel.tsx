@@ -14,10 +14,10 @@ import {
   Heart, 
   Wallet,
   Video,
-  Leaf,
   Award,
   Globe
 } from "lucide-react";
+import CannabisLeaf from "@/components/icons/CannabisLeaf";
 
 interface Benefit {
   icon: React.ReactNode;
@@ -94,7 +94,7 @@ const benefits: Benefit[] = [
     color: "bg-pink-500",
   },
   {
-    icon: <Leaf className="w-6 h-6" />,
+    icon: <CannabisLeaf className="" size={24} />,
     title: "Produtos de Qualidade",
     description: "Indicação de fornecedores confiáveis e certificados",
     color: "bg-lime-500",
