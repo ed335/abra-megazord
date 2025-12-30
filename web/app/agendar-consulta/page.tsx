@@ -14,10 +14,9 @@ import {
   Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { FooterSection } from '@/components/ui/footer-section';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { fetchWithAuth } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 interface Medico {
   id: string;
@@ -188,128 +187,108 @@ export default function AgendarConsultaPage() {
 
   if (success && agendamentoData) {
     return (
-      <main className="min-h-screen bg-gray-50">
-        <section className="py-20 px-4 md:px-6">
-          <div className="max-w-lg mx-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center"
-            >
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-8 h-8 text-green-600" />
+      <AppLayout title="Agendar Consulta">
+        <div className="max-w-lg mx-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl border border-gray-200 p-8 text-center"
+          >
+            <div className="w-16 h-16 bg-[#3FA174]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Check className="w-8 h-8 text-[#3FA174]" />
+            </div>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+              Consulta Agendada!
+            </h1>
+            <p className="text-gray-500 mb-6">
+              Você receberá uma confirmação via WhatsApp.
+            </p>
+            
+            <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
+              <div className="flex items-center gap-3 mb-3">
+                <Calendar className="w-5 h-5 text-[#3FA174]" />
+                <span className="text-gray-900 font-medium">
+                  {new Date(agendamentoData.dataHora).toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </span>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Consulta Agendada!
-              </h1>
-              <p className="text-gray-600 mb-6">
-                Sua consulta foi agendada com sucesso. Você receberá uma confirmação via WhatsApp.
-              </p>
-              
-              <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
-                <div className="flex items-center gap-3 mb-3">
-                  <Calendar className="w-5 h-5 text-[#3FA174]" />
-                  <span className="text-gray-900 font-medium">
-                    {new Date(agendamentoData.dataHora).toLocaleDateString('pt-BR', {
-                      weekday: 'long',
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 mb-3">
-                  <Clock className="w-5 h-5 text-[#3FA174]" />
-                  <span className="text-gray-900 font-medium">
-                    {new Date(agendamentoData.dataHora).toLocaleTimeString('pt-BR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Stethoscope className="w-5 h-5 text-[#3FA174]" />
-                  <span className="text-gray-900 font-medium">{agendamentoData.medico}</span>
-                </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Clock className="w-5 h-5 text-[#3FA174]" />
+                <span className="text-gray-900 font-medium">
+                  {new Date(agendamentoData.dataHora).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
               </div>
+              <div className="flex items-center gap-3">
+                <Stethoscope className="w-5 h-5 text-[#3FA174]" />
+                <span className="text-gray-900 font-medium">{agendamentoData.medico}</span>
+              </div>
+            </div>
 
-              <p className="text-sm text-gray-500 mb-6">
-                No dia da consulta, você receberá o link do Google Meet via WhatsApp.
-              </p>
-
-              <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
-                  className="flex-1"
-                  onClick={() => router.push('/dashboard')}
-                >
-                  Ir para Dashboard
-                </Button>
-                <Button 
-                  className="flex-1 bg-[#3FA174] hover:bg-[#359966]"
-                  onClick={() => {
-                    setSuccess(false);
-                    setStep(1);
-                    setMedicoSelecionado(null);
-                    setDataSelecionada(null);
-                    setHorarioSelecionado(null);
-                  }}
-                >
-                  Agendar Outra
-                </Button>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-        <FooterSection />
-      </main>
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => router.push('/dashboard')}
+              >
+                Ir para Início
+              </Button>
+              <Button 
+                className="flex-1 bg-gray-900 hover:bg-gray-800"
+                onClick={() => {
+                  setSuccess(false);
+                  setStep(1);
+                  setMedicoSelecionado(null);
+                  setDataSelecionada(null);
+                  setHorarioSelecionado(null);
+                }}
+              >
+                Agendar Outra
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </AppLayout>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <section className="py-12 md:py-20 px-4 md:px-6">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
-          >
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Agendar Consulta
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Escolha o médico, data e horário para sua teleconsulta
-            </p>
-          </motion.div>
-
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center gap-2 bg-white rounded-full p-1 shadow-sm border border-gray-100">
-              {[1, 2, 3].map((s) => (
-                <div
-                  key={s}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
-                    step === s
-                      ? 'bg-[#3FA174] text-white'
-                      : step > s
-                      ? 'bg-green-100 text-green-700'
-                      : 'text-gray-400'
-                  }`}
-                >
-                  {step > s ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <span className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs font-bold">
-                      {s}
-                    </span>
-                  )}
-                  <span className="text-sm font-medium hidden sm:block">
-                    {s === 1 ? 'Médico' : s === 2 ? 'Data' : 'Horário'}
+    <AppLayout title="Agendar Consulta">
+      <div className="space-y-6">
+        {/* Steps indicator */}
+        <div className="flex justify-center">
+          <div className="flex items-center gap-1 bg-white rounded-full p-1 border border-gray-200">
+            {[1, 2, 3].map((s) => (
+              <div
+                key={s}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
+                  step === s
+                    ? 'bg-gray-900 text-white'
+                    : step > s
+                    ? 'bg-[#3FA174]/10 text-[#3FA174]'
+                    : 'text-gray-400'
+                }`}
+              >
+                {step > s ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <span className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs font-bold">
+                    {s}
                   </span>
-                </div>
-              ))}
-            </div>
+                )}
+                <span className="text-sm font-medium hidden sm:block">
+                  {s === 1 ? 'Médico' : s === 2 ? 'Data' : 'Horário'}
+                </span>
+              </div>
+            ))}
           </div>
+        </div>
 
           {error && (
             <motion.div
@@ -582,15 +561,7 @@ export default function AgendarConsultaPage() {
             )}
           </AnimatePresence>
 
-          <div className="text-center mt-8">
-            <Link href="/dashboard" className="text-sm text-gray-500 hover:text-[#3FA174] transition-colors">
-              Voltar para o Dashboard
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <FooterSection />
-    </main>
+      </div>
+    </AppLayout>
   );
 }
