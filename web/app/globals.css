@@ -38,7 +38,12 @@ p {
 }
 
 a {
-  @apply text-verde-oliva hover:underline transition-colors;
+  @apply text-verde-oliva transition-all duration-200;
+}
+
+a:hover {
+  @apply text-verde-escuro;
+  filter: brightness(0.9);
 }
 
 /* Acessibilidade - Focus visível */

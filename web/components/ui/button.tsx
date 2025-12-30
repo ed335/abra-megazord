@@ -20,7 +20,7 @@ const buttonVariants = cva(
           "bg-off-white text-cinza-escuro shadow-sm hover:bg-cinza-claro/50",
         ghost:
           "hover:bg-off-white hover:text-verde-escuro",
-        link: "text-verde-oliva underline-offset-4 hover:underline",
+        link: "text-verde-oliva hover:text-verde-escuro transition-all duration-200",
       },
       size: {
         default: "h-10 px-4 py-2",
