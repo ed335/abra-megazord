@@ -4,8 +4,9 @@ import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Clock3, CheckCircle2, User, MapPin, FileText, Stethoscope } from 'lucide-react';
+import { Eye, EyeOff, Clock3, CheckCircle2, User, MapPin, FileText, Stethoscope, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { setToken } from '@/lib/auth';
 
 const STORAGE_KEY = 'abracanm_cadastro_form';
@@ -494,7 +495,6 @@ export default function CadastroAssociadoClient() {
   
   const getInputClass = (field: keyof FormData) => fieldErrors[field] ? inputErrorClass : inputClass;
   const getLabelClass = (field: keyof FormData) => fieldErrors[field] ? labelErrorClass : labelClass;
-  const checkboxLabelClass = "flex items-start gap-3 cursor-pointer text-sm text-cinza-escuro";
 
   return (
     <main className="min-h-screen bg-white px-4 sm:px-6 lg:px-8 py-8">
@@ -667,51 +667,103 @@ export default function CadastroAssociadoClient() {
                 <div className="border-t border-cinza-claro pt-4 mt-6">
                   <h3 className="text-lg font-medium text-cinza-escuro mb-4">Termos e Consentimentos</h3>
                   
-                  <div className="space-y-4">
-                    <div className={`p-3 rounded-lg ${fieldErrors.termoAjuizamento ? 'bg-red-50 border border-red-300' : ''}`}>
-                      <label className={checkboxLabelClass}>
-                        <input
-                          type="checkbox"
-                          checked={formData.termoAjuizamento}
-                          onChange={(e) => updateField('termoAjuizamento', e.target.checked)}
-                          className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva ${fieldErrors.termoAjuizamento ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
-                        />
-                        <span className={fieldErrors.termoAjuizamento ? 'text-red-600' : ''}>
-                          Li e aceito o <a href="/termos-uso" target="_blank" className="text-verde-oliva underline">Termo de Uso</a> da ABRACANM, 
-                          incluindo as condições para ajuizamento de ações coletivas em meu benefício.
-                        </span>
-                      </label>
-                    </div>
+                  <TooltipProvider delayDuration={200}>
+                    <div className="space-y-4">
+                      <div className={`p-3 rounded-lg ${fieldErrors.termoAjuizamento ? 'bg-red-50 border border-red-300' : ''}`}>
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={formData.termoAjuizamento}
+                            onChange={(e) => updateField('termoAjuizamento', e.target.checked)}
+                            className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva cursor-pointer ${fieldErrors.termoAjuizamento ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
+                          />
+                          <span className={`flex-1 text-sm ${fieldErrors.termoAjuizamento ? 'text-red-600' : 'text-cinza-escuro'}`}>
+                            Li e aceito o <a href="/termos-uso" target="_blank" className="text-verde-oliva underline">Termo de Uso</a> da ABRACANM, 
+                            incluindo as condições para ajuizamento de ações coletivas em meu benefício.
+                          </span>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button type="button" className="flex-shrink-0 p-1 rounded-full hover:bg-verde-claro/20 transition-colors">
+                                <Info className="w-5 h-5 text-verde-oliva" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-xs p-3 bg-white border border-cinza-claro shadow-lg">
+                              <p className="text-sm text-cinza-escuro font-medium mb-2">Termo de Uso e Ajuizamento</p>
+                              <ul className="text-xs text-cinza-medio space-y-1">
+                                <li>• Define as regras de uso da plataforma ABRACANM</li>
+                                <li>• Autoriza a associação a representá-lo em ações coletivas judiciais</li>
+                                <li>• Estabelece direitos e deveres como associado</li>
+                                <li>• Inclui condições para importação de medicamentos via Anvisa</li>
+                              </ul>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </div>
 
-                    <div className={`p-3 rounded-lg ${fieldErrors.termoConsentimento ? 'bg-red-50 border border-red-300' : ''}`}>
-                      <label className={checkboxLabelClass}>
-                        <input
-                          type="checkbox"
-                          checked={formData.termoConsentimento}
-                          onChange={(e) => updateField('termoConsentimento', e.target.checked)}
-                          className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva ${fieldErrors.termoConsentimento ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
-                        />
-                        <span className={fieldErrors.termoConsentimento ? 'text-red-600' : ''}>
-                          Consinto com o tratamento dos meus dados pessoais e de saúde conforme a 
-                          <a href="/lgpd" target="_blank" className="text-verde-oliva underline ml-1">Lei Geral de Proteção de Dados (LGPD)</a>.
-                        </span>
-                      </label>
-                    </div>
+                      <div className={`p-3 rounded-lg ${fieldErrors.termoConsentimento ? 'bg-red-50 border border-red-300' : ''}`}>
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={formData.termoConsentimento}
+                            onChange={(e) => updateField('termoConsentimento', e.target.checked)}
+                            className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva cursor-pointer ${fieldErrors.termoConsentimento ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
+                          />
+                          <span className={`flex-1 text-sm ${fieldErrors.termoConsentimento ? 'text-red-600' : 'text-cinza-escuro'}`}>
+                            Consinto com o tratamento dos meus dados pessoais e de saúde conforme a 
+                            <a href="/lgpd" target="_blank" className="text-verde-oliva underline ml-1">Lei Geral de Proteção de Dados (LGPD)</a>.
+                          </span>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button type="button" className="flex-shrink-0 p-1 rounded-full hover:bg-verde-claro/20 transition-colors">
+                                <Info className="w-5 h-5 text-verde-oliva" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-xs p-3 bg-white border border-cinza-claro shadow-lg">
+                              <p className="text-sm text-cinza-escuro font-medium mb-2">Consentimento LGPD</p>
+                              <ul className="text-xs text-cinza-medio space-y-1">
+                                <li>• Autoriza a coleta e armazenamento de seus dados pessoais</li>
+                                <li>• Inclui dados sensíveis de saúde (diagnósticos, receitas, laudos)</li>
+                                <li>• Permite compartilhamento com médicos prescritores credenciados</li>
+                                <li>• Dados usados exclusivamente para fins de tratamento médico</li>
+                                <li>• Você pode solicitar exclusão a qualquer momento</li>
+                              </ul>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </div>
 
-                    <div className={`p-3 rounded-lg ${fieldErrors.termoPoliticaPrivacidade ? 'bg-red-50 border border-red-300' : ''}`}>
-                      <label className={checkboxLabelClass}>
-                        <input
-                          type="checkbox"
-                          checked={formData.termoPoliticaPrivacidade}
-                          onChange={(e) => updateField('termoPoliticaPrivacidade', e.target.checked)}
-                          className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva ${fieldErrors.termoPoliticaPrivacidade ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
-                        />
-                        <span className={fieldErrors.termoPoliticaPrivacidade ? 'text-red-600' : ''}>
-                          Li e aceito a <a href="/politica-privacidade" target="_blank" className="text-verde-oliva underline">Política de Privacidade</a> da ABRACANM.
-                        </span>
-                      </label>
+                      <div className={`p-3 rounded-lg ${fieldErrors.termoPoliticaPrivacidade ? 'bg-red-50 border border-red-300' : ''}`}>
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={formData.termoPoliticaPrivacidade}
+                            onChange={(e) => updateField('termoPoliticaPrivacidade', e.target.checked)}
+                            className={`w-5 h-5 mt-0.5 rounded focus:ring-verde-oliva cursor-pointer ${fieldErrors.termoPoliticaPrivacidade ? 'border-red-500 text-red-500' : 'border-cinza-claro text-verde-oliva'}`}
+                          />
+                          <span className={`flex-1 text-sm ${fieldErrors.termoPoliticaPrivacidade ? 'text-red-600' : 'text-cinza-escuro'}`}>
+                            Li e aceito a <a href="/politica-privacidade" target="_blank" className="text-verde-oliva underline">Política de Privacidade</a> da ABRACANM.
+                          </span>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button type="button" className="flex-shrink-0 p-1 rounded-full hover:bg-verde-claro/20 transition-colors">
+                                <Info className="w-5 h-5 text-verde-oliva" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-xs p-3 bg-white border border-cinza-claro shadow-lg">
+                              <p className="text-sm text-cinza-escuro font-medium mb-2">Política de Privacidade</p>
+                              <ul className="text-xs text-cinza-medio space-y-1">
+                                <li>• Explica como seus dados são protegidos e armazenados</li>
+                                <li>• Detalha medidas de segurança (criptografia, backups)</li>
+                                <li>• Informa sobre cookies e tecnologias de rastreamento</li>
+                                <li>• Descreve seus direitos sobre seus dados pessoais</li>
+                                <li>• Inclui informações de contato do encarregado de dados</li>
+                              </ul>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </TooltipProvider>
                 </div>
               </div>
             </motion.div>
