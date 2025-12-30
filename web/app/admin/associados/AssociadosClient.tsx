@@ -6,7 +6,14 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, Power, Trash2, Eye, Image, LogIn, CreditCard } from 'lucide-react';
+import { 
+  FileText, AlertCircle, Clock, Activity, Download, Upload, 
+  FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, 
+  Power, Trash2, Eye, Image, LogIn, CreditCard, User, Phone, 
+  MapPin, Calendar, Heart, ChevronRight, Mail, CheckCircle,
+  AlertTriangle, Stethoscope, Target, ClipboardList, MoreVertical
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Plano = {
   id: string;
@@ -82,13 +89,32 @@ const ESTADOS_BR = [
   'SP', 'SE', 'TO'
 ];
 
+function getInitials(nome: string): string {
+  const parts = nome.split(' ').filter(p => p.length > 0);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return parts[0]?.substring(0, 2).toUpperCase() || 'US';
+}
+
+function getAvatarColor(nome: string): string {
+  const colors = [
+    'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500',
+    'bg-pink-500', 'bg-teal-500', 'bg-indigo-500', 'bg-cyan-500'
+  ];
+  let hash = 0;
+  for (let i = 0; i < nome.length; i++) {
+    hash = nome.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+}
+
 export default function AssociadosClient() {
   const [associados, setAssociados] = useState<Associado[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ success: number; errors: { linha: number; email: string; erro: string }[]; skipped: number } | null>(null);
@@ -102,6 +128,43 @@ export default function AssociadosClient() {
     temAnamnese: '',
   });
   const router = useRouter();
+
+  const [selectedAssociado, setSelectedAssociado] = useState<Associado | null>(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    nome: '',
+    whatsapp: '',
+    cpf: '',
+    dataNascimento: '',
+    cep: '',
+    rua: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+    patologiaCID: '',
+    jaUsaCannabis: false,
+  });
+
+  const [showDocsModal, setShowDocsModal] = useState(false);
+  const [docsLoading, setDocsLoading] = useState(false);
+  const [docsData, setDocsData] = useState<{
+    associado: { id: string; nome: string };
+    documentos: { tipo: string; url: string; nome: string }[];
+  } | null>(null);
+
+  const [showPlanoModal, setShowPlanoModal] = useState(false);
+  const [planos, setPlanos] = useState<Plano[]>([]);
+  const [selectedPlanoId, setSelectedPlanoId] = useState('');
+  const [mesesPlano, setMesesPlano] = useState(1);
+  const [atribuindoPlano, setAtribuindoPlano] = useState(false);
 
   const buildQueryString = useCallback((page: number, currentFilters: Filters) => {
     const params = new URLSearchParams();
@@ -136,17 +199,16 @@ export default function AssociadosClient() {
         },
       });
 
-      if (response.status === 401) {
-        router.push('/login');
-        return;
-      }
-
       if (!response.ok) {
+        if (response.status === 401) {
+          router.push('/admin/login');
+          return;
+        }
         throw new Error('Erro ao carregar associados');
       }
 
       const data = await response.json();
-      setAssociados(data.associados || []);
+      setAssociados(data.associados);
       setPagination(data.pagination);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
@@ -157,16 +219,12 @@ export default function AssociadosClient() {
 
   useEffect(() => {
     fetchAssociados(currentPage, filters);
-  }, [currentPage, fetchAssociados, filters]);
+  }, [currentPage]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
     fetchAssociados(1, filters);
-  };
-
-  const handleFilterChange = (key: keyof Filters, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
@@ -185,40 +243,23 @@ export default function AssociadosClient() {
 
   const hasActiveFilters = Object.values(filters).some(v => v !== '');
 
-  const [editingAssociado, setEditingAssociado] = useState<Associado | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editForm, setEditForm] = useState({
-    nome: '',
-    whatsapp: '',
-    cpf: '',
-    dataNascimento: '',
-    cep: '',
-    rua: '',
-    numero: '',
-    complemento: '',
-    bairro: '',
-    cidade: '',
-    estado: '',
-    patologiaCID: '',
-    jaUsaCannabis: false,
-  });
-  const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const [showDocsModal, setShowDocsModal] = useState(false);
-  const [docsLoading, setDocsLoading] = useState(false);
-  const [docsData, setDocsData] = useState<{
-    associado: { id: string; nome: string };
-    documentos: { tipo: string; url: string; nome: string }[];
-  } | null>(null);
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('pt-BR');
+  };
 
-  const [showPlanoModal, setShowPlanoModal] = useState(false);
-  const [planos, setPlanos] = useState<Plano[]>([]);
-  const [selectedAssociadoPlano, setSelectedAssociadoPlano] = useState<Associado | null>(null);
-  const [selectedPlanoId, setSelectedPlanoId] = useState('');
-  const [mesesPlano, setMesesPlano] = useState(1);
-  const [atribuindoPlano, setAtribuindoPlano] = useState(false);
+  const formatWhatsApp = (phone: string) => {
+    const digits = phone?.replace(/\D/g, '') || '';
+    if (digits.length === 11) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+    }
+    return phone;
+  };
+
+  const getWhatsAppLink = (phone: string, nome: string) => {
+    const digits = phone?.replace(/\D/g, '') || '';
+    const message = encodeURIComponent(`Olá ${nome.split(' ')[0]}, tudo bem? Aqui é da ABRACANM.`);
+    return `https://wa.me/55${digits}?text=${message}`;
+  };
 
   const fetchPlanos = async () => {
     const token = getToken();
@@ -235,8 +276,13 @@ export default function AssociadosClient() {
     }
   };
 
+  const handleOpenProfile = (associado: Associado) => {
+    setSelectedAssociado(associado);
+    setShowProfileModal(true);
+  };
+
   const handleOpenPlanoModal = (associado: Associado) => {
-    setSelectedAssociadoPlano(associado);
+    setSelectedAssociado(associado);
     setSelectedPlanoId('');
     setMesesPlano(1);
     setShowPlanoModal(true);
@@ -246,13 +292,13 @@ export default function AssociadosClient() {
   };
 
   const handleAtribuirPlano = async () => {
-    if (!selectedAssociadoPlano || !selectedPlanoId) return;
+    if (!selectedAssociado || !selectedPlanoId) return;
     
     setAtribuindoPlano(true);
     const token = getToken();
     
     try {
-      const response = await fetch(`/api/admin/associados/${selectedAssociadoPlano.id}/atribuir-plano`, {
+      const response = await fetch(`/api/admin/associados/${selectedAssociado.id}/atribuir-plano`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -269,7 +315,7 @@ export default function AssociadosClient() {
       const data = await response.json();
       alert(`Plano "${data.assinatura.plano}" atribuído com sucesso até ${new Date(data.assinatura.dataFim).toLocaleDateString('pt-BR')}`);
       setShowPlanoModal(false);
-      setSelectedAssociadoPlano(null);
+      setSelectedAssociado(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao atribuir plano');
     } finally {
@@ -277,13 +323,13 @@ export default function AssociadosClient() {
     }
   };
 
-  const handleViewDocs = async (id: string) => {
+  const handleViewDocs = async (associado: Associado) => {
     setDocsLoading(true);
     setShowDocsModal(true);
     const token = getToken();
 
     try {
-      const response = await fetch(`/api/admin/associados/${id}/documentos`, {
+      const response = await fetch(`/api/admin/associados/${associado.id}/documentos`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -304,7 +350,7 @@ export default function AssociadosClient() {
   };
 
   const handleEdit = (associado: Associado) => {
-    setEditingAssociado(associado);
+    setSelectedAssociado(associado);
     setEditForm({
       nome: associado.nome || '',
       whatsapp: associado.whatsapp || '',
@@ -324,13 +370,13 @@ export default function AssociadosClient() {
   };
 
   const handleSaveEdit = async () => {
-    if (!editingAssociado) return;
+    if (!selectedAssociado) return;
     
     setSaving(true);
     const token = getToken();
     
     try {
-      const response = await fetch(`/api/admin/associados/${editingAssociado.id}`, {
+      const response = await fetch(`/api/admin/associados/${selectedAssociado.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -344,7 +390,7 @@ export default function AssociadosClient() {
       }
 
       setShowEditModal(false);
-      setEditingAssociado(null);
+      setSelectedAssociado(null);
       fetchAssociados(currentPage, filters);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao salvar');
@@ -353,12 +399,12 @@ export default function AssociadosClient() {
     }
   };
 
-  const handleToggleStatus = async (id: string) => {
-    setTogglingId(id);
+  const handleToggleStatus = async (associado: Associado) => {
+    setTogglingId(associado.id);
     const token = getToken();
     
     try {
-      const response = await fetch(`/api/admin/associados/${id}/toggle-status`, {
+      const response = await fetch(`/api/admin/associados/${associado.id}/toggle-status`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -377,7 +423,7 @@ export default function AssociadosClient() {
     }
   };
 
-  const handleImpersonate = async (usuarioId: string, nome: string) => {
+  const handleImpersonate = async (associado: Associado) => {
     const token = getToken();
     
     try {
@@ -387,7 +433,7 @@ export default function AssociadosClient() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ userId: usuarioId }),
+        body: JSON.stringify({ userId: associado.usuarioId }),
       });
 
       if (!response.ok) {
@@ -399,7 +445,7 @@ export default function AssociadosClient() {
       localStorage.setItem('admin_original_token', token || '');
       localStorage.setItem('abracann_token', data.access_token);
       
-      alert(`Logado como ${nome}. Para voltar ao admin, faça logout e entre novamente.`);
+      alert(`Logado como ${associado.nome}. Para voltar ao admin, faça logout e entre novamente.`);
       
       if (data.user.role === 'PRESCRITOR') {
         router.push('/medico');
@@ -434,18 +480,6 @@ export default function AssociadosClient() {
     } finally {
       setDeletingId(null);
     }
-  };
-
-  const toggleRow = (id: string) => {
-    setExpandedRows(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
   };
 
   const handleExport = async () => {
@@ -483,56 +517,18 @@ export default function AssociadosClient() {
     }
   };
 
-  const handleDownloadTemplate = async () => {
-    const token = getToken();
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/admin/associados/template', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao baixar modelo');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'modelo_importacao_associados_abracanm.csv';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao baixar modelo');
-    }
-  };
-
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     setImporting(true);
     setImportResult(null);
-    setError('');
-
     const token = getToken();
-    if (!token) {
-      router.push('/login');
-      return;
-    }
+
+    const formData = new FormData();
+    formData.append('file', file);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
       const response = await fetch('/api/admin/associados/import', {
         method: 'POST',
         headers: {
@@ -547,730 +543,587 @@ export default function AssociadosClient() {
         throw new Error(data.error || 'Erro ao importar');
       }
 
-      setImportResult(data.results);
-      setCurrentPage(1);
-      fetchAssociados(1, filters);
+      setImportResult(data);
+      fetchAssociados(currentPage, filters);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao importar');
     } finally {
       setImporting(false);
-      e.target.value = '';
+      event.target.value = '';
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const getPriorityColor = (score: number) => {
+    if (score >= 70) return 'text-red-600 bg-red-50 border-red-200';
+    if (score >= 40) return 'text-amber-600 bg-amber-50 border-amber-200';
+    return 'text-green-600 bg-green-50 border-green-200';
   };
 
-  const formatWhatsApp = (whatsapp: string) => {
-    if (!whatsapp) return '-';
-    const numbers = whatsapp.replace(/\D/g, '');
-    if (numbers.length === 11) {
-      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-    }
-    return whatsapp;
-  };
-
-  const getWhatsAppLink = (whatsapp: string, nome: string) => {
-    const numbers = whatsapp.replace(/\D/g, '');
-    const phone = numbers.startsWith('55') ? numbers : `55${numbers}`;
-    const firstName = nome.split(' ')[0];
-    const message = encodeURIComponent(`Olá ${firstName}! Aqui é da ABRACANM - Associação Brasileira de Cannabis Medicinal. Tudo bem com você?`);
-    return `https://wa.me/${phone}?text=${message}`;
-  };
-
-  const getUrgencyBadge = (nivel: string) => {
-    const styles = {
-      baixa: 'bg-green-100 text-green-800',
-      moderada: 'bg-yellow-100 text-yellow-800',
-      alta: 'bg-red-100 text-red-800',
-    };
-    const labels = {
-      baixa: 'Baixa',
-      moderada: 'Moderada',
-      alta: 'Alta',
-    };
-    return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[nivel as keyof typeof styles] || styles.baixa}`}>
-        {labels[nivel as keyof typeof labels] || nivel}
-      </span>
-    );
-  };
-
-  const getPerfilLabel = (perfil: string) => {
-    const labels: Record<string, string> = {
-      'PACIENTE_NOVO': 'Paciente Novo',
-      'EM_TRATAMENTO': 'Em Tratamento',
-      'CUIDADOR': 'Cuidador/Familiar',
-    };
-    return labels[perfil] || perfil;
+  const getPriorityLabel = (score: number) => {
+    if (score >= 70) return 'Alta';
+    if (score >= 40) return 'Média';
+    return 'Baixa';
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-off-white to-cinza-muito-claro px-4 sm:px-6 lg:px-8 py-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="text-sm text-verde-oliva font-medium mb-1">Admin</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-cinza-escuro">
-              Lista de Associados
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleDownloadTemplate}
-              className="inline-flex items-center gap-2 px-3 py-2 border border-verde-oliva text-verde-oliva rounded-lg hover:bg-verde-oliva/10 transition-colors text-sm font-medium"
-            >
-              <FileSpreadsheet size={16} />
-              Modelo
-            </button>
-            <label className="inline-flex items-center gap-2 px-3 py-2 border border-verde-oliva text-verde-oliva rounded-lg hover:bg-verde-oliva/10 transition-colors text-sm font-medium cursor-pointer">
-              <Upload size={16} />
-              {importing ? 'Importando...' : 'Importar'}
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleImport}
-                disabled={importing}
-                className="hidden"
-              />
-            </label>
-            <button
-              onClick={handleExport}
-              disabled={exporting || loading}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-            >
-              <Download size={16} />
-              {exporting ? 'Exportando...' : 'Exportar'}
-            </button>
-            <Link href="/dashboard" className="text-sm text-verde-oliva hover:underline">
-              Voltar
-            </Link>
-          </div>
+    <main className="p-6 bg-gray-50 min-h-screen">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">CRM de Associados</h1>
+          <p className="text-gray-500 text-sm">Gerencie seus pacientes e acompanhe o progresso</p>
         </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+          >
+            <Download size={16} />
+            {exporting ? 'Exportando...' : 'Exportar'}
+          </button>
+          <label className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+            <Upload size={16} />
+            {importing ? 'Importando...' : 'Importar'}
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleImport}
+              className="hidden"
+              disabled={importing}
+            />
+          </label>
+        </div>
+      </div>
 
-        <form onSubmit={handleSearch} className="mb-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-cinza-medio" size={18} />
-              <input
-                type="text"
-                placeholder="Buscar por nome, email ou WhatsApp..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-4 py-2.5 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors text-sm font-medium"
-            >
-              Buscar
-            </button>
+      <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-6">
+        <form onSubmit={handleSearch} className="flex flex-wrap gap-3">
+          <div className="flex-1 min-w-[200px] relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              value={filters.search}
+              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+              placeholder="Buscar por nome, email ou CPF..."
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
+            />
+          </div>
+          
+          <select
+            value={filters.estado}
+            onChange={(e) => setFilters(prev => ({ ...prev, estado: e.target.value }))}
+            className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174] bg-white"
+          >
+            <option value="">Todos os estados</option>
+            {ESTADOS_BR.map(uf => (
+              <option key={uf} value={uf}>{uf}</option>
+            ))}
+          </select>
+
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+            className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174] bg-white"
+          >
+            <option value="">Todos os status</option>
+            <option value="ativo">Ativos</option>
+            <option value="inativo">Inativos</option>
+          </select>
+
+          <select
+            value={filters.temAnamnese}
+            onChange={(e) => setFilters(prev => ({ ...prev, temAnamnese: e.target.value }))}
+            className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174] bg-white"
+          >
+            <option value="">Pré-anamnese</option>
+            <option value="sim">Com anamnese</option>
+            <option value="nao">Sem anamnese</option>
+          </select>
+
+          <button
+            type="submit"
+            className="px-6 py-2.5 bg-[#3FA174] text-white rounded-xl hover:bg-[#359966] transition-colors font-medium"
+          >
+            Buscar
+          </button>
+
+          {hasActiveFilters && (
             <button
               type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 border rounded-lg transition-colors text-sm font-medium ${
-                showFilters || hasActiveFilters
-                  ? 'border-verde-oliva bg-verde-oliva/10 text-verde-oliva'
-                  : 'border-cinza-claro text-cinza-escuro hover:bg-cinza-muito-claro'
-              }`}
+              onClick={clearFilters}
+              className="px-4 py-2.5 text-gray-500 hover:text-gray-700 transition-colors"
             >
-              <Filter size={16} />
-              Filtros
-              {hasActiveFilters && (
-                <span className="w-2 h-2 rounded-full bg-verde-oliva" />
-              )}
+              Limpar filtros
             </button>
-          </div>
-
-          {showFilters && (
-            <div className="mt-3 p-4 bg-white border border-cinza-claro rounded-xl">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                <div>
-                  <label className="block text-xs text-cinza-medio mb-1">Cidade</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: São Paulo"
-                    value={filters.cidade}
-                    onChange={(e) => handleFilterChange('cidade', e.target.value)}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-cinza-medio mb-1">Estado</label>
-                  <select
-                    value={filters.estado}
-                    onChange={(e) => handleFilterChange('estado', e.target.value)}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  >
-                    <option value="">Todos</option>
-                    {ESTADOS_BR.map(uf => (
-                      <option key={uf} value={uf}>{uf}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-cinza-medio mb-1">Patologia</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Ansiedade, F41"
-                    value={filters.patologia}
-                    onChange={(e) => handleFilterChange('patologia', e.target.value)}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-cinza-medio mb-1">Status</label>
-                  <select
-                    value={filters.status}
-                    onChange={(e) => handleFilterChange('status', e.target.value)}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  >
-                    <option value="">Todos</option>
-                    <option value="ativo">Ativo</option>
-                    <option value="inativo">Inativo</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-cinza-medio mb-1">Pré-Anamnese</label>
-                  <select
-                    value={filters.temAnamnese}
-                    onChange={(e) => handleFilterChange('temAnamnese', e.target.value)}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg text-sm focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  >
-                    <option value="">Todos</option>
-                    <option value="sim">Respondida</option>
-                    <option value="nao">Pendente</option>
-                  </select>
-                </div>
-              </div>
-              {hasActiveFilters && (
-                <div className="mt-3 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="inline-flex items-center gap-1 text-sm text-erro hover:underline"
-                  >
-                    <X size={14} />
-                    Limpar filtros
-                  </button>
-                </div>
-              )}
-            </div>
           )}
         </form>
+      </div>
 
-        {importResult && (
-          <div className="mb-4 p-4 bg-white border border-cinza-claro rounded-xl">
-            <h3 className="font-semibold text-cinza-escuro mb-2">Resultado da Importação</h3>
-            <div className="flex gap-6 text-sm">
-              <span className="text-sucesso">{importResult.success} importado(s)</span>
-              <span className="text-cinza-medio">{importResult.skipped} já existente(s)</span>
-              <span className="text-erro">{importResult.errors.length} erro(s)</span>
-            </div>
-            {importResult.errors.length > 0 && (
-              <div className="mt-3 text-xs text-erro">
-                <p className="font-medium mb-1">Erros:</p>
-                <ul className="space-y-1 max-h-32 overflow-y-auto">
-                  {importResult.errors.map((err, i) => (
-                    <li key={i}>Linha {err.linha} ({err.email}): {err.erro}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <button 
-              onClick={() => setImportResult(null)} 
-              className="mt-2 text-xs text-cinza-medio hover:text-cinza-escuro"
-            >
-              Fechar
+      {importResult && (
+        <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+          <div className="flex items-center gap-4 text-sm">
+            <span className="text-green-600 font-medium">{importResult.success} importado(s)</span>
+            <span className="text-gray-400">|</span>
+            <span className="text-gray-500">{importResult.skipped} já existente(s)</span>
+            <span className="text-gray-400">|</span>
+            <span className="text-red-500">{importResult.errors.length} erro(s)</span>
+            <button onClick={() => setImportResult(null)} className="ml-auto text-gray-400 hover:text-gray-600">
+              <X size={18} />
             </button>
           </div>
-        )}
+        </div>
+      )}
 
-        {pagination && (
-          <div className="mb-4 flex items-center gap-4 text-sm text-cinza-medio">
-            <span>{pagination.total} associado(s) cadastrado(s)</span>
-            <span className="text-cinza-claro">|</span>
+      {pagination && (
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <span className="font-medium text-gray-900">{pagination.total}</span> associados
+            <span className="text-gray-300">|</span>
             <span className="flex items-center gap-1">
-              <FileText size={14} />
+              <FileText size={14} className="text-[#3FA174]" />
               {associados.filter(a => a.preAnamnese).length} com pré-anamnese
             </span>
           </div>
-        )}
+        </div>
+      )}
 
-        {loading ? (
-          <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 text-center">
-            <p className="text-cinza-medio">Carregando...</p>
-          </div>
-        ) : error ? (
-          <div className="bg-erro/10 border border-erro/30 rounded-lg p-4 text-erro">
-            {error}
-          </div>
-        ) : associados.length === 0 ? (
-          <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm p-8 text-center">
-            <p className="text-cinza-medio">Nenhum associado cadastrado ainda.</p>
-          </div>
-        ) : (
-          <>
-            <div className="bg-white border border-cinza-claro rounded-2xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-cinza-muito-claro">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider w-8">
-                        
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Nome
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        WhatsApp
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Cidade/UF
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Patologia (CID)
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Pré-Anamnese
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Prioridade
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Data Cadastro
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-cinza-escuro uppercase tracking-wider">
-                        Ações
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-cinza-claro">
-                    {associados.map((associado) => (
-                      <>
-                        <tr 
-                          key={associado.id} 
-                          className={`hover:bg-cinza-muito-claro/50 transition-colors ${associado.preAnamnese ? 'cursor-pointer' : ''}`}
-                          onClick={() => associado.preAnamnese && toggleRow(associado.id)}
-                        >
-                          <td className="px-4 py-4">
-                            {associado.preAnamnese && (
-                              <button className="text-cinza-medio hover:text-cinza-escuro">
-                                {expandedRows.has(associado.id) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                              </button>
-                            )}
-                          </td>
-                          <td className="px-4 py-4">
-                            <div>
-                              <p className="font-medium text-cinza-escuro">{associado.nome}</p>
-                              <p className="text-xs text-cinza-medio">{associado.email}</p>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 text-sm text-cinza-escuro">
-                            <div className="flex items-center gap-2">
-                              <a
-                                href={getWhatsAppLink(associado.whatsapp, associado.nome)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors"
-                                title="Enviar mensagem no WhatsApp"
-                              >
-                                <MessageCircle size={16} />
-                              </a>
-                              <span>{formatWhatsApp(associado.whatsapp)}</span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 text-sm text-cinza-escuro">
-                            {associado.cidade && associado.estado
-                              ? `${associado.cidade}/${associado.estado}`
-                              : '-'}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-cinza-escuro">
-                            {associado.patologiaCID || '-'}
-                          </td>
-                          <td className="px-4 py-4">
-                            {associado.preAnamnese ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-verde-claro/20 text-verde-oliva">
-                                <FileText size={12} />
-                                Respondida
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-cinza-claro text-cinza-medio">
-                                <Clock size={12} />
-                                Pendente
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-4 py-4">
-                            {associado.preAnamnese ? (
-                              <div className="flex items-center gap-2">
-                                <div className="w-16 bg-cinza-claro rounded-full h-2">
-                                  <div 
-                                    className={`h-2 rounded-full ${
-                                      associado.preAnamnese.scorePrioridade >= 70 ? 'bg-red-500' :
-                                      associado.preAnamnese.scorePrioridade >= 40 ? 'bg-yellow-500' : 'bg-green-500'
-                                    }`}
-                                    style={{ width: `${associado.preAnamnese.scorePrioridade}%` }}
-                                  />
-                                </div>
-                                <span className="text-xs text-cinza-medio">{associado.preAnamnese.scorePrioridade}</span>
-                              </div>
-                            ) : (
-                              <span className="text-cinza-claro">-</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-cinza-escuro">
-                            {formatDate(associado.criadoEm)}
-                          </td>
-                          <td className="px-4 py-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              associado.usuario.ativo
-                                ? 'bg-sucesso/20 text-sucesso'
-                                : 'bg-erro/20 text-erro'
-                            }`}>
-                              {associado.usuario.ativo ? 'Ativo' : 'Inativo'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4">
-                            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                              <button
-                                onClick={() => handleViewDocs(associado.id)}
-                                className="p-1.5 text-cinza-medio hover:text-blue-600 hover:bg-blue-100 rounded transition-colors"
-                                title="Ver documentos"
-                              >
-                                <Eye size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleEdit(associado)}
-                                className="p-1.5 text-cinza-medio hover:text-verde-oliva hover:bg-verde-oliva/10 rounded transition-colors"
-                                title="Editar"
-                              >
-                                <Edit2 size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleToggleStatus(associado.id)}
-                                disabled={togglingId === associado.id}
-                                className={`p-1.5 rounded transition-colors ${
-                                  associado.usuario.ativo 
-                                    ? 'text-cinza-medio hover:text-amber-600 hover:bg-amber-100' 
-                                    : 'text-cinza-medio hover:text-sucesso hover:bg-sucesso/10'
-                                }`}
-                                title={associado.usuario.ativo ? 'Desativar' : 'Ativar'}
-                              >
-                                <Power size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleOpenPlanoModal(associado)}
-                                className="p-1.5 text-cinza-medio hover:text-[#3FA174] hover:bg-[#3FA174]/10 rounded transition-colors"
-                                title="Atribuir plano"
-                              >
-                                <CreditCard size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleImpersonate(associado.usuarioId, associado.nome)}
-                                className="p-1.5 text-cinza-medio hover:text-purple-600 hover:bg-purple-100 rounded transition-colors"
-                                title="Entrar como este usuário"
-                              >
-                                <LogIn size={14} />
-                              </button>
-                              {confirmDelete === associado.id ? (
-                                <div className="flex items-center gap-1 bg-erro/10 rounded px-2 py-1">
-                                  <span className="text-xs text-erro">Confirmar?</span>
-                                  <button
-                                    onClick={() => handleDelete(associado.id)}
-                                    disabled={deletingId === associado.id}
-                                    className="text-xs text-erro font-medium hover:underline"
-                                  >
-                                    Sim
-                                  </button>
-                                  <button
-                                    onClick={() => setConfirmDelete(null)}
-                                    className="text-xs text-cinza-medio hover:underline"
-                                  >
-                                    Não
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => setConfirmDelete(associado.id)}
-                                  className="p-1.5 text-cinza-medio hover:text-erro hover:bg-erro/10 rounded transition-colors"
-                                  title="Excluir"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                        
-                        {expandedRows.has(associado.id) && associado.preAnamnese && (
-                          <tr key={`${associado.id}-details`} className="bg-cinza-muito-claro/30">
-                            <td colSpan={10} className="px-4 py-6">
-                              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                <div className="bg-white rounded-xl p-4 border border-cinza-claro">
-                                  <h4 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
-                                    <Activity size={16} className="text-verde-oliva" />
-                                    Diagnóstico ABRACANM
-                                  </h4>
-                                  {associado.preAnamnese.diagnostico ? (
-                                    <div className="space-y-3">
-                                      <div>
-                                        <p className="text-sm font-medium text-cinza-escuro">{associado.preAnamnese.diagnostico.titulo}</p>
-                                        <p className="text-xs text-cinza-medio mt-1">{associado.preAnamnese.diagnostico.resumo}</p>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-cinza-medio">Urgência:</span>
-                                        {getUrgencyBadge(associado.preAnamnese.diagnostico.nivelUrgencia)}
-                                      </div>
-                                      {associado.preAnamnese.diagnostico.observacoes && (
-                                        <p className="text-xs text-cinza-medio italic">{associado.preAnamnese.diagnostico.observacoes}</p>
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <p className="text-sm text-cinza-medio italic">Diagnóstico ainda não gerado</p>
-                                  )}
-                                </div>
-
-                                <div className="bg-white rounded-xl p-4 border border-cinza-claro">
-                                  <h4 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
-                                    <FileText size={16} className="text-verde-oliva" />
-                                    Respostas da Pré-Anamnese
-                                  </h4>
-                                  <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between">
-                                      <span className="text-cinza-medio">Perfil:</span>
-                                      <span className="font-medium text-cinza-escuro">{getPerfilLabel(associado.preAnamnese.perfil)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className="text-cinza-medio">Objetivo:</span>
-                                      <span className="font-medium text-cinza-escuro text-right max-w-[200px]">{associado.preAnamnese.objetivoPrincipal}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className="text-cinza-medio">Gravidade:</span>
-                                      <span className="font-medium text-cinza-escuro">{associado.preAnamnese.gravidade}/5</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className="text-cinza-medio">Preferência:</span>
-                                      <span className="font-medium text-cinza-escuro">{associado.preAnamnese.preferenciaAcompanhamento}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className="text-cinza-medio">Horário:</span>
-                                      <span className="font-medium text-cinza-escuro">{associado.preAnamnese.melhorHorario}</span>
-                                    </div>
-                                    {(associado.preAnamnese.tratamentosPrevios || []).length > 0 && (
-                                      <div>
-                                        <span className="text-cinza-medio">Tratamentos prévios:</span>
-                                        <p className="text-xs text-cinza-escuro mt-1">{(associado.preAnamnese.tratamentosPrevios || []).join(', ')}</p>
-                                      </div>
-                                    )}
-                                    {(associado.preAnamnese.comorbidades || []).length > 0 && (
-                                      <div>
-                                        <span className="text-cinza-medio">Comorbidades:</span>
-                                        <p className="text-xs text-cinza-escuro mt-1">{(associado.preAnamnese.comorbidades || []).join(', ')}</p>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="bg-white rounded-xl p-4 border border-cinza-claro">
-                                  <h4 className="font-semibold text-cinza-escuro mb-3 flex items-center gap-2">
-                                    <AlertCircle size={16} className="text-verde-oliva" />
-                                    Indicações e Próximos Passos
-                                  </h4>
-                                  <div className="space-y-3">
-                                    {associado.preAnamnese.diagnostico?.indicacoes && associado.preAnamnese.diagnostico.indicacoes.length > 0 && (
-                                      <div>
-                                        <p className="text-xs font-medium text-verde-oliva mb-1">Indicações:</p>
-                                        <ul className="text-xs text-cinza-medio space-y-1">
-                                          {associado.preAnamnese.diagnostico.indicacoes.map((ind, i) => (
-                                            <li key={i} className="flex items-start gap-1">
-                                              <span className="text-verde-oliva mt-0.5">•</span>
-                                              {ind}
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-                                    )}
-                                    {associado.preAnamnese.diagnostico?.contraindicacoes && associado.preAnamnese.diagnostico.contraindicacoes.length > 0 && (
-                                      <div>
-                                        <p className="text-xs font-medium text-erro mb-1">Contraindicações:</p>
-                                        <ul className="text-xs text-cinza-medio space-y-1">
-                                          {associado.preAnamnese.diagnostico.contraindicacoes.map((contra, i) => (
-                                            <li key={i} className="flex items-start gap-1">
-                                              <span className="text-erro mt-0.5">•</span>
-                                              {contra}
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-                                    )}
-                                    <div className="pt-2 border-t border-cinza-claro">
-                                      <p className="text-xs font-medium text-cinza-escuro mb-1">Próximo passo:</p>
-                                      <p className="text-xs text-cinza-medio">{associado.preAnamnese.proximosPasso || 'Não definido'}</p>
-                                    </div>
-                                    <div className="text-xs text-cinza-claro">
-                                      Respondido em: {formatDate(associado.preAnamnese.criadoEm)}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {pagination && pagination.totalPages > 1 && (
-              <div className="mt-6 flex justify-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-lg border border-cinza-claro text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cinza-muito-claro transition-colors"
-                >
-                  Anterior
-                </button>
-                <span className="px-4 py-2 text-sm text-cinza-medio">
-                  Página {currentPage} de {pagination.totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(pagination.totalPages, p + 1))}
-                  disabled={currentPage === pagination.totalPages}
-                  className="px-4 py-2 rounded-lg border border-cinza-claro text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cinza-muito-claro transition-colors"
-                >
-                  Próxima
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
-      {showEditModal && editingAssociado && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-cinza-claro flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-cinza-escuro">Editar Associado</h2>
-              <button
-                onClick={() => { setShowEditModal(false); setEditingAssociado(null); }}
-                className="p-2 text-cinza-medio hover:text-cinza-escuro hover:bg-cinza-muito-claro rounded-lg transition-colors"
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-[#3FA174] border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 flex items-center gap-3">
+          <AlertCircle size={20} />
+          {error}
+        </div>
+      ) : associados.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+          <User className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500">Nenhum associado encontrado</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {associados.map((associado) => (
+              <motion.div
+                key={associado.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg hover:border-[#3FA174]/30 transition-all cursor-pointer group"
+                onClick={() => handleOpenProfile(associado)}
               >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-12 h-12 rounded-full ${getAvatarColor(associado.nome)} flex items-center justify-center text-white font-semibold text-sm`}>
+                      {getInitials(associado.nome)}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 group-hover:text-[#3FA174] transition-colors">
+                        {associado.nome}
+                      </h3>
+                      <p className="text-xs text-gray-500">{associado.email}</p>
+                    </div>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    associado.usuario.ativo 
+                      ? 'bg-green-50 text-green-600' 
+                      : 'bg-red-50 text-red-600'
+                  }`}>
+                    {associado.usuario.ativo ? 'Ativo' : 'Inativo'}
+                  </span>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  {associado.cidade && associado.estado && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <MapPin size={14} className="text-gray-400" />
+                      {associado.cidade}/{associado.estado}
+                    </div>
+                  )}
+                  {associado.patologiaCID && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Heart size={14} className="text-gray-400" />
+                      {associado.patologiaCID}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Calendar size={14} className="text-gray-400" />
+                    Desde {formatDate(associado.criadoEm)}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 mb-4">
+                  {associado.preAnamnese ? (
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${getPriorityColor(associado.preAnamnese.scorePrioridade)}`}>
+                      <Activity size={14} />
+                      <span className="text-xs font-medium">
+                        Prioridade {getPriorityLabel(associado.preAnamnese.scorePrioridade)}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500">
+                      <Clock size={14} />
+                      <span className="text-xs font-medium">Aguardando anamnese</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
+                  <a
+                    href={getWhatsAppLink(associado.whatsapp, associado.nome)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+                  >
+                    <MessageCircle size={16} />
+                    WhatsApp
+                  </a>
+                  <button
+                    onClick={() => handleEdit(associado)}
+                    className="p-2 text-gray-400 hover:text-[#3FA174] hover:bg-[#3FA174]/10 rounded-lg transition-colors"
+                    title="Editar"
+                  >
+                    <Edit2 size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleViewDocs(associado)}
+                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    title="Ver documentos"
+                  >
+                    <Eye size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleOpenPlanoModal(associado)}
+                    className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                    title="Atribuir plano"
+                  >
+                    <CreditCard size={16} />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {pagination && pagination.totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Anterior
+              </button>
+              <span className="px-4 py-2 text-sm text-gray-600">
+                Página {currentPage} de {pagination.totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(pagination.totalPages, p + 1))}
+                disabled={currentPage === pagination.totalPages}
+                className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Próxima
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      <AnimatePresence>
+        {showProfileModal && selectedAssociado && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto"
+            onClick={() => setShowProfileModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="bg-white rounded-2xl shadow-xl max-w-2xl w-full my-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-16 h-16 rounded-full ${getAvatarColor(selectedAssociado.nome)} flex items-center justify-center text-white font-bold text-xl`}>
+                      {getInitials(selectedAssociado.nome)}
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900">{selectedAssociado.nome}</h2>
+                      <p className="text-gray-500">{selectedAssociado.email}</p>
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          selectedAssociado.usuario.ativo 
+                            ? 'bg-green-50 text-green-600' 
+                            : 'bg-red-50 text-red-600'
+                        }`}>
+                          {selectedAssociado.usuario.ativo ? 'Ativo' : 'Inativo'}
+                        </span>
+                        {selectedAssociado.jaUsaCannabis && (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-600">
+                            Usa cannabis
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowProfileModal(false)}
+                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
+                      <Phone size={14} />
+                      WhatsApp
+                    </div>
+                    <p className="font-medium text-gray-900">{formatWhatsApp(selectedAssociado.whatsapp)}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
+                      <MapPin size={14} />
+                      Localização
+                    </div>
+                    <p className="font-medium text-gray-900">
+                      {selectedAssociado.cidade && selectedAssociado.estado 
+                        ? `${selectedAssociado.cidade}/${selectedAssociado.estado}` 
+                        : 'Não informado'}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
+                      <Heart size={14} />
+                      Patologia (CID)
+                    </div>
+                    <p className="font-medium text-gray-900">{selectedAssociado.patologiaCID || 'Não informado'}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
+                      <Calendar size={14} />
+                      Cadastro
+                    </div>
+                    <p className="font-medium text-gray-900">{formatDate(selectedAssociado.criadoEm)}</p>
+                  </div>
+                </div>
+
+                {selectedAssociado.preAnamnese ? (
+                  <div className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                      <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                        <ClipboardList size={18} className="text-[#3FA174]" />
+                        Pré-Anamnese
+                      </h3>
+                    </div>
+                    <div className="p-4 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500">Score de Prioridade</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full ${
+                                selectedAssociado.preAnamnese.scorePrioridade >= 70 ? 'bg-red-500' :
+                                selectedAssociado.preAnamnese.scorePrioridade >= 40 ? 'bg-amber-500' : 'bg-green-500'
+                              }`}
+                              style={{ width: `${selectedAssociado.preAnamnese.scorePrioridade}%` }}
+                            />
+                          </div>
+                          <span className="font-bold">{selectedAssociado.preAnamnese.scorePrioridade}</span>
+                        </div>
+                      </div>
+
+                      {selectedAssociado.preAnamnese.diagnostico && (
+                        <div className="bg-[#3FA174]/5 border border-[#3FA174]/20 rounded-xl p-4">
+                          <h4 className="font-semibold text-[#3FA174] mb-2">
+                            {selectedAssociado.preAnamnese.diagnostico.titulo}
+                          </h4>
+                          <p className="text-sm text-gray-600 mb-3">
+                            {selectedAssociado.preAnamnese.diagnostico.resumo}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              selectedAssociado.preAnamnese.diagnostico.nivelUrgencia === 'alta' 
+                                ? 'bg-red-100 text-red-700' 
+                                : selectedAssociado.preAnamnese.diagnostico.nivelUrgencia === 'moderada'
+                                ? 'bg-amber-100 text-amber-700'
+                                : 'bg-green-100 text-green-700'
+                            }`}>
+                              Urgência: {selectedAssociado.preAnamnese.diagnostico.nivelUrgencia}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-500">Objetivo Principal</span>
+                          <p className="font-medium">{selectedAssociado.preAnamnese.objetivoPrincipal || '-'}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Perfil</span>
+                          <p className="font-medium">{selectedAssociado.preAnamnese.perfil || '-'}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Gravidade</span>
+                          <p className="font-medium">{selectedAssociado.preAnamnese.gravidade}/10</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Horário Preferido</span>
+                          <p className="font-medium">{selectedAssociado.preAnamnese.melhorHorario || '-'}</p>
+                        </div>
+                      </div>
+
+                      {selectedAssociado.preAnamnese.comorbidades?.length > 0 && (
+                        <div>
+                          <span className="text-sm text-gray-500">Comorbidades</span>
+                          <div className="flex flex-wrap gap-2 mt-1">
+                            {selectedAssociado.preAnamnese.comorbidades.map((c, i) => (
+                              <span key={i} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                                {c}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedAssociado.preAnamnese.notas && (
+                        <div>
+                          <span className="text-sm text-gray-500">Observações</span>
+                          <p className="text-sm text-gray-700 mt-1 bg-gray-50 p-3 rounded-lg">
+                            {selectedAssociado.preAnamnese.notas}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border border-gray-200 rounded-xl p-6 text-center">
+                    <Clock className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                    <p className="text-gray-500">Pré-anamnese ainda não respondida</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-gray-100">
+                  <button
+                    onClick={() => { setShowProfileModal(false); handleEdit(selectedAssociado); }}
+                    className="flex items-center justify-center gap-2 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors text-sm font-medium"
+                  >
+                    <Edit2 size={16} />
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => { setShowProfileModal(false); handleViewDocs(selectedAssociado); }}
+                    className="flex items-center justify-center gap-2 py-3 px-4 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-colors text-sm font-medium"
+                  >
+                    <Eye size={16} />
+                    Docs
+                  </button>
+                  <button
+                    onClick={() => { setShowProfileModal(false); handleOpenPlanoModal(selectedAssociado); }}
+                    className="flex items-center justify-center gap-2 py-3 px-4 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-100 transition-colors text-sm font-medium"
+                  >
+                    <CreditCard size={16} />
+                    Plano
+                  </button>
+                  <button
+                    onClick={() => handleToggleStatus(selectedAssociado)}
+                    disabled={togglingId === selectedAssociado.id}
+                    className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-colors text-sm font-medium ${
+                      selectedAssociado.usuario.ativo
+                        ? 'bg-amber-50 text-amber-600 hover:bg-amber-100'
+                        : 'bg-green-50 text-green-600 hover:bg-green-100'
+                    }`}
+                  >
+                    <Power size={16} />
+                    {selectedAssociado.usuario.ativo ? 'Desativar' : 'Ativar'}
+                  </button>
+                </div>
+
+                <div className="flex gap-3">
+                  <a
+                    href={getWhatsAppLink(selectedAssociado.whatsapp, selectedAssociado.nome)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors font-medium"
+                  >
+                    <MessageCircle size={18} />
+                    Enviar WhatsApp
+                  </a>
+                  <button
+                    onClick={() => handleImpersonate(selectedAssociado)}
+                    className="flex items-center justify-center gap-2 py-3 px-6 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium"
+                  >
+                    <LogIn size={18} />
+                    Logar como
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {showEditModal && selectedAssociado && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Editar Associado</h2>
+              <button onClick={() => setShowEditModal(false)} className="p-2 text-gray-400 hover:text-gray-600">
                 <X size={20} />
               </button>
             </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Nome completo</label>
-                  <input
-                    type="text"
-                    value={editForm.nome}
-                    onChange={(e) => setEditForm({ ...editForm, nome: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                <input
+                  type="text"
+                  value={editForm.nome}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, nome: e.target.value }))}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">WhatsApp</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
                   <input
                     type="text"
                     value={editForm.whatsapp}
-                    onChange={(e) => setEditForm({ ...editForm, whatsapp: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                    onChange={(e) => setEditForm(prev => ({ ...prev, whatsapp: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">CPF</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">CPF</label>
                   <input
                     type="text"
                     value={editForm.cpf}
-                    onChange={(e) => setEditForm({ ...editForm, cpf: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                    onChange={(e) => setEditForm(prev => ({ ...prev, cpf: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
                   />
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Data de Nascimento</label>
-                  <input
-                    type="date"
-                    value={editForm.dataNascimento}
-                    onChange={(e) => setEditForm({ ...editForm, dataNascimento: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">CEP</label>
-                  <input
-                    type="text"
-                    value={editForm.cep}
-                    onChange={(e) => setEditForm({ ...editForm, cep: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Rua</label>
-                  <input
-                    type="text"
-                    value={editForm.rua}
-                    onChange={(e) => setEditForm({ ...editForm, rua: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Número</label>
-                  <input
-                    type="text"
-                    value={editForm.numero}
-                    onChange={(e) => setEditForm({ ...editForm, numero: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Complemento</label>
-                  <input
-                    type="text"
-                    value={editForm.complemento}
-                    onChange={(e) => setEditForm({ ...editForm, complemento: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Bairro</label>
-                  <input
-                    type="text"
-                    value={editForm.bairro}
-                    onChange={(e) => setEditForm({ ...editForm, bairro: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Cidade</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
                   <input
                     type="text"
                     value={editForm.cidade}
-                    onChange={(e) => setEditForm({ ...editForm, cidade: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                    onChange={(e) => setEditForm(prev => ({ ...prev, cidade: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Estado</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
                   <select
                     value={editForm.estado}
-                    onChange={(e) => setEditForm({ ...editForm, estado: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
+                    onChange={(e) => setEditForm(prev => ({ ...prev, estado: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174] bg-white"
                   >
                     <option value="">Selecione</option>
                     {ESTADOS_BR.map(uf => (
@@ -1278,39 +1131,38 @@ export default function AssociadosClient() {
                     ))}
                   </select>
                 </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-cinza-escuro mb-1">Patologia (CID)</label>
-                  <input
-                    type="text"
-                    value={editForm.patologiaCID}
-                    onChange={(e) => setEditForm({ ...editForm, patologiaCID: e.target.value })}
-                    className="w-full px-3 py-2 border border-cinza-claro rounded-lg focus:ring-2 focus:ring-verde-oliva/20 focus:border-verde-oliva"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={editForm.jaUsaCannabis}
-                      onChange={(e) => setEditForm({ ...editForm, jaUsaCannabis: e.target.checked })}
-                      className="w-4 h-4 text-verde-oliva border-cinza-claro rounded focus:ring-verde-oliva"
-                    />
-                    <span className="text-sm text-cinza-escuro">Já utiliza cannabis medicinal</span>
-                  </label>
-                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Patologia (CID)</label>
+                <input
+                  type="text"
+                  value={editForm.patologiaCID}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, patologiaCID: e.target.value }))}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="jaUsaCannabis"
+                  checked={editForm.jaUsaCannabis}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, jaUsaCannabis: e.target.checked }))}
+                  className="w-4 h-4 text-[#3FA174] rounded"
+                />
+                <label htmlFor="jaUsaCannabis" className="text-sm text-gray-700">Já usa cannabis medicinal</label>
               </div>
             </div>
-            <div className="p-6 border-t border-cinza-claro flex justify-end gap-3">
+            <div className="p-6 border-t border-gray-100 flex justify-end gap-3">
               <button
-                onClick={() => { setShowEditModal(false); setEditingAssociado(null); }}
-                className="px-4 py-2 text-sm text-cinza-medio hover:text-cinza-escuro transition-colors"
+                onClick={() => setShowEditModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-900"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveEdit}
                 disabled={saving}
-                className="px-4 py-2 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors disabled:opacity-50 text-sm font-medium"
+                className="px-6 py-2 bg-[#3FA174] text-white rounded-xl hover:bg-[#359966] disabled:opacity-50"
               >
                 {saving ? 'Salvando...' : 'Salvar'}
               </button>
@@ -1322,104 +1174,74 @@ export default function AssociadosClient() {
       {showDocsModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-cinza-claro flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-cinza-escuro">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">
                 {docsLoading ? 'Carregando...' : `Documentos de ${docsData?.associado.nome || ''}`}
               </h2>
-              <button
-                onClick={() => { setShowDocsModal(false); setDocsData(null); }}
-                className="p-2 text-cinza-medio hover:text-cinza-escuro hover:bg-cinza-muito-claro rounded-lg transition-colors"
-              >
+              <button onClick={() => { setShowDocsModal(false); setDocsData(null); }} className="p-2 text-gray-400 hover:text-gray-600">
                 <X size={20} />
               </button>
             </div>
             <div className="p-6">
               {docsLoading ? (
                 <div className="text-center py-8">
-                  <p className="text-cinza-medio">Carregando documentos...</p>
+                  <div className="w-8 h-8 border-2 border-[#3FA174] border-t-transparent rounded-full animate-spin mx-auto" />
                 </div>
               ) : docsData && docsData.documentos.length > 0 ? (
                 <div className="grid gap-4">
                   {docsData.documentos.map((doc, index) => (
-                    <div key={index} className="border border-cinza-claro rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
+                    <div key={index} className="border border-gray-200 rounded-xl p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                             <Image size={20} className="text-blue-600" />
                           </div>
                           <div>
-                            <p className="font-medium text-cinza-escuro">{doc.tipo}</p>
-                            <p className="text-xs text-cinza-medio">{doc.url.split('/').pop()}</p>
+                            <p className="font-medium text-gray-900">{doc.tipo}</p>
+                            <p className="text-xs text-gray-500">{doc.url.split('/').pop()}</p>
                           </div>
                         </div>
                         <a
                           href={doc.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-verde-oliva text-white rounded-lg hover:bg-verde-oliva/90 transition-colors text-sm font-medium"
+                          className="px-4 py-2 bg-[#3FA174] text-white rounded-lg hover:bg-[#359966] text-sm font-medium"
                         >
-                          <Eye size={14} />
                           Abrir
                         </a>
                       </div>
-                      {(doc.url.endsWith('.jpg') || doc.url.endsWith('.jpeg') || doc.url.endsWith('.png') || doc.url.endsWith('.gif')) && (
-                        <div className="mt-2 rounded-lg overflow-hidden bg-cinza-muito-claro">
-                          <img 
-                            src={doc.url} 
-                            alt={doc.tipo}
-                            className="max-w-full h-auto max-h-64 mx-auto object-contain"
-                          />
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-cinza-muito-claro rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FileText size={32} className="text-cinza-claro" />
-                  </div>
-                  <p className="text-cinza-medio">Nenhum documento enviado</p>
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-500">Nenhum documento enviado</p>
                 </div>
               )}
-            </div>
-            <div className="p-6 border-t border-cinza-claro flex justify-end">
-              <button
-                onClick={() => { setShowDocsModal(false); setDocsData(null); }}
-                className="px-4 py-2 text-sm text-cinza-medio hover:text-cinza-escuro transition-colors"
-              >
-                Fechar
-              </button>
             </div>
           </div>
         </div>
       )}
 
-      {showPlanoModal && selectedAssociadoPlano && (
+      {showPlanoModal && selectedAssociado && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Atribuir Plano
-              </h2>
-              <button
-                onClick={() => { setShowPlanoModal(false); setSelectedAssociadoPlano(null); }}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <h2 className="text-lg font-semibold text-gray-900">Atribuir Plano</h2>
+              <button onClick={() => { setShowPlanoModal(false); setSelectedAssociado(null); }} className="p-2 text-gray-400 hover:text-gray-600">
                 <X size={20} />
               </button>
             </div>
             <div className="p-6 space-y-4">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Associado</p>
-                <p className="font-medium text-gray-900">{selectedAssociadoPlano.nome}</p>
-                <p className="text-sm text-gray-500">{selectedAssociadoPlano.email}</p>
+                <p className="font-medium text-gray-900">{selectedAssociado.nome}</p>
+                <p className="text-sm text-gray-500">{selectedAssociado.email}</p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Selecione o Plano
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Selecione o Plano</label>
                 {planos.length === 0 ? (
                   <p className="text-sm text-gray-500">Carregando planos...</p>
                 ) : (
@@ -1439,9 +1261,7 @@ export default function AssociadosClient() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Duração (meses)
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Duração (meses)</label>
                 <select
                   value={mesesPlano}
                   onChange={(e) => setMesesPlano(Number(e.target.value))}
@@ -1464,15 +1284,15 @@ export default function AssociadosClient() {
             </div>
             <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
               <button
-                onClick={() => { setShowPlanoModal(false); setSelectedAssociadoPlano(null); }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                onClick={() => { setShowPlanoModal(false); setSelectedAssociado(null); }}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleAtribuirPlano}
                 disabled={!selectedPlanoId || atribuindoPlano}
-                className="px-6 py-2 bg-[#3FA174] text-white rounded-xl hover:bg-[#3FA174]/90 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-[#3FA174] text-white rounded-xl hover:bg-[#3FA174]/90 text-sm font-medium disabled:opacity-50"
               >
                 {atribuindoPlano ? 'Atribuindo...' : 'Atribuir Plano'}
               </button>
