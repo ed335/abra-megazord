@@ -112,7 +112,9 @@ function convertToPricingPlans(planos: Plano[]): PricingPlan[] {
     isPopular: false,
   };
 
-  const planosConvertidos = planos.map((plano, index) => ({
+  const planosLimitados = planos.slice(0, 2);
+
+  const planosConvertidos = planosLimitados.map((plano, index) => ({
     name: `Plano ${plano.nome}`,
     price: String(Math.round(plano.valorMensalidade)),
     yearlyPrice: String(Math.round(plano.valorMensalidade * 0.8)),
