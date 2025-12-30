@@ -130,7 +130,7 @@ export default function AgendarConsultaPage() {
 
       if (response.success && response.agendamento) {
         setAgendamentoData(response.agendamento);
-        setSuccess(true);
+        router.push(`/checkout-consulta?agendamento=${response.agendamento.id}`);
       } else {
         setError(response.error || 'Erro ao agendar consulta');
       }
