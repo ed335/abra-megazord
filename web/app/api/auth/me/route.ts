@@ -89,6 +89,8 @@ export async function GET(request: NextRequest) {
       cpf,
       planoAtivo,
       assinaturaAtiva,
+      isPrescritor: !!usuario.prescritor,
+      prescritorId: usuario.prescritor?.id || null,
     });
   } catch (error) {
     console.error('Me error:', error);

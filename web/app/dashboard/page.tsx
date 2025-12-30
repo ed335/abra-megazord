@@ -24,7 +24,15 @@ import {
   Shield,
   Sparkles,
   Crown,
-  HeartPulse
+  HeartPulse,
+  Users,
+  Video,
+  CalendarDays,
+  TrendingUp,
+  Search,
+  MapPin,
+  Heart,
+  Stethoscope
 } from 'lucide-react';
 
 type PlanoAtivo = {
@@ -49,7 +57,35 @@ type UserData = {
   nome: string;
   planoAtivo: PlanoAtivo | null;
   assinaturaAtiva: AssinaturaAtiva | null;
+  isPrescritor: boolean;
+  prescritorId: string | null;
 };
+
+interface MedicoPaciente {
+  id: string;
+  nome: string;
+  email: string;
+  whatsapp: string;
+  cidade: string | null;
+  estado: string | null;
+  patologiaCID: string | null;
+  jaUsaCannabis: boolean;
+  criadoEm: string;
+  preAnamnese: any | null;
+  agendamento?: {
+    id: string;
+    dataHora: string;
+    tipo: string;
+    status: string;
+  };
+}
+
+interface MedicoStats {
+  totalPacientes: number;
+  consultasHoje: number;
+  consultasSemana: number;
+  aguardandoConfirmacao: number;
+}
 
 interface Diagnostico {
   titulo: string;
@@ -106,6 +142,10 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [preAnamnese, setPreAnamnese] = useState<PreAnamneseData | null>(null);
+  const [medicoPacientes, setMedicoPacientes] = useState<MedicoPaciente[]>([]);
+  const [medicoStats, setMedicoStats] = useState<MedicoStats | null>(null);
+  const [medicoFilter, setMedicoFilter] = useState<'todos' | 'hoje' | 'semana' | 'aguardando'>('todos');
+  const [medicoSearch, setMedicoSearch] = useState('');
 
   useEffect(() => {
     const token = getToken();
@@ -130,23 +170,52 @@ export default function DashboardPage() {
       .then((userData) => {
         setUser(userData);
         
-        fetchWithAuth<{ completed: boolean; preAnamnese?: PreAnamneseData }>(
-          '/api/pre-anamnese',
-          { skipLogoutOn401: true }
-        )
-          .then((preAnamneseData) => {
-            if (preAnamneseData.completed && preAnamneseData.preAnamnese) {
-              setPreAnamnese(preAnamneseData.preAnamnese);
-            }
-          })
-          .catch(() => {})
-          .finally(() => setLoading(false));
+        if (userData.isPrescritor) {
+          fetchWithAuth<{ success: boolean; pacientes: MedicoPaciente[]; stats: MedicoStats }>(
+            '/api/medico/pacientes?filter=todos'
+          )
+            .then((data) => {
+              if (data.success) {
+                setMedicoPacientes(data.pacientes);
+                setMedicoStats(data.stats);
+              }
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+        } else {
+          fetchWithAuth<{ completed: boolean; preAnamnese?: PreAnamneseData }>(
+            '/api/pre-anamnese',
+            { skipLogoutOn401: true }
+          )
+            .then((preAnamneseData) => {
+              if (preAnamneseData.completed && preAnamneseData.preAnamnese) {
+                setPreAnamnese(preAnamneseData.preAnamnese);
+              }
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+        }
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
   }, [router]);
+
+  useEffect(() => {
+    if (user?.isPrescritor) {
+      fetchWithAuth<{ success: boolean; pacientes: MedicoPaciente[]; stats: MedicoStats }>(
+        `/api/medico/pacientes?filter=${medicoFilter}`
+      )
+        .then((data) => {
+          if (data.success) {
+            setMedicoPacientes(data.pacientes);
+            setMedicoStats(data.stats);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [medicoFilter, user?.isPrescritor]);
 
   if (loading) {
     return (
@@ -166,6 +235,254 @@ export default function DashboardPage() {
   const planoNome = user.planoAtivo?.nome || 'Essencial';
   const planoConfig = planoBadgeConfig[planoNome] || planoBadgeConfig['Essencial'];
   const PlanoIcon = planoConfig.icon;
+
+  const getAvatarColor = (nome: string): string => {
+    const colors = [
+      'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500',
+      'bg-pink-500', 'bg-teal-500', 'bg-indigo-500', 'bg-cyan-500'
+    ];
+    let hash = 0;
+    for (let i = 0; i < nome.length; i++) {
+      hash = nome.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  };
+
+  const getInitials = (nome: string): string => {
+    const parts = nome.split(' ').filter(p => p.length > 0);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0]?.substring(0, 2).toUpperCase() || 'US';
+  };
+
+  const getWhatsAppLink = (phone: string, nome: string) => {
+    const digits = phone?.replace(/\D/g, '') || '';
+    const message = encodeURIComponent(`Olá ${nome.split(' ')[0]}, aqui é seu médico da ABRACANM.`);
+    return `https://wa.me/55${digits}?text=${message}`;
+  };
+
+  const filteredMedicoPacientes = medicoPacientes.filter(p =>
+    p.nome.toLowerCase().includes(medicoSearch.toLowerCase()) ||
+    p.email.toLowerCase().includes(medicoSearch.toLowerCase())
+  );
+
+  if (user.isPrescritor) {
+    return (
+      <AppLayout title="Painel Médico">
+        <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between"
+          >
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Olá, Dr. {firstName}</h1>
+              <p className="text-gray-500 text-sm">Bem-vindo ao seu painel médico</p>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-[#3FA174] rounded-full">
+              <Stethoscope className="w-4 h-4 text-white" />
+              <span className="text-sm font-medium text-white">Médico</span>
+            </div>
+          </motion.div>
+
+          {medicoStats && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+              <div className="bg-white rounded-xl p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#3FA174]/10 rounded-lg flex items-center justify-center">
+                    <Users className="w-5 h-5 text-[#3FA174]" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{medicoStats.totalPacientes}</p>
+                    <p className="text-xs text-gray-500">Pacientes</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <CalendarDays className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{medicoStats.consultasHoje}</p>
+                    <p className="text-xs text-gray-500">Consultas hoje</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{medicoStats.consultasSemana}</p>
+                    <p className="text-xs text-gray-500">Esta semana</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{medicoStats.aguardandoConfirmacao}</p>
+                    <p className="text-xs text-gray-500">Aguardando</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl border border-gray-200 p-4"
+          >
+            <div className="flex flex-wrap gap-3">
+              <div className="flex-1 min-w-[200px] relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <input
+                  type="text"
+                  value={medicoSearch}
+                  onChange={(e) => setMedicoSearch(e.target.value)}
+                  placeholder="Buscar paciente..."
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
+                />
+              </div>
+              <div className="flex gap-2">
+                {([
+                  { key: 'todos', label: 'Todos' },
+                  { key: 'hoje', label: 'Hoje' },
+                  { key: 'semana', label: 'Semana' },
+                  { key: 'aguardando', label: 'Aguardando' },
+                ] as const).map(f => (
+                  <button
+                    key={f.key}
+                    onClick={() => setMedicoFilter(f.key)}
+                    className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                      medicoFilter === f.key
+                        ? 'bg-[#3FA174] text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="text-sm text-gray-500">
+            {filteredMedicoPacientes.length} paciente(s)
+          </div>
+
+          {filteredMedicoPacientes.length === 0 ? (
+            <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+              <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">Nenhum paciente encontrado</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredMedicoPacientes.map((paciente) => (
+                <motion.div
+                  key={paciente.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg hover:border-[#3FA174]/30 transition-all"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-full ${getAvatarColor(paciente.nome)} flex items-center justify-center text-white font-semibold text-sm`}>
+                        {getInitials(paciente.nome)}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{paciente.nome}</h3>
+                        <p className="text-xs text-gray-500">{paciente.email}</p>
+                      </div>
+                    </div>
+                    {paciente.agendamento && (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        paciente.agendamento.status === 'AGENDADO' 
+                          ? 'bg-blue-50 text-blue-600' 
+                          : 'bg-gray-50 text-gray-600'
+                      }`}>
+                        {paciente.agendamento.status === 'AGENDADO' ? 'Agendado' : paciente.agendamento.status}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 mb-4">
+                    {paciente.cidade && paciente.estado && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin size={14} className="text-gray-400" />
+                        {paciente.cidade}/{paciente.estado}
+                      </div>
+                    )}
+                    {paciente.patologiaCID && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Heart size={14} className="text-gray-400" />
+                        {paciente.patologiaCID}
+                      </div>
+                    )}
+                    {paciente.agendamento && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Calendar size={14} className="text-gray-400" />
+                        {new Date(paciente.agendamento.dataHora).toLocaleDateString('pt-BR')} às{' '}
+                        {new Date(paciente.agendamento.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-4">
+                    {paciente.preAnamnese ? (
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-green-200 bg-green-50 text-green-600">
+                        <FileText size={14} />
+                        <span className="text-xs font-medium">Anamnese completa</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500">
+                        <Clock size={14} />
+                        <span className="text-xs font-medium">Sem anamnese</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <a
+                      href={getWhatsAppLink(paciente.whatsapp, paciente.nome)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+                    >
+                      <MessageCircle size={16} />
+                      WhatsApp
+                    </a>
+                    {paciente.agendamento && paciente.agendamento.status === 'AGENDADO' && (
+                      <Link
+                        href={`/medico/consultas/${paciente.agendamento.id}`}
+                        className="flex-1 flex items-center justify-center gap-2 py-2 bg-[#3FA174] text-white rounded-lg hover:bg-[#359966] transition-colors text-sm font-medium"
+                      >
+                        <Video size={16} />
+                        Iniciar
+                      </Link>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </AppLayout>
+    );
+  }
 
   if (hasPlanoAtivo) {
     return (
