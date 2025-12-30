@@ -205,6 +205,109 @@ model Admin {
   atualizadoEm    DateTime  @updatedAt
 }
 
+enum StatusCadastro {
+  PENDENTE
+  EM_ANALISE
+  APROVADO
+  REJEITADO
+}
+
+model Instituto {
+  id              String    @id @default(cuid())
+  
+  // Dados institucionais
+  razaoSocial     String
+  nomeFantasia    String
+  cnpj            String    @unique
+  email           String    @unique
+  telefone        String?
+  whatsapp        String
+  website         String?
+  
+  // Endereço
+  rua             String?
+  numero          String?
+  complemento     String?
+  bairro          String?
+  cidade          String?
+  estado          String?
+  cep             String?
+  
+  // Responsável
+  responsavelNome String
+  responsavelCpf  String?
+  responsavelEmail String
+  responsavelTelefone String?
+  
+  // Documentos
+  documentoUrl    String?   // Contrato social, estatuto, etc
+  
+  // Status
+  status          StatusCadastro @default(PENDENTE)
+  observacoes     String?
+  
+  // LGPD
+  consenteLGPD    Boolean   @default(false)
+  consentimentoEm DateTime?
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([cnpj])
+  @@index([email])
+  @@index([status])
+}
+
+model AssociacaoParceira {
+  id              String    @id @default(cuid())
+  
+  // Dados institucionais
+  razaoSocial     String
+  nomeFantasia    String
+  cnpj            String    @unique
+  email           String    @unique
+  telefone        String?
+  whatsapp        String
+  website         String?
+  
+  // Tipo de parceria
+  tipoParceria    String    // Ex: "Farmácia", "Clínica", "Laboratório", "ONG", etc
+  
+  // Endereço
+  rua             String?
+  numero          String?
+  complemento     String?
+  bairro          String?
+  cidade          String?
+  estado          String?
+  cep             String?
+  
+  // Responsável
+  responsavelNome String
+  responsavelCpf  String?
+  responsavelEmail String
+  responsavelTelefone String?
+  
+  // Documentos
+  documentoUrl    String?   // Contrato social, estatuto, etc
+  
+  // Status
+  status          StatusCadastro @default(PENDENTE)
+  observacoes     String?
+  
+  // LGPD
+  consenteLGPD    Boolean   @default(false)
+  consentimentoEm DateTime?
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@index([cnpj])
+  @@index([email])
+  @@index([status])
+  @@index([tipoParceria])
+}
+
 model Prescricao {
   id              String    @id @default(cuid())
   
