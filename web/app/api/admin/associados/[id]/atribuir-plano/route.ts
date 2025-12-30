@@ -73,14 +73,6 @@ export async function POST(
       }
     });
 
-    await (prisma as any).adminLog.create({
-      data: {
-        adminId: admin.id,
-        acao: 'ATRIBUIR_PLANO',
-        detalhes: `Plano "${plano.nome}" atribuído ao associado ${paciente.nome} por ${duracao} mês(es)`,
-      }
-    });
-
     return NextResponse.json({
       success: true,
       assinatura: {
