@@ -56,8 +56,6 @@ export function CarteirinhaFlip({ associado, className }: CarteirinhaFlipProps) 
           <motion.div
             className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-2xl"
             style={{ backfaceVisibility: "hidden" }}
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <div className="absolute -top-1 left-3 right-3 h-6 md:h-8 rounded-t-xl md:rounded-t-2xl bg-gradient-to-b from-[#4CAF50] to-[#43A047] -z-10" />
             
