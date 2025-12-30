@@ -68,7 +68,19 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         orderBy: { criadoEm: 'desc' },
-        include: {
+        select: {
+          id: true,
+          nome: true,
+          email: true,
+          whatsapp: true,
+          cidade: true,
+          estado: true,
+          jaUsaCannabis: true,
+          patologiaCID: true,
+          termoAjuizamento: true,
+          consenteLGPD: true,
+          criadoEm: true,
+          usuarioId: true,
           usuario: {
             select: {
               ativo: true,
