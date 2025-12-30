@@ -94,7 +94,7 @@ export default function PainelMedicoPage() {
   useEffect(() => {
     const token = getToken();
     if (!token) {
-      router.replace('/login-medico');
+      router.replace('/login');
       return;
     }
     setAuthChecked(true);
@@ -117,7 +117,7 @@ export default function PainelMedicoPage() {
       }
     } catch (err: any) {
       if (err?.code === 'UNAUTHORIZED' || err?.message?.includes('Sessão')) {
-        router.replace('/login-medico');
+        router.replace('/login');
         return;
       }
       if (err?.message?.includes('médicos')) {

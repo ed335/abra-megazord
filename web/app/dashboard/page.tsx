@@ -15,7 +15,6 @@ import {
   CreditCard,
   User,
   MessageCircle,
-  AlertCircle,
   Clock,
   CheckCircle2,
   ChevronRight,
@@ -31,7 +30,6 @@ import {
   HeartPulse,
   Gift
 } from 'lucide-react';
-import { toast } from 'sonner';
 import CannabisLeaf from '@/components/icons/CannabisLeaf';
 
 type PlanoAtivo = {

@@ -38,9 +38,12 @@ export default function LoginClient() {
         setToken(data.access_token);
         toast.success('Login realizado com sucesso!');
         
-        const redirectPath = data.user?.role === 'ADMIN' 
-          ? '/admin' 
-          : '/dashboard';
+        let redirectPath = '/dashboard';
+        if (data.user?.role === 'ADMIN') {
+          redirectPath = '/admin';
+        } else if (data.user?.role === 'PRESCRITOR') {
+          redirectPath = '/medico';
+        }
         
         setTimeout(() => router.push(redirectPath), 500);
       } else {
