@@ -73,25 +73,12 @@ interface PreAnamneseData {
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-6">
-      <div>
-        <Skeleton className="h-7 w-48 mb-2" />
-        <Skeleton className="h-4 w-64" />
-      </div>
-      
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white border border-border rounded-lg p-4">
-            <Skeleton className="h-5 w-5 mb-3" />
-            <Skeleton className="h-4 w-24" />
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-white border border-border rounded-lg p-5">
-        <Skeleton className="h-5 w-32 mb-3" />
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-3/4" />
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="text-center">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#3FA174]/10 mb-4">
+          <div className="w-5 h-5 border-2 border-[#3FA174] border-t-transparent rounded-full animate-spin" />
+        </div>
+        <p className="text-sm text-gray-500">Carregando...</p>
       </div>
     </div>
   );
