@@ -145,9 +145,12 @@ model PreAnamnese {
   
   perfil          PerfilIntake
   objetivoPrincipal String
+  objetivoOutro   String?   // Texto personalizado quando seleciona "Outros" em objetivo
   gravidade       Int       // 1-5
   tratamentosPrevios String[] @default([])
+  tratamentoOutro String?   // Texto personalizado quando seleciona "Outros" em tratamentos
   comorbidades    String[]  @default([])
+  comorbidadeOutro String?  // Texto personalizado quando seleciona "Outros" em comorbidades
   notas           String?
   preferenciaAcompanhamento String
   melhorHorario   String

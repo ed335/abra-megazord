@@ -6,9 +6,12 @@ export const dynamic = 'force-dynamic';
 interface PreAnamneseRequest {
   perfil: 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';
   objetivoPrincipal: string;
+  objetivoOutro: string;
   gravidade: number;
   tratamentosPrevios: string[];
+  tratamentoOutro: string;
   comorbidades: string[];
+  comorbidadeOutro: string;
   notas: string;
   preferenciaAcompanhamento: string;
   melhorHorario: string;
@@ -246,9 +249,12 @@ export async function POST(request: NextRequest) {
         pacienteId: paciente.id,
         perfil: body.perfil,
         objetivoPrincipal: body.objetivoPrincipal,
+        objetivoOutro: body.objetivoOutro || null,
         gravidade: body.gravidade,
         tratamentosPrevios: body.tratamentosPrevios,
+        tratamentoOutro: body.tratamentoOutro || null,
         comorbidades: body.comorbidades,
+        comorbidadeOutro: body.comorbidadeOutro || null,
         notas: body.notas,
         preferenciaAcompanhamento: body.preferenciaAcompanhamento,
         melhorHorario: body.melhorHorario,

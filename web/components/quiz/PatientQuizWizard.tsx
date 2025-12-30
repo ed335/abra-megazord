@@ -28,9 +28,12 @@ type PerfilIntake = 'PACIENTE_NOVO' | 'EM_TRATAMENTO' | 'CUIDADOR';
 type PreAnamneseForm = {
   perfil: PerfilIntake;
   objetivoPrincipal: string;
+  objetivoOutro: string;
   gravidade: number;
   tratamentosPrevios: string[];
+  tratamentoOutro: string;
   comorbidades: string[];
+  comorbidadeOutro: string;
   notas: string;
   preferenciaAcompanhamento: string;
   melhorHorario: string;
@@ -40,9 +43,12 @@ type PreAnamneseForm = {
 const initialState: PreAnamneseForm = {
   perfil: 'PACIENTE_NOVO',
   objetivoPrincipal: '',
+  objetivoOutro: '',
   gravidade: 3,
   tratamentosPrevios: [],
+  tratamentoOutro: '',
   comorbidades: [],
+  comorbidadeOutro: '',
   notas: '',
   preferenciaAcompanhamento: '',
   melhorHorario: '',
@@ -153,11 +159,23 @@ export default function PatientQuizWizard({ onComplete }: Props) {
 
   const canContinue = useMemo(() => {
     if (step === 0) return form.consentiu;
-    if (step === 1) return Boolean(form.objetivoPrincipal);
+    if (step === 1) {
+      if (!form.objetivoPrincipal) return false;
+      if (form.objetivoPrincipal === 'Outros' && !form.objetivoOutro.trim()) return false;
+      return true;
+    }
+    if (step === 3) {
+      if (form.tratamentosPrevios.includes('Outros') && !form.tratamentoOutro.trim()) return false;
+      return true;
+    }
+    if (step === 4) {
+      if (form.comorbidades.includes('Outros') && !form.comorbidadeOutro.trim()) return false;
+      return true;
+    }
     if (step === 5) return Boolean(form.preferenciaAcompanhamento);
     if (step === 6) return Boolean(form.melhorHorario);
     return true;
-  }, [form.consentiu, form.objetivoPrincipal, form.preferenciaAcompanhamento, form.melhorHorario, step]);
+  }, [form.consentiu, form.objetivoPrincipal, form.objetivoOutro, form.tratamentosPrevios, form.tratamentoOutro, form.comorbidades, form.comorbidadeOutro, form.preferenciaAcompanhamento, form.melhorHorario, step]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -302,12 +320,17 @@ export default function PatientQuizWizard({ onComplete }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((option) => {
             const Icon = option.icon;
-            const active = form.objetivoPrincipal.includes(option.value);
+            const active = form.objetivoPrincipal === option.value;
             return (
               <button
                 key={option.value}
                 type="button"
-                onClick={() => updateForm('objetivoPrincipal', option.value)}
+                onClick={() => {
+                  updateForm('objetivoPrincipal', option.value);
+                  if (option.value !== 'Outros') {
+                    updateForm('objetivoOutro', '');
+                  }
+                }}
                 className={`${pillBase} ${active ? 'border-verde-oliva bg-verde-claro/10' : 'border-cinza-claro bg-white hover:border-verde-oliva/60'}`}
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-verde-claro/20 text-verde-oliva">
@@ -321,6 +344,21 @@ export default function PatientQuizWizard({ onComplete }: Props) {
             );
           })}
         </div>
+        {form.objetivoPrincipal === 'Outros' && (
+          <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+            <label className="block text-sm font-medium text-cinza-escuro mb-2">
+              Descreva seu objetivo principal:
+            </label>
+            <textarea
+              value={form.objetivoOutro}
+              onChange={(e) => updateForm('objetivoOutro', e.target.value)}
+              className="w-full rounded-xl border border-verde-oliva/40 bg-verde-claro/5 px-4 py-3 text-sm text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva placeholder:text-cinza-medio"
+              rows={3}
+              placeholder="Ex: Fibromialgia, Parkinson, esclerose múltipla, etc."
+              autoFocus
+            />
+          </div>
+        )}
       </div>
     );
   };
@@ -354,6 +392,14 @@ export default function PatientQuizWizard({ onComplete }: Props) {
 
   const renderTratamentos = () => {
     const options = ['Nenhum', 'Ansiolíticos', 'Anticonvulsivantes', 'Fisioterapia', 'Psicoterapia', 'Outros'];
+    
+    const handleTratamentoClick = (option: string) => {
+      toggleArrayValue('tratamentosPrevios', option);
+      if (option === 'Outros' && form.tratamentosPrevios.includes('Outros')) {
+        updateForm('tratamentoOutro', '');
+      }
+    };
+    
     return (
       <div className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -363,7 +409,7 @@ export default function PatientQuizWizard({ onComplete }: Props) {
               <button
                 key={option}
                 type="button"
-                onClick={() => toggleArrayValue('tratamentosPrevios', option)}
+                onClick={() => handleTratamentoClick(option)}
                 className={`${pillBase} ${active ? 'border-verde-oliva bg-verde-claro/10' : 'border-cinza-claro bg-white hover:border-verde-oliva/60'}`}
               >
                 <Stethoscope className="w-5 h-5 text-verde-oliva" />
@@ -373,6 +419,21 @@ export default function PatientQuizWizard({ onComplete }: Props) {
             );
           })}
         </div>
+        {form.tratamentosPrevios.includes('Outros') && (
+          <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+            <label className="block text-sm font-medium text-cinza-escuro mb-2">
+              Quais outros tratamentos você já tentou?
+            </label>
+            <textarea
+              value={form.tratamentoOutro}
+              onChange={(e) => updateForm('tratamentoOutro', e.target.value)}
+              className="w-full rounded-xl border border-verde-oliva/40 bg-verde-claro/5 px-4 py-3 text-sm text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva placeholder:text-cinza-medio"
+              rows={3}
+              placeholder="Ex: Acupuntura, homeopatia, quiropraxia, medicação manipulada, etc."
+              autoFocus
+            />
+          </div>
+        )}
         <textarea
           value={form.notas}
           onChange={(e) => updateForm('notas', e.target.value)}
@@ -386,6 +447,14 @@ export default function PatientQuizWizard({ onComplete }: Props) {
 
   const renderComorbidades = () => {
     const options = ['Hipertensão', 'Diabetes', 'Histórico psiquiátrico', 'Gestação/planejamento', 'Outros'];
+    
+    const handleComorbidadeClick = (option: string) => {
+      toggleArrayValue('comorbidades', option);
+      if (option === 'Outros' && form.comorbidades.includes('Outros')) {
+        updateForm('comorbidadeOutro', '');
+      }
+    };
+    
     return (
       <div className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -395,7 +464,7 @@ export default function PatientQuizWizard({ onComplete }: Props) {
               <button
                 key={option}
                 type="button"
-                onClick={() => toggleArrayValue('comorbidades', option)}
+                onClick={() => handleComorbidadeClick(option)}
                 className={`${pillBase} ${active ? 'border-verde-oliva bg-verde-claro/10' : 'border-cinza-claro bg-white hover:border-verde-oliva/60'}`}
               >
                 <ShieldCheck className="w-5 h-5 text-verde-oliva" />
@@ -405,6 +474,21 @@ export default function PatientQuizWizard({ onComplete }: Props) {
             );
           })}
         </div>
+        {form.comorbidades.includes('Outros') && (
+          <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+            <label className="block text-sm font-medium text-cinza-escuro mb-2">
+              Descreva outras condições ou informações importantes:
+            </label>
+            <textarea
+              value={form.comorbidadeOutro}
+              onChange={(e) => updateForm('comorbidadeOutro', e.target.value)}
+              className="w-full rounded-xl border border-verde-oliva/40 bg-verde-claro/5 px-4 py-3 text-sm text-cinza-escuro focus:outline-none focus:ring-2 focus:ring-verde-oliva placeholder:text-cinza-medio"
+              rows={3}
+              placeholder="Ex: Alergias, condições cardíacas, uso de anticoagulantes, etc."
+              autoFocus
+            />
+          </div>
+        )}
       </div>
     );
   };
