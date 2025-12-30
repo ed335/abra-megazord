@@ -178,19 +178,49 @@ model Prescritor {
   instituicao     String?
   email           String    @unique
   telefone        String?
+  whatsapp        String?
+  fotoUrl         String?
   
   // Validação
   crmVerificado   Boolean   @default(false)
   dataVerificacao DateTime?
   
+  // Configurações de agenda
+  duracaoConsulta Int       @default(30) // Minutos
+  intervaloConsultas Int    @default(10) // Minutos entre consultas
+  aceitaNovosPacientes Boolean @default(true)
+  
   // Relacionamentos
   prescricoes     Prescricao[]
+  agendamentos    Agendamento[]
+  disponibilidades DisponibilidadeMedico[]
   
   criadoEm        DateTime  @default(now())
   atualizadoEm    DateTime  @updatedAt
   
   @@index([usuarioId])
   @@index([crm])
+  @@index([aceitaNovosPacientes])
+}
+
+// Disponibilidade semanal do médico
+model DisponibilidadeMedico {
+  id              String    @id @default(cuid())
+  
+  prescritorId    String
+  prescritor      Prescritor @relation(fields: [prescritorId], references: [id], onDelete: Cascade)
+  
+  diaSemana       Int       // 0=Domingo, 1=Segunda, ..., 6=Sábado
+  horaInicio      String    // "08:00"
+  horaFim         String    // "18:00"
+  ativo           Boolean   @default(true)
+  
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  
+  @@unique([prescritorId, diaSemana])
+  @@index([prescritorId])
+  @@index([diaSemana])
 }
 
 model Admin {
@@ -460,6 +490,9 @@ model Agendamento {
   pacienteId      String
   paciente        Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
   
+  prescritorId    String?
+  prescritor      Prescritor? @relation(fields: [prescritorId], references: [id])
+  
   dataHora        DateTime
   duracao         Int       @default(30) // Duração em minutos
   
@@ -470,14 +503,18 @@ model Agendamento {
   motivo          String?
   observacoes     String?
   
-  // Confirmação
+  // Confirmação e notificações WhatsApp
   confirmadoEm    DateTime?
   lembreteEnviado Boolean   @default(false)
   lembreteEm      DateTime?
+  whatsappConfirmacaoEnviado Boolean @default(false)
+  whatsappLembreteEnviado Boolean @default(false)
+  whatsappLinkEnviado Boolean @default(false)
   
-  // Para consulta por vídeo
-  linkVideo       String?
-  salaId          String?   @unique // ID único da sala Jitsi
+  // Para consulta por vídeo (Google Meet)
+  linkVideo       String?   // Link do Google Meet
+  googleMeetEventId String? // ID do evento no Google Calendar
+  salaId          String?   @unique // ID único da sala
   medicoPresente  Boolean   @default(false)
   pacientePresente Boolean  @default(false)
   inicioReal      DateTime? // Quando a consulta realmente começou
@@ -487,6 +524,7 @@ model Agendamento {
   atualizadoEm    DateTime  @updatedAt
   
   @@index([pacienteId])
+  @@index([prescritorId])
   @@index([dataHora])
   @@index([status])
   @@index([salaId])
