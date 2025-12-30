@@ -36,7 +36,7 @@ export async function GET(
     const agendamento = await prisma.agendamento.findUnique({
       where: { id: params.id },
       include: {
-        medico: {
+        prescritor: {
           include: {
             usuario: true,
           },
@@ -53,7 +53,7 @@ export async function GET(
       where: { usuarioId: decoded.sub },
       include: {
         assinaturas: {
-          where: { status: 'ATIVO' },
+          where: { status: 'ATIVA' },
           include: { plano: true },
           take: 1,
         },
@@ -78,8 +78,8 @@ export async function GET(
         status: agendamento.status,
         tipo: agendamento.tipo,
         medico: {
-          nome: agendamento.medico.nome,
-          especialidade: agendamento.medico.especialidade || 'Medicina Integrativa',
+          nome: agendamento.prescritor.nome,
+          especialidade: agendamento.prescritor.especialidade || 'Medicina Integrativa',
         },
         valorConsulta,
         valorComDesconto,
