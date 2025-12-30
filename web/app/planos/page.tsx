@@ -45,8 +45,8 @@ const BENEFICIOS_DETALHADOS = [
   },
   {
     icon: HeartPulse,
-    titulo: 'Acompanhamento Contínuo',
-    descricao: 'Monitoramento do seu tratamento com ajustes de dosagem conforme sua evolução.',
+    titulo: 'Desconto em Medicamentos',
+    descricao: 'Descontos exclusivos em medicamentos prescritos através de parcerias com fornecedores autorizados.',
   },
   {
     icon: MessageCircle,
@@ -55,8 +55,8 @@ const BENEFICIOS_DETALHADOS = [
   },
   {
     icon: Users,
-    titulo: 'Comunidade de Pacientes',
-    descricao: 'Acesso a grupos exclusivos para troca de experiências com outros pacientes.',
+    titulo: 'Acompanhamento Contínuo',
+    descricao: 'Monitoramento do seu tratamento com ajustes de dosagem conforme sua evolução.',
   },
   {
     icon: Shield,
@@ -73,6 +73,7 @@ const COMPARATIVO = [
   { item: 'Conteúdo educativo exclusivo', associado: true, avulso: false },
   { item: 'Acompanhamento contínuo', associado: true, avulso: false },
   { item: 'Descontos em consultas de retorno', associado: true, avulso: false },
+  { item: 'Desconto em medicamentos prescritos', associado: true, avulso: false },
   { item: 'Orientação jurídica', associado: true, avulso: false },
 ];
 
@@ -125,6 +126,7 @@ function convertToPricingPlans(planos: Plano[]): PricingPlan[] {
       'Conteúdo educativo exclusivo',
       'Acompanhamento do tratamento',
       'Descontos em consultas de retorno',
+      'Desconto em medicamentos prescritos',
       'Orientação jurídica e importação',
       ...plano.beneficios,
     ],
