@@ -338,7 +338,7 @@ export default function PlanosPage() {
               </p>
               <Button variant="outline" asChild className="border-[#6B7C59] text-[#6B7C59] hover:bg-[#6B7C59] hover:text-white">
                 <a
-                  href="https://wa.me/5511999999999?text=Olá! Gostaria de saber mais sobre os planos da ABRACANM"
+                  href="https://wa.me/5561981471038?text=Olá! Gostaria de saber mais sobre os planos da ABRACANM"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

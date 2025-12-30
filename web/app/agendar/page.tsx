@@ -65,7 +65,7 @@ export default function AgendarPage() {
       ? 'Olá! Sou associado ABRACANM e gostaria de agendar uma teleconsulta.'
       : 'Olá! Sou associado ABRACANM e gostaria de agendar uma consulta presencial.';
     
-    window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`, '_blank');
+    window.open(`https://wa.me/5561981471038?text=${encodeURIComponent(mensagem)}`, '_blank');
     setDialogOpen(false);
   };
 

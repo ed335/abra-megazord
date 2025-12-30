@@ -48,7 +48,7 @@ function FooterSection() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <Link href="https://wa.me/5511999999999" target="_blank">
+            <Link href="https://wa.me/5561981471038" target="_blank">
               <Button variant="outline" className="border-2 border-white/40 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-[#1B4332] px-8 py-6 text-base font-semibold rounded-full transition-all">
                 Falar no WhatsApp
               </Button>

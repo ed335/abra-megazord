@@ -21,8 +21,8 @@ const defaultContacts: ContactItem[] = [
   {
     icon: Phone,
     title: "WhatsApp",
-    value: "(11) 99999-9999",
-    href: "https://wa.me/5511999999999",
+    value: "(61) 9 8147-1038",
+    href: "https://wa.me/5561981471038",
   },
   {
     icon: Mail,
