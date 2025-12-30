@@ -155,9 +155,7 @@ export default function DashboardPage() {
         setError(err.message);
         setLoading(false);
         clearToken();
-        toast.error('Sessão expirada', {
-          description: 'Por favor, faça login novamente.'
-        });
+        router.replace('/login');
       });
   }, [router]);
 
@@ -170,18 +168,7 @@ export default function DashboardPage() {
   }
 
   if (error || !user) {
-    return (
-      <AppLayout title="Início">
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-            <AlertCircle className="w-6 h-6 text-destructive" />
-          </div>
-          <p className="text-foreground font-medium mb-1">Sessão expirada</p>
-          <p className="text-muted-foreground text-sm mb-4">Faça login para continuar</p>
-          <Button onClick={() => router.push('/login')}>Entrar</Button>
-        </div>
-      </AppLayout>
-    );
+    return null;
   }
 
   const firstName = user.nome?.split(' ')[0] || 'Associado';
