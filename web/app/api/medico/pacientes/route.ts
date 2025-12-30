@@ -74,7 +74,14 @@ export async function GET(request: NextRequest) {
       whereClause.status = 'AGENDADO';
     }
 
-    const agendamentos = await prisma.agendamento.findMany({
+    // Incluir status PENDENTE_PAGAMENTO e AGENDADO no filtro base
+    if (!whereClause.status) {
+      whereClause.status = {
+        in: ['PENDENTE_PAGAMENTO', 'AGENDADO', 'CONFIRMADO', 'EM_ANDAMENTO'],
+      };
+    }
+
+    const agendamentos = await (prisma as any).agendamento.findMany({
       where: whereClause,
       include: {
         paciente: {
@@ -125,8 +132,7 @@ export async function GET(request: NextRequest) {
     });
 
     const pacientes = agendamentos
-      .filter((ag) => ag.paciente.preAnamnese)
-      .map((ag) => {
+      .map((ag: any) => {
         const paciente = ag.paciente;
         const preAnamnese = paciente.preAnamnese;
         const assinatura = paciente.assinaturas[0];
