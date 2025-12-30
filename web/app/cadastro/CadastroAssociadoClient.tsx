@@ -189,6 +189,20 @@ export default function CadastroAssociadoClient() {
     setFormData(prev => ({ ...prev, [field]: value }));
   }, []);
 
+  const formatNome = (value: string) => {
+    const preposicoes = ['de', 'da', 'do', 'das', 'dos', 'e'];
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map((word, index) => {
+        if (index > 0 && preposicoes.includes(word)) {
+          return word;
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(' ');
+  };
+
   const formatWhatsApp = (value: string) => {
     const numbers = value.replace(/\D/g, '');
     if (numbers.length <= 2) return numbers;
@@ -586,7 +600,7 @@ export default function CadastroAssociadoClient() {
                   <input
                     type="text"
                     value={formData.nome}
-                    onChange={(e) => updateField('nome', e.target.value)}
+                    onChange={(e) => updateField('nome', formatNome(e.target.value))}
                     className={getInputClass('nome')}
                     placeholder="Seu nome completo"
                   />
