@@ -49,6 +49,7 @@ interface QuizAnswers {
   qualidadeSono: string;
   nivelEstresse: number;
   expectativasTratamento: string[];
+  expectativasOutro: string;
   preocupacoes: string;
   disponibilidadeHorario: string;
   preferenciaContato: string;
@@ -79,6 +80,7 @@ const initialAnswers: QuizAnswers = {
   qualidadeSono: '',
   nivelEstresse: 5,
   expectativasTratamento: [],
+  expectativasOutro: '',
   preocupacoes: '',
   disponibilidadeHorario: '',
   preferenciaContato: '',
@@ -870,6 +872,21 @@ export default function PatientQuizWizardV2() {
                 </button>
               ))}
             </div>
+
+            {answers.expectativasTratamento.includes('Outro') && (
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Descreva sua expectativa:
+                </label>
+                <input
+                  type="text"
+                  value={answers.expectativasOutro}
+                  onChange={(e) => updateAnswer('expectativasOutro', e.target.value)}
+                  placeholder="Digite aqui sua expectativa específica..."
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
+                />
+              </div>
+            )}
 
             <div>
               <label className="text-sm font-medium text-gray-700 mb-2 block">
