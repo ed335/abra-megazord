@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, Power, Trash2, Eye, Image } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, Power, Trash2, Eye, Image, LogIn } from 'lucide-react';
 
 type PreAnamnese = {
   id: string;
@@ -301,6 +301,40 @@ export default function AssociadosClient() {
       setError(err instanceof Error ? err.message : 'Erro ao alterar status');
     } finally {
       setTogglingId(null);
+    }
+  };
+
+  const handleImpersonate = async (usuarioId: string, nome: string) => {
+    const token = getToken();
+    
+    try {
+      const response = await fetch('/api/admin/impersonate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId: usuarioId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao fazer login como usuário');
+      }
+
+      const data = await response.json();
+      
+      localStorage.setItem('admin_original_token', token || '');
+      localStorage.setItem('abracann_token', data.access_token);
+      
+      alert(`Logado como ${nome}. Para voltar ao admin, faça logout e entre novamente.`);
+      
+      if (data.user.role === 'PRESCRITOR') {
+        router.push('/medico');
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao fazer login como usuário');
     }
   };
 
@@ -863,6 +897,13 @@ export default function AssociadosClient() {
                                 title={associado.usuario.ativo ? 'Desativar' : 'Ativar'}
                               >
                                 <Power size={14} />
+                              </button>
+                              <button
+                                onClick={() => handleImpersonate(associado.usuarioId, associado.nome)}
+                                className="p-1.5 text-cinza-medio hover:text-purple-600 hover:bg-purple-100 rounded transition-colors"
+                                title="Entrar como este usuário"
+                              >
+                                <LogIn size={14} />
                               </button>
                               {confirmDelete === associado.id ? (
                                 <div className="flex items-center gap-1 bg-erro/10 rounded px-2 py-1">
