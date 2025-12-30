@@ -372,61 +372,61 @@ export default function AgendarConsultaPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+                className="bg-white rounded-2xl border border-gray-200 p-4 max-w-md mx-auto"
               >
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-[#3FA174]" />
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#3FA174]" />
                     Escolha a Data
                   </h2>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setStep(1)}
-                    className="gap-1"
+                    className="gap-1 h-8 text-xs"
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-3 h-3" />
                     Voltar
                   </Button>
                 </div>
 
-                <div className="mb-4 p-3 bg-gray-50 rounded-xl">
-                  <p className="text-sm text-gray-600">
+                <div className="mb-3 p-2 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-600">
                     <span className="font-medium">Médico:</span> {medicoSelecionado.nome}
                   </p>
                 </div>
 
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
                     <button
                       onClick={prevMonth}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                     >
-                      <ChevronLeft className="w-5 h-5" />
+                      <ChevronLeft className="w-4 h-4" />
                     </button>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-sm font-semibold text-gray-900">
                       {meses[currentMonth.getMonth()]} {currentMonth.getFullYear()}
                     </h3>
                     <button
                       onClick={nextMonth}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                     >
-                      <ChevronRight className="w-5 h-5" />
+                      <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-7 gap-1 mb-2">
+                  <div className="grid grid-cols-7 gap-0.5 mb-1">
                     {diasSemana.map((dia) => (
-                      <div key={dia} className="text-center text-xs font-medium text-gray-500 py-2">
+                      <div key={dia} className="text-center text-[10px] font-medium text-gray-400 py-1">
                         {dia}
                       </div>
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-7 gap-1">
+                  <div className="grid grid-cols-7 gap-0.5">
                     {getDaysInMonth(currentMonth).map((date, index) => {
                       if (!date) {
-                        return <div key={`empty-${index}`} className="aspect-square" />;
+                        return <div key={`empty-${index}`} className="w-9 h-9" />;
                       }
 
                       const isAvailable = isDateAvailable(date);
@@ -443,13 +443,13 @@ export default function AgendarConsultaPage() {
                             }
                           }}
                           disabled={!isAvailable}
-                          className={`aspect-square rounded-lg text-sm font-medium transition-all ${
+                          className={`w-9 h-9 rounded-lg text-xs font-medium transition-all ${
                             isSelected
                               ? 'bg-[#3FA174] text-white'
                               : isAvailable
                               ? 'hover:bg-[#3FA174]/10 text-gray-900'
                               : 'text-gray-300 cursor-not-allowed'
-                          } ${isToday && !isSelected ? 'ring-2 ring-[#3FA174] ring-offset-1' : ''}`}
+                          } ${isToday && !isSelected ? 'ring-1 ring-[#3FA174]' : ''}`}
                         >
                           {date.getDate()}
                         </button>
@@ -458,8 +458,8 @@ export default function AgendarConsultaPage() {
                   </div>
                 </div>
 
-                <p className="text-xs text-gray-500 text-center">
-                  Dias disponíveis em destaque. Dias passados e sem atendimento estão desabilitados.
+                <p className="text-[10px] text-gray-400 text-center mt-2">
+                  Selecione uma data disponível
                 </p>
               </motion.div>
             )}
