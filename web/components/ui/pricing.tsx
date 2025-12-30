@@ -89,11 +89,14 @@ export function Pricing({
         )}>
           Anual
         </span>
-        {!isMonthly && (
-          <span className="ml-2 text-xs font-medium text-[#3FA174] bg-[#3FA174]/10 px-2 py-1 rounded-full">
-            20% OFF
-          </span>
-        )}
+        <span className={cn(
+          "ml-2 text-xs font-medium px-2 py-1 rounded-full transition-opacity",
+          !isMonthly 
+            ? "text-[#3FA174] bg-[#3FA174]/10 opacity-100" 
+            : "opacity-0"
+        )}>
+          20% OFF
+        </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
