@@ -141,3 +141,31 @@ _ABRACANM - Associação Brasileira de Cannabis Medicinal_`;
 
   return sendWhatsAppMessage({ phone, message });
 }
+
+export async function sendRegistrationApproval(
+  phone: string,
+  patientName: string,
+  preAnamneseLink: string
+): Promise<boolean> {
+  const message = `🌿 *ABRACANM - Cadastro Validado!*
+
+Olá, ${patientName}!
+
+Temos uma ótima notícia: seu cadastro na ABRACANM foi *validado com sucesso*! ✅
+
+Agora você faz parte da nossa comunidade de pacientes que buscam qualidade de vida através da cannabis medicinal.
+
+📋 *Próximo passo:* Preencha sua pré-anamnese para agilizar seu atendimento médico.
+
+👉 *Clique aqui para preencher:*
+${preAnamneseLink}
+
+A pré-anamnese nos ajuda a entender melhor suas necessidades e preparar sua consulta de forma personalizada.
+
+Dúvidas? Responda esta mensagem ou entre em contato pelo email contato@abracanm.org.br
+
+_ABRACANM - Associação Brasileira de Cannabis Medicinal_
+_Acolhendo você na sua jornada de saúde_`;
+
+  return sendWhatsAppMessage({ phone, message });
+}

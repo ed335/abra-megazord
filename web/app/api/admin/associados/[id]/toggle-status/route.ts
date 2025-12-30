@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken, getPrismaClient } from '@/lib/admin-auth';
 import { registrarLog } from '@/lib/audit-log';
+import { sendRegistrationApproval } from '@/lib/evolution';
 export const dynamic = 'force-dynamic';
 
 const prisma = getPrismaClient();
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://abracanm.org.br';
 
 export async function POST(
   request: NextRequest,
@@ -45,6 +47,15 @@ export async function POST(
       recursoId: params.id,
       detalhes: { nome: associado.nome, statusAnterior: !novoStatus, novoStatus },
     });
+
+    if (novoStatus && associado.telefone) {
+      const preAnamneseLink = `${BASE_URL}/pre-anamnese`;
+      await sendRegistrationApproval(
+        associado.telefone,
+        associado.nome,
+        preAnamneseLink
+      ).catch(err => console.error('Erro ao enviar WhatsApp de validação:', err));
+    }
 
     return NextResponse.json({ 
       success: true, 
