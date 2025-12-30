@@ -6,7 +6,15 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
-import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, Power, Trash2, Eye, Image, LogIn } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText, AlertCircle, Clock, Activity, Download, Upload, FileSpreadsheet, MessageCircle, Search, Filter, X, Edit2, Power, Trash2, Eye, Image, LogIn, CreditCard } from 'lucide-react';
+
+type Plano = {
+  id: string;
+  nome: string;
+  tipo: string;
+  valorMensalidade: number;
+  ativo: boolean;
+};
 
 type PreAnamnese = {
   id: string;
@@ -44,6 +52,7 @@ type Associado = {
   termoAjuizamento: boolean;
   consenteLGPD: boolean;
   criadoEm: string;
+  usuarioId: string;
   usuario: {
     ativo: boolean;
     emailVerificado: boolean;
@@ -203,6 +212,70 @@ export default function AssociadosClient() {
     associado: { id: string; nome: string };
     documentos: { tipo: string; url: string; nome: string }[];
   } | null>(null);
+
+  const [showPlanoModal, setShowPlanoModal] = useState(false);
+  const [planos, setPlanos] = useState<Plano[]>([]);
+  const [selectedAssociadoPlano, setSelectedAssociadoPlano] = useState<Associado | null>(null);
+  const [selectedPlanoId, setSelectedPlanoId] = useState('');
+  const [mesesPlano, setMesesPlano] = useState(1);
+  const [atribuindoPlano, setAtribuindoPlano] = useState(false);
+
+  const fetchPlanos = async () => {
+    const token = getToken();
+    try {
+      const response = await fetch('/api/admin/planos', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setPlanos(data.planos.filter((p: Plano) => p.ativo));
+      }
+    } catch (err) {
+      console.error('Erro ao buscar planos:', err);
+    }
+  };
+
+  const handleOpenPlanoModal = (associado: Associado) => {
+    setSelectedAssociadoPlano(associado);
+    setSelectedPlanoId('');
+    setMesesPlano(1);
+    setShowPlanoModal(true);
+    if (planos.length === 0) {
+      fetchPlanos();
+    }
+  };
+
+  const handleAtribuirPlano = async () => {
+    if (!selectedAssociadoPlano || !selectedPlanoId) return;
+    
+    setAtribuindoPlano(true);
+    const token = getToken();
+    
+    try {
+      const response = await fetch(`/api/admin/associados/${selectedAssociadoPlano.id}/atribuir-plano`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ planoId: selectedPlanoId, meses: mesesPlano }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Erro ao atribuir plano');
+      }
+
+      const data = await response.json();
+      alert(`Plano "${data.assinatura.plano}" atribuído com sucesso até ${new Date(data.assinatura.dataFim).toLocaleDateString('pt-BR')}`);
+      setShowPlanoModal(false);
+      setSelectedAssociadoPlano(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao atribuir plano');
+    } finally {
+      setAtribuindoPlano(false);
+    }
+  };
 
   const handleViewDocs = async (id: string) => {
     setDocsLoading(true);
@@ -899,6 +972,13 @@ export default function AssociadosClient() {
                                 <Power size={14} />
                               </button>
                               <button
+                                onClick={() => handleOpenPlanoModal(associado)}
+                                className="p-1.5 text-cinza-medio hover:text-[#3FA174] hover:bg-[#3FA174]/10 rounded transition-colors"
+                                title="Atribuir plano"
+                              >
+                                <CreditCard size={14} />
+                              </button>
+                              <button
                                 onClick={() => handleImpersonate(associado.usuarioId, associado.nome)}
                                 className="p-1.5 text-cinza-medio hover:text-purple-600 hover:bg-purple-100 rounded transition-colors"
                                 title="Entrar como este usuário"
@@ -1309,6 +1389,92 @@ export default function AssociadosClient() {
                 className="px-4 py-2 text-sm text-cinza-medio hover:text-cinza-escuro transition-colors"
               >
                 Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPlanoModal && selectedAssociadoPlano && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Atribuir Plano
+              </h2>
+              <button
+                onClick={() => { setShowPlanoModal(false); setSelectedAssociadoPlano(null); }}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Associado</p>
+                <p className="font-medium text-gray-900">{selectedAssociadoPlano.nome}</p>
+                <p className="text-sm text-gray-500">{selectedAssociadoPlano.email}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Selecione o Plano
+                </label>
+                {planos.length === 0 ? (
+                  <p className="text-sm text-gray-500">Carregando planos...</p>
+                ) : (
+                  <select
+                    value={selectedPlanoId}
+                    onChange={(e) => setSelectedPlanoId(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
+                  >
+                    <option value="">Selecione um plano</option>
+                    {planos.map((plano) => (
+                      <option key={plano.id} value={plano.id}>
+                        {plano.nome} - R$ {plano.valorMensalidade.toFixed(2).replace('.', ',')}/{plano.tipo === 'MENSAL' ? 'mês' : 'ano'}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Duração (meses)
+                </label>
+                <select
+                  value={mesesPlano}
+                  onChange={(e) => setMesesPlano(Number(e.target.value))}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3FA174]/30 focus:border-[#3FA174]"
+                >
+                  <option value={1}>1 mês</option>
+                  <option value={3}>3 meses</option>
+                  <option value={6}>6 meses</option>
+                  <option value={12}>12 meses</option>
+                </select>
+              </div>
+
+              {selectedPlanoId && (
+                <div className="bg-[#3FA174]/5 border border-[#3FA174]/20 rounded-xl p-4">
+                  <p className="text-sm text-gray-600">
+                    O plano será ativado imediatamente e terá validade de <strong>{mesesPlano} mês(es)</strong> a partir de hoje.
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+              <button
+                onClick={() => { setShowPlanoModal(false); setSelectedAssociadoPlano(null); }}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAtribuirPlano}
+                disabled={!selectedPlanoId || atribuindoPlano}
+                className="px-6 py-2 bg-[#3FA174] text-white rounded-xl hover:bg-[#3FA174]/90 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {atribuindoPlano ? 'Atribuindo...' : 'Atribuir Plano'}
               </button>
             </div>
           </div>
