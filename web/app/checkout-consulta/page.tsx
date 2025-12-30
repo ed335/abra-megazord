@@ -14,7 +14,8 @@ import {
   Check,
   Stethoscope,
   Tag,
-  ArrowLeft
+  ArrowLeft,
+  Gift
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FooterSection } from '@/components/ui/footer-section';
@@ -45,6 +46,15 @@ interface AgendamentoData {
   desconto: number;
 }
 
+interface PlanoData {
+  id: string;
+  nome: string;
+  valorMensalidade: number;
+  valorConsulta: number;
+  valorPrimeiraConsulta: number;
+  beneficios: string[];
+}
+
 export default function CheckoutConsultaPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -59,6 +69,9 @@ export default function CheckoutConsultaPage() {
   const [pixCopied, setPixCopied] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [checkingPayment, setCheckingPayment] = useState(false);
+  const [planos, setPlanos] = useState<PlanoData[]>([]);
+  const [showPlansOffer, setShowPlansOffer] = useState(false);
+  const [skipPlansOffer, setSkipPlansOffer] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -74,6 +87,16 @@ export default function CheckoutConsultaPage() {
           `/api/agendamento/${agendamentoId}`
         );
         setAgendamento(agendamentoData.agendamento);
+      }
+
+      const planosRes = await fetch('/api/planos');
+      if (planosRes.ok) {
+        const planosData = await planosRes.json();
+        setPlanos(planosData.planos?.filter((p: PlanoData) => p.valorMensalidade > 0) || []);
+      }
+
+      if (!userData.planoAtivo) {
+        setShowPlansOffer(true);
       }
     } catch (err) {
       setError('Erro ao carregar dados. Faça login novamente.');
@@ -336,7 +359,78 @@ export default function CheckoutConsultaPage() {
                 </div>
               </div>
 
-              {!pixCode ? (
+              {showPlansOffer && !skipPlansOffer && !user?.planoAtivo && !pixCode && planos.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="border-2 border-[#3FA174] rounded-2xl p-5 bg-gradient-to-br from-[#3FA174]/5 to-white"
+                >
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-10 h-10 bg-[#3FA174]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Gift className="w-5 h-5 text-[#3FA174]" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 text-lg">Economize na sua consulta!</h3>
+                      <p className="text-sm text-gray-600">
+                        Torne-se associado e pague menos nesta e nas próximas consultas
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mb-4">
+                    {planos.slice(0, 2).map((plano) => {
+                      const economiaConsulta = (agendamento?.valorConsulta || 149) - plano.valorPrimeiraConsulta;
+                      return (
+                        <div
+                          key={plano.id}
+                          className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#3FA174] transition-colors cursor-pointer"
+                          onClick={() => router.push(`/checkout?plano=${plano.id}&tipo=MENSALIDADE&redirect=/checkout-consulta?agendamento=${agendamentoId}`)}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <span className="font-semibold text-gray-900">Plano {plano.nome}</span>
+                              <span className="ml-2 text-xs bg-[#3FA174]/10 text-[#3FA174] px-2 py-0.5 rounded-full">
+                                R$ {plano.valorMensalidade.toFixed(0)}/mês
+                              </span>
+                            </div>
+                            {economiaConsulta > 0 && (
+                              <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                                Economize R$ {economiaConsulta.toFixed(0)}
+                              </span>
+                            )}
+                          </div>
+                          <ul className="space-y-1 text-sm text-gray-600">
+                            <li className="flex items-center gap-2">
+                              <Check className="w-3.5 h-3.5 text-[#3FA174]" />
+                              Primeira consulta por R$ {plano.valorPrimeiraConsulta.toFixed(0)}
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="w-3.5 h-3.5 text-[#3FA174]" />
+                              Retornos por R$ {plano.valorConsulta.toFixed(0)}
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="w-3.5 h-3.5 text-[#3FA174]" />
+                              Suporte via WhatsApp
+                            </li>
+                          </ul>
+                          <Button className="w-full mt-3 bg-[#3FA174] hover:bg-[#359966]">
+                            Assinar e Economizar
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setSkipPlansOffer(true)}
+                    className="w-full text-center text-sm text-gray-500 hover:text-gray-700 py-2 transition-colors"
+                  >
+                    Continuar sem plano e pagar R$ {(agendamento?.valorConsulta || 149).toFixed(0)} →
+                  </button>
+                </motion.div>
+              )}
+
+              {(!showPlansOffer || skipPlansOffer || user?.planoAtivo) && !pixCode && (
                 <Button
                   onClick={handleGeneratePix}
                   disabled={processing}
@@ -354,7 +448,9 @@ export default function CheckoutConsultaPage() {
                     </>
                   )}
                 </Button>
-              ) : (
+              )}
+
+              {pixCode && (
                 <div className="space-y-4">
                   <div className="bg-gray-50 rounded-xl p-4">
                     <p className="text-sm text-gray-600 mb-2">Código PIX Copia e Cola:</p>
